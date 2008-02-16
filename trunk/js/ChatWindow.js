@@ -11,9 +11,10 @@ ChatWindow = Ext.extend(Ext.Panel,{
     draggable: true,
     cls: 'x-portlet',
     layout: 'anchor',
-    addMsg: function() {
+    addMsg: function(msg) {
         var chatPanel = this.findById('chatpanel');
         chatPanel.insertHtml('beforeEnd', msg);
+        chatPanel.repaint();
     }
     
     /* Runtime Variables */
