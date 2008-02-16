@@ -1,7 +1,8 @@
 /*
  * Chat Window Class
  */
- 
+
+
 ChatWindow = Ext.extend(Ext.Panel,{
     
     /* Construction Time Variables */
@@ -11,16 +12,16 @@ ChatWindow = Ext.extend(Ext.Panel,{
     draggable: true,
     cls: 'x-portlet',
     layout: 'anchor',
-    addMsg: function(msg) {
-        var chatPanel = this.findById('chatpanel');
-        chatPanel.insertHtml('beforeEnd', msg);
-        chatPanel.repaint();
-    }
+    addMsg: 'hello',/*function(msg) {
+        var chatPanelElem = this.findById('chatpanel').getEl();
+        chatPanelElem.insertHtml('beforeEnd', msg);
+    }*/,
     
     /* Runtime Variables */
     
     initComponent: function() {
         Ext.apply(this, {
+            
             items:[{
                 id:'chatpanel',
                 split: false,
