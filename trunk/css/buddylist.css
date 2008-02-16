@@ -27,3 +27,10 @@
 .user-suit {
     background-image:url(../extjs/examples/shared/icons/fam/user_suit.gif) !important;
 }
+
+.buddy-list {
+	font-family: Helvetica, Verdana, Arial, sans-serif;
+	background-color: white;
+	color: black;
+}
+
