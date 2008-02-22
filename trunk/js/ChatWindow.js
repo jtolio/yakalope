@@ -13,6 +13,10 @@ ChatWindow = Ext.extend(Ext.Panel,{
     cls: 'x-portlet',
     layout: 'anchor',
     scope:this,
+    height:278,
+    width:300,
+    autoScroll:true,
+    bodyBorder:true,
     
     /* Runtime Variables */
     
@@ -20,13 +24,16 @@ ChatWindow = Ext.extend(Ext.Panel,{
         Ext.apply(this, {
             
             items:[{
-                id:'chatpanel ' + this.getId(),
+                id:'chat ' + this.getId(),
                 split: false,
-                offsets: '-50 -5',
-                width: 150,
-                height: 300,
-                html:'hello<br>',
-                autoScroll: true,
+                height:225,
+                width:295,
+                autoScroll:true,
+                items: [{
+                    id: 'chatpanel ' + this.getId(),
+                    autoHeight:true,
+                    bodyBorder:true,
+                }]
             },{
                 id:'chatform',
                 split: false,
@@ -52,14 +59,11 @@ ChatWindow = Ext.extend(Ext.Panel,{
         ChatWindow.superclass.initComponent.apply(this, arguments);
     },
     addMsg: function(msg) {
-        chatPanel = this.items.first().getEl();
-        return chatPanel.insertHtml('afterEnd', msg);
+        chatPanel = this.items.first();
+        chatPanelElement = chatPanel.items.first().getEl();
+        insertedElement = chatPanelElement.insertHtml('afterBegin', msg);
+        return chatPanel.getEl().scroll('down', 10, true);
     },
-    test: function() {
-        return this.body;
-    },
-    
-
  });
  
  Ext.reg('chatwindow', ChatWindow);
