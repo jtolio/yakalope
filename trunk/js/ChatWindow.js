@@ -53,7 +53,7 @@ ChatWindow = Ext.extend(Ext.Panel,{
     },
     addMsg: function(msg) {
         chatPanel = this.items.first().getEl();
-        return chatPanel.insertHtml('afterBegin', msg);
+        return chatPanel.insertHtml('afterEnd', msg);
     },
     test: function() {
         return this.body;
