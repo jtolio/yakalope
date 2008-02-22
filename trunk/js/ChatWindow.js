@@ -12,10 +12,7 @@ ChatWindow = Ext.extend(Ext.Panel,{
     draggable: true,
     cls: 'x-portlet',
     layout: 'anchor',
-    addMsg: 'hello',/*function(msg) {
-        var chatPanelElem = this.findById('chatpanel').getEl();
-        chatPanelElem.insertHtml('beforeEnd', msg);
-    }*/,
+    scope:this,
     
     /* Runtime Variables */
     
@@ -23,11 +20,12 @@ ChatWindow = Ext.extend(Ext.Panel,{
         Ext.apply(this, {
             
             items:[{
-                id:'chatpanel',
+                id:'chatpanel ' + this.getId(),
                 split: false,
                 offsets: '-50 -5',
                 width: 150,
                 height: 300,
+                html:'hello<br>',
                 autoScroll: true,
             },{
                 id:'chatform',
@@ -52,7 +50,16 @@ ChatWindow = Ext.extend(Ext.Panel,{
         });
         
         ChatWindow.superclass.initComponent.apply(this, arguments);
-    }
+    },
+    addMsg: function(msg) {
+        chatPanel = this.items.first().getEl();
+        return chatPanel.insertHtml('afterBegin', msg);
+    },
+    test: function() {
+        return this.body;
+    },
+    
+
  });
  
  Ext.reg('chatwindow', ChatWindow);
