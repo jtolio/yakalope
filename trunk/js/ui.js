@@ -70,15 +70,17 @@ yakalope.app = function () {
                     style: 'padding:10px 10px 10px 10px',
                     items:[{
                         title: 'Chat > Buddy 1',
-                        id:'chat1',
+                        id:'chat1'
                     },{
                         title: 'Chat > Buddy 2',
+                        id:'chat2'
                     }]
                 },{
                     width: 300,
                     style: 'padding:10px 10px 10px 10px',
                     items: [{
                         title:'Chat > Buddy 3',
+                        id:'chat3'
                     }]
                 }]
                 
