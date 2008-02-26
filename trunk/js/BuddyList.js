@@ -15,6 +15,9 @@
     layoutConfig: {
         animate: true
     },
+    clickHandler: function(userName) {
+        alert(userName);
+    },
     initComponent: function() {
         Ext.apply(this,{
             items: [
@@ -33,7 +36,7 @@
                             children:[{
                                 text:'Jack',
                                 iconCls:'user',
-                                leaf:true
+                                leaf:true,
                             },{
                                 text:'Brian',
                                 iconCls:'user',
@@ -67,7 +70,6 @@
                 }
             ]       
         });
-        
         BuddyList.superclass.initComponent.apply(this, arguments);
     }
     
