@@ -1,4 +1,4 @@
-Ext.BLANK_IMAGE_URL = "../trunk/extjs/resources/images/default/s.gif"
+Ext.BLANK_IMAGE_URL = "extjs/resources/images/default/s.gif"
 
 function setupCon(connection) {
     connection.registerHandler
@@ -66,7 +66,7 @@ yakalope.app = function () {
                 margins: '10 0 0 0',
                 id: 'chatarea',
                 items:[{
-                    width: 400,
+                    width: 320,
                     style: 'padding:10px 10px 10px 10px',
                     items:[{
                         title: 'Chat > Buddy 1',
@@ -76,7 +76,7 @@ yakalope.app = function () {
                         id:'chat2'
                     }]
                 },{
-                    width: 400,
+                    width: 320,
                     style: 'padding:10px 10px 10px 10px',
                     items: [{
                         title:'Chat > Buddy 3',

@@ -40,3 +40,15 @@
 .x-portlet .x-panel-nofooter .x-panel-bc {
     height:2px;
 }
+
+.x-chatwindow {    
+	background-color:#7ed0ff;
+	margin-bottom:10px;
+}
+
+.x-chatpanel {
+	background-color:white;
+    margin-bottom:5px;
+}
+
+
