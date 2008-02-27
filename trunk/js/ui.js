@@ -1,22 +1,15 @@
 Ext.BLANK_IMAGE_URL = "extjs/resources/images/default/s.gif"
 
-function setupCon(connection) {
-    connection.registerHandler
-}
-
-function initConnection() {
-    oDbg = function(){};
-    oDbg.log = function(){};
-    connection = new JSJaCHttpBindingConnection({'oDbg':oDbg});
-}
 
 Ext.namespace('yakalope');
     
 yakalope.app = function () {
-    initConnection();
+
     return {
         init:function() {
-    
+            
+            jabber.init();
+                
             /* Setup Layout of Main Window */
     
             viewport = new Ext.Viewport({
@@ -99,6 +92,17 @@ yakalope.app = function () {
 
                 /* End Buddy Window */ 
 
+            },{
+                region:'south',
+                buttons:[{
+                    text:'Connect',
+                    id:'connect',
+                    handler:jabber.doLogin,
+                },{
+                    text:'Disconnect',
+                    id:'disconnect',
+                    handler:jabber.quit,
+                }]
             }]
             
             /* End Main Layout */
