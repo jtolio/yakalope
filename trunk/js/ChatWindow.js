@@ -18,6 +18,7 @@ ChatWindow = Ext.extend(Ext.Panel,{
     cls:'x-chatwindow',
     
     /* Runtime Variables */
+    
     sendHandler: function() {
         chatForm = this.items.last();
         chatField = chatForm.items.first();
