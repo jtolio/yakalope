@@ -4,9 +4,18 @@ Ext.BLANK_IMAGE_URL = "extjs/resources/images/default/s.gif"
 Ext.namespace('yakalope');
     
 yakalope.app = function () {
-
+    var viewport;
     return {
-        init:function() {
+        getViewport: function() {
+            return viewport;
+        },
+        getChatArea: function () {
+            return viewport.items.get('chatarea');
+        },
+        getBuddyList: function() {
+            return viewport.items.get('buddylist');
+        },
+        init: function() {
             
             jabber.init();
                 
@@ -15,68 +24,16 @@ yakalope.app = function () {
             viewport = new Ext.Viewport({
             layout: 'border',
             items:
-            [{  
-                
-                /* Log Window */
-                    
-                region: 'west',
-                id: 'logs',
-                title: 'Logs',
-                split: true,
-                isCollapsed: false,
-                width: 200,
-                minSize: 175,
-                maxSize: 400,
-                collapsible: true,
-                margins: '10 0 0 0',
-                cmargins: '10 0 0 0',
-                layout: 'accordion',
-                layoutConfig: {
-                    animateConfig: true
-                },
-                items: [{
-                    html: Ext.example.shortBogusMarktup,
-                    title:'Navigation',
-                    autoScroll: true,
-                    border: false,
-                    iconCls: 'nav'
-                },{
-                    title:'Settings',
-                    html: Ext.example.shortBogusMarkup,
-                    border: false,
-                    autoScroll: true,
-                    iconCls: 'settings'
-                }]
-                
-                /* End Log Window */
-            
-            },{
-               
+            [{ 
                 /* Chat Area */
                 
-                xtype:'portal',
-                region: 'center',
-                margins: '10 0 0 0',
-                id: 'chatarea',
-                items:[{
-                    width: 320,
-                    style: 'padding:10px 10px 10px 10px',
-                    items:[{
-                        title: 'Chat > Buddy 1',
-                        id:'chat1'
-                    },{
-                        title: 'Chat > Buddy 2',
-                        id:'chat2'
-                    }]
-                },{
-                    width: 320,
-                    style: 'padding:10px 10px 10px 10px',
-                    items: [{
-                        title:'Chat > Buddy 3',
-                        id:'chat3'
-                    }]
-                }]
-                
+                xtype:'panel',
+                region:'center',
+                margins:'10 0 0 0',
+                id:'chatarea',
+                key:'chatarea',
+                autoScroll:true,
+           
                 /* End Chat Area */
             
             },{
@@ -108,7 +65,30 @@ yakalope.app = function () {
             /* End Main Layout */
 
             });
-        }
+        },
+        createNewChatWindow: function(chatId) {
+            if (!Ext.get(chatId)) {
+                var chatArea = yakalope.app.getChatArea();
+                var newChat = new ChatWindow({
+                    id:chatId,
+                    title:chatId,
+                    hidden:false,
+                    key:chatId,
+                });
+                newChat = chatArea.add(newChat);
+                viewport.doLayout();
+                return newChat;
+            }
+            return null;
+        },
+        addBuddy: function(userName) {
+            var buddyList = yakalope.app.getBuddyList();
+            return buddyList.addBuddy(userName);
+        },
+        removeChatWindow: function(chatId) {
+            var chatArea = yakalope.app.getChatArea();
+            chatArea.remove(chatId, true);
+        },  
     }
 }();
 
