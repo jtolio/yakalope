@@ -15,8 +15,32 @@
     layoutConfig: {
         animate: true
     },
-    clickHandler: function(userName) {
-        alert(userName);
+    onClick: function(node) {
+        yakalope.app.createNewChatWindow(node.text);
+    },
+    addBuddy: function(userName) {
+        var friendTreeNode = this.items.first().root.firstChild;
+        if (!this.containsBuddy(friendTreeNode, userName)) {
+            var newBuddy = new Ext.tree.AsyncTreeNode({
+                text:userName,
+                iconCls:'user',
+                leaf:true, 
+            });
+            newBuddy.on('click', this.onClick);
+            return friendTreeNode.appendChild(newBuddy);
+        }
+        return null;
+    },
+    containsBuddy: function(tree, userName) {
+        var node = tree.firstChild;
+        while (node != null) {
+            if (node.text == userName) {
+                return true;
+            } else {
+                node = node.nextSibling;
+            }
+        }
+        return false;
     },
     initComponent: function() {
         Ext.apply(this,{
@@ -33,35 +57,6 @@
                         children:[{
                             text:'Friends',
                             expanded:true,
-                            children:[{
-                                text:'Jack',
-                                iconCls:'user',
-                                leaf:true,
-                            },{
-                                text:'Brian',
-                                iconCls:'user',
-                                leaf:true
-                            },{
-                                text:'Jon',
-                                iconCls:'user',
-                                leaf:true
-                            },{
-                                text:'Tim',
-                                iconCls:'user',
-                                leaf:true
-                            },{
-                                text:'Nige',
-                                iconCls:'user',
-                                leaf:true
-                            },{
-                                text:'Fred',
-                                iconCls:'user',
-                                leaf:true
-                            },{
-                                text:'Bob',
-                                iconCls:'user',
-                                leaf:true
-                            }]
                         }]
                     })
                 }),{

@@ -16,6 +16,7 @@ ChatWindow = Ext.extend(Ext.Panel,{
     autoScroll:true,
     bodyBorder:true,
     cls:'x-chatwindow',
+    draggable:true,
     
     /* Runtime Variables */
     
@@ -81,12 +82,15 @@ ChatWindow = Ext.extend(Ext.Panel,{
         });
         ChatWindow.superclass.initComponent.apply(this, arguments);
     },
+    render: function() {
+        ChatWindow.superclass.render.apply(this, arguments);
+    },
     addMsg:function(msg) {
-        chat = this.items.first();
-        chatPanel = chat.items.first();
-        chatPanelHeight = chatPanel.getInnerHeight();
-        chatPanelElement = chatPanel.getEl();
-        chatPanelElement.insertHtml('beforeEnd', msg);
+        var chat = this.items.first();
+        var chatPanel = chat.items.first();
+        var chatPanelHeight = chatPanel.getInnerHeight();
+        var chatPanelElement = chatPanel.getEl();
+        chatPanelElement.insertHtml('beforeEnd', ' ' + msg);
     },
  });
  
