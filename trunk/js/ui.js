@@ -82,17 +82,27 @@ yakalope.app = function () {
             }
             return null;
         },
+        removeChatWindow: function(chatId) {
+            var chatArea = yakalope.app.getChatArea();
+            chatArea.remove(chatId, true);
+        },
+        addMsg: function(chatId, msg) {
+            var chatWindow = Ext.getCmp(chatId);
+            if (chatWindow) {
+                chatWindow.addMsg(msg);
+            } else {
+                var newChatWindow = yakalope.app.createNewChatWindow(chatId);
+                newChatWindow.addMsg(msg);
+            }
+        },
         addBuddy: function(userName) {
             var buddyList = yakalope.app.getBuddyList();
             return buddyList.addBuddy(userName);
         },
         removeBuddy: function(userName){
-            
-        },
-        removeChatWindow: function(chatId) {
-            var chatArea = yakalope.app.getChatArea();
-            chatArea.remove(chatId, true);
-        },  
+            var buddyList = yakalope.app.getBuddyList();
+            return buddyList.removeBuddy(username);
+        },   
     }
 }();
 
