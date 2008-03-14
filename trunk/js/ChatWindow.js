@@ -27,8 +27,9 @@ ChatWindow = Ext.extend(Ext.Panel,{
         if (chatMessage != '') {
             chatField.setValue('');
             //prepend username
-            this.addMsg(chatMessage + '<br>');
+            this.addMsg('Me: ' + chatMessage + '<br>');
             //Send Message to Jabber Connection
+            jabber.sendMsg(this.getId(), chatMessage);
         }
         chatField.focus();
     },
@@ -90,7 +91,7 @@ ChatWindow = Ext.extend(Ext.Panel,{
         var chatPanel = chat.items.first();
         var chatPanelHeight = chatPanel.getInnerHeight();
         var chatPanelElement = chatPanel.getEl();
-        chatPanelElement.insertHtml('beforeEnd', ' ' + msg);
+        chatPanelElement.insertHtml('beforeEnd', ' ' + msg + '<br>');
     },
  });
  

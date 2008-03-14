@@ -70,48 +70,39 @@ var jabber = {
     }
   },
   
-  sendMsg: function(aForm) {
-    if (aForm.msg.value == '' || aForm.sendTo.value == '')
+  sendMsg: function(recipient, msg) {
+    if (msg == '' || recipient == '')
       return false;
 
-    if (aForm.sendTo.value.indexOf('@') == -1)
-      aForm.sendTo.value += '@' + con.domain;
+    /*if (recipient.indexOf('@') == -1)
+      recipient += '@' + con.domain;*/
 
     try {
+      alert(recipient + ": " + msg);
       var aMsg = new JSJaCMessage();
-      aMsg.setTo(new JSJaCJID(aForm.sendTo.value));
-      aMsg.setBody(aForm.msg.value);
+      aMsg.setTo(new JSJaCJID(recipient));
+      aMsg.setBody(msg);
       con.send(aMsg);
-
-      aForm.msg.value = '';
-
       return false;
     } catch (e) {
-      html = "<div class='msg error''>Error: " + e.message + "</div>"; 
-      Ext.getCmp('iResp').addMsg(html);
-      //Ext.get('iResp').lastChild.scrollIntoView();
-      //alert("Error: " + e.message);
+      oDbg.log("Error sendMsg: " + e.message);
       return false;
     }
   },
   
   handle: {
     iq: function(aIQ) {
-      Ext.getCmp('iResp').addMsg("<div class='msg'>IN (raw): " + aIQ.xml().htmlEnc() + '</div>');
+      oDbg.log("IN (raw): " + aIQ.xml().htmlEnc());
       //Ext.getCmp('iResp').lastChild.scrollIntoView();
       con.send(aIQ.errorReply(ERR_FEATURE_NOT_IMPLEMENTED));
     },
     
     message: function(aJSJaCPacket) {
-      var html = '';
-      html += '<div class="msg"><b>Received Message from ' + aJSJaCPacket.getFromJID() + ':</b>';
-      html += aJSJaCPacket.getBody().htmlEnc() + '<br /></div>';
-      Ext.getCmp('iResp').addMsg(html);
-      //document.getElementById('iResp').lastChild.scrollIntoView();
+      yakalope.app.addMsg(aJSJaCPacket.getFrom(), aJSJaCPacket.getBody().htmlEnc());
     },
     
     presence: function(aJSJaCPacket) {
-      var html = '<div class="msg">';
+      /*var html = '<div class="msg">';
       if (!aJSJaCPacket.getType() && !aJSJaCPacket.getShow()) 
         html += '<b>'+aJSJaCPacket.getFromJID()+' has become available.</b>';
       else {
@@ -125,12 +116,14 @@ var jabber = {
       }
       html += '</div>';
 
-      Ext.getCmp('iResp').addMsg(html);
+      oDbg.log(html);*/
       //Ext.get('iResp').lastChild.scrollIntoView();
+      oDbg.log(aJSJaCPacket.getFrom());
+      yakalope.app.addBuddy(aJSJaCPacket.getFrom());
     },
     
     error: function(aJSJaCPacket) {
-      Ext.getCmp('iResp').addMsg("An error occured:<br />" +
+      oDbg.log("An error occured:" +
         ("Code: " + e.getAttribute('code') + "\nType: " + e.getAttribute('type') +
         "\nCondition: " + e.firstChild.nodeName).htmlEnc()); 
       //document.getElementById('login_pane').style.display = '';
@@ -148,15 +141,14 @@ var jabber = {
       //document.getElementById('login_pane').style.display = 'none';
       //document.getElementById('sendmsg_pane').style.display = '';
       //document.getElementById('err').innerHTML = '';
-      Ext.getCmp('iResp').addMsg("<strong>Connected</strong><br />");
-
+      oDbg.log("Connected");
       con.send(new JSJaCPresence());
     },
     
     disconnected: function() {
       //document.getElementById('login_pane').style.display = '';
       //document.getElementById('sendmsg_pane').style.display = 'none';
-      Ext.getCmp('iResp').addMsg("<strong>Disconnected</strong><br />");
+      oDbg.log("Disconnected");
     },
     
     iqVersion: function(iq) {
