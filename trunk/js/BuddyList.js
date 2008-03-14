@@ -18,28 +18,46 @@
     onClick: function(node) {
         yakalope.app.createNewChatWindow(node.text);
     },
+    getTreeRoot: function() {
+        return this.items.first().root;
+    },
     addBuddy: function(userName) {
-        var friendTreeNode = this.items.first().root.firstChild;
-        if (!this.containsBuddy(friendTreeNode, userName)) {
+        var friendRoot = this.getTreeRoot().firstChild;
+        if (!this.containsBuddy(userName)) {
             var newBuddy = new Ext.tree.AsyncTreeNode({
                 text:userName,
                 iconCls:'user',
                 leaf:true, 
             });
             newBuddy.on('click', this.onClick);
-            return friendTreeNode.appendChild(newBuddy);
+            return friendRoot.appendChild(newBuddy);
         }
         return null;
     },
-    containsBuddy: function(tree, userName) {
-        var node = tree.firstChild;
+    removeBuddy: function(userName) {
+        var node = this.getTreeRoot().firstChild;
         while (node != null) {
             if (node.text == userName) {
+                node.remove();
+                break;
+            }
+            node = node.nextSibling;
+        }
+    },
+    containsBuddy: function(userName) {
+        var tree = this.getTreeRoot();
+        var node = tree.firstChild;
+        alert(node);
+        alert(userName);
+        while (node != null) {
+            if (node.text == userName) {
+                alert(userName + " found");
                 return true;
             } else {
                 node = node.nextSibling;
             }
         }
+        alert(userName + " not found");
         return false;
     },
     initComponent: function() {
@@ -54,6 +72,7 @@
                     autoScroll:true,
                     root: new Ext.tree.AsyncTreeNode({
                         text:'Online',
+                        loaded:true,
                         children:[{
                             text:'Friends',
                             expanded:true,
