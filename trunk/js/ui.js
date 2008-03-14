@@ -27,7 +27,7 @@ yakalope.app = function () {
             [{ 
                 /* Chat Area */
                 
-                xtype:'chatarea',
+                xtype:'panel',
                 region:'center',
                 margins:'10 0 0 0',
                 id:'chatarea',
