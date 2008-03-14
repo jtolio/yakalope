@@ -7,10 +7,10 @@
  */
 
 Ext.ux.Portal = Ext.extend(Ext.Panel, {
-    layout: 'column',
+    layout: 'anchor',
     autoScroll:true,
     cls:'x-portal',
-    defaultType: 'portalcolumn',
+    defaultType: 'chatwindow',
 
     initComponent : function(){
         Ext.ux.Portal.superclass.initComponent.call(this);

@@ -27,11 +27,12 @@ yakalope.app = function () {
             [{ 
                 /* Chat Area */
                 
-                xtype:'panel',
+                xtype:'chatarea',
                 region:'center',
                 margins:'10 0 0 0',
                 id:'chatarea',
                 key:'chatarea',
+                dd:true,
                 autoScroll:true,
            
                 /* End Chat Area */
@@ -84,6 +85,9 @@ yakalope.app = function () {
         addBuddy: function(userName) {
             var buddyList = yakalope.app.getBuddyList();
             return buddyList.addBuddy(userName);
+        },
+        removeBuddy: function(userName){
+            
         },
         removeChatWindow: function(chatId) {
             var chatArea = yakalope.app.getChatArea();

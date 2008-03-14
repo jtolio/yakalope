@@ -57,6 +57,7 @@
                         children:[{
                             text:'Friends',
                             expanded:true,
+                            children:[],
                         }]
                     })
                 }),{
