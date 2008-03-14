@@ -16,6 +16,7 @@ yakalope.app = function () {
             return viewport.items.get('buddylist');
         },
         init: function() {
+            login.loginPage();
             
             jabber.init();
                 
