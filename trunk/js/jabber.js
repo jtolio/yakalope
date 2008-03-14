@@ -57,7 +57,7 @@ var jabber = {
 
       // setup args for connect method
       oArgs = new Object();
-      oArgs.domain = 'jabberworld.org';
+      oArgs.domain = 'squall.cs.umn.edu';
       oArgs.username = 'testing';
       oArgs.resource = 'yakalope';
       oArgs.pass = 'testing';

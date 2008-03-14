@@ -67,6 +67,9 @@ yakalope.app = function () {
 
             });
         },
+        getUser: function() {
+            return "test_user";
+        },
         createNewChatWindow: function(chatId) {
             if (!Ext.get(chatId)) {
                 var chatArea = yakalope.app.getChatArea();
@@ -75,6 +78,7 @@ yakalope.app = function () {
                     title:chatId,
                     hidden:false,
                     key:chatId,
+                    user:this.getUser(),
                 });
                 newChat = chatArea.add(newChat);
                 viewport.doLayout();
@@ -89,10 +93,10 @@ yakalope.app = function () {
         addMsg: function(chatId, msg) {
             var chatWindow = Ext.getCmp(chatId);
             if (chatWindow) {
-                chatWindow.addMsg(msg);
+                chatWindow.addMsg(chatId, msg);
             } else {
                 var newChatWindow = yakalope.app.createNewChatWindow(chatId);
-                newChatWindow.addMsg(msg);
+                newChatWindow.addMsg(chatId, msg);
             }
         },
         addBuddy: function(userName) {
