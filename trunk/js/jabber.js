@@ -9,11 +9,6 @@ var jabber = {
       setupCon(con);
 
       if (con.resume()) {
-
-        //document.getElementById('login_pane').style.display = 'none';
-        //document.getElementById('sendmsg_pane').style.display = '';
-        //document.getElementById('err').innerHTML = '';
-
       }
     } catch (e) {} // reading cookie failed - never mind
   },
@@ -21,10 +16,7 @@ var jabber = {
   quit: function() {
     if (con && con.connected())
       con.disconnect();
-
-    //document.getElementById('login_pane').style.display = '';
-    //document.getElementById('sendmsg_pane').style.display = 'none';
-  },
+},
   
   setupCon: function(con) {
     con.registerHandler('message',jabber.handle.message);
@@ -70,39 +62,44 @@ var jabber = {
     }
   },
   
-  sendMsg: function(recipient, msg) {
-    if (msg == '' || recipient == '')
+  sendMsg: function(aForm) {
+    if (aForm.msg.value == '' || aForm.sendTo.value == '')
       return false;
 
-    /*if (recipient.indexOf('@') == -1)
-      recipient += '@' + con.domain;*/
+    if (aForm.sendTo.value.indexOf('@') == -1)
+      aForm.sendTo.value += '@' + con.domain;
 
     try {
-      alert(recipient + ": " + msg);
       var aMsg = new JSJaCMessage();
-      aMsg.setTo(new JSJaCJID(recipient));
-      aMsg.setBody(msg);
+      aMsg.setTo(new JSJaCJID(aForm.sendTo.value));
+      aMsg.setBody(aForm.msg.value);
       con.send(aMsg);
+
+      aForm.msg.value = '';
+
       return false;
     } catch (e) {
-      oDbg.log("Error sendMsg: " + e.message);
+      html = "<div class='msg error''>Error: " + e.message + "</div>"; 
+      Ext.getCmp('iResp').addMsg(html);
       return false;
     }
   },
   
   handle: {
     iq: function(aIQ) {
-      oDbg.log("IN (raw): " + aIQ.xml().htmlEnc());
-      //Ext.getCmp('iResp').lastChild.scrollIntoView();
+      Ext.getCmp('iResp').addMsg("<div class='msg'>IN (raw): " + aIQ.xml().htmlEnc() + '</div>');
       con.send(aIQ.errorReply(ERR_FEATURE_NOT_IMPLEMENTED));
     },
     
     message: function(aJSJaCPacket) {
-      yakalope.app.addMsg(aJSJaCPacket.getFrom(), aJSJaCPacket.getBody().htmlEnc());
+      var html = '';
+      html += '<div class="msg"><b>Received Message from ' + aJSJaCPacket.getFromJID() + ':</b>';
+      html += aJSJaCPacket.getBody().htmlEnc() + '<br /></div>';
+      Ext.getCmp('iResp').addMsg(html);
     },
     
     presence: function(aJSJaCPacket) {
-      /*var html = '<div class="msg">';
+      var html = '<div class="msg">';
       if (!aJSJaCPacket.getType() && !aJSJaCPacket.getShow()) 
         html += '<b>'+aJSJaCPacket.getFromJID()+' has become available.</b>';
       else {
@@ -115,20 +112,13 @@ var jabber = {
           html += ' ('+aJSJaCPacket.getStatus().htmlEnc()+')';
       }
       html += '</div>';
-
-      oDbg.log(html);*/
-      //Ext.get('iResp').lastChild.scrollIntoView();
-      oDbg.log(aJSJaCPacket.getFrom());
-      yakalope.app.addBuddy(aJSJaCPacket.getFrom());
     },
     
     error: function(aJSJaCPacket) {
-      oDbg.log("An error occured:" +
+      /*Ext.getCmp('iResp').addMsg("An error occured:<br />" +
         ("Code: " + e.getAttribute('code') + "\nType: " + e.getAttribute('type') +
         "\nCondition: " + e.firstChild.nodeName).htmlEnc()); 
-      //document.getElementById('login_pane').style.display = '';
-      //document.getElementById('sendmsg_pane').style.display = 'none';
-      
+      */
       if (con.connected())
         con.disconnect();
     },
@@ -138,17 +128,10 @@ var jabber = {
     },
     
     connected: function() {
-      //document.getElementById('login_pane').style.display = 'none';
-      //document.getElementById('sendmsg_pane').style.display = '';
-      //document.getElementById('err').innerHTML = '';
-      oDbg.log("Connected");
       con.send(new JSJaCPresence());
     },
     
     disconnected: function() {
-      //document.getElementById('login_pane').style.display = '';
-      //document.getElementById('sendmsg_pane').style.display = 'none';
-      oDbg.log("Disconnected");
     },
     
     iqVersion: function(iq) {

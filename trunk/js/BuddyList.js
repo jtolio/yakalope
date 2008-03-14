@@ -49,15 +49,12 @@
         var node = tree.firstChild;
         node = node.firstChild;
         while (node != null) {
-            alert(node.text);
             if (node.text == userName) {
-                alert(userName + " found");
                 return true;
             } else {
                 node = node.nextSibling;
             }
         }
-        alert(userName + " not found");
         return false;
     },
     initComponent: function() {
