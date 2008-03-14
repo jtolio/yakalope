@@ -47,9 +47,9 @@
     containsBuddy: function(userName) {
         var tree = this.getTreeRoot();
         var node = tree.firstChild;
-        alert(node);
-        alert(userName);
+        node = node.firstChild;
         while (node != null) {
+            alert(node.text);
             if (node.text == userName) {
                 alert(userName + " found");
                 return true;
