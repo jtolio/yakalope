@@ -2,8 +2,16 @@
     File Header
 """
 import lucene
+import time
+import os.path
+lucene.initVM(lucene.CLASSPATH)
 
-
+"""
+    Constants
+"""
+PATH_SEP = os.path.sep
+SECONDS_IN_20_MINUTES = 1200 #(20 * 60)
+MAX_TIMESTAMP = "999999999999"
 """
     CLASS: LogModule
 """
@@ -37,6 +45,7 @@ class LogModule:
             except OSError:
                 return False #Could not make the directory
         self.datadir = location
+        return True
 
 
     """
@@ -64,6 +73,7 @@ class LogModule:
             except OSError:
                 return False #Could not make the directory
         self.indexdir = location
+        return True
 
     """
     METHOD: LogModule::addMessage
@@ -90,10 +100,53 @@ class LogModule:
         False on failure
     """
     def addMessage(self, username, protocol, friend_chat, who_sent,
-                   timestamp):
-        path_sep = os.path.sep
-        print 'Not yet written'
+                   timestamp, text):
+        #Determine index and data paths
+        index_dir = self.indexdir + username
+        data_dir = self.datadir + username + PATH_SEP + protocol + PATH_SEP
+        data_file = data_dir + friend_chat
 
+        #if the index doesn't exist, we use a sepcial constructor to create it
+        if os.path.isdir(index_dir) == False:
+            os.makedirs(index_dir)
+            luc_index = lucene.FSDirectory.getDirectory(index_dir,True)
+            luc_writer = lucene.IndexWriter(luc_index,
+                                            lucene.StandardAnalyzer(),True)
+        else:
+            luc_index = lucene.FSDirectory.getDirectory(index_dir)
+            luc_writer = lucene.IndexWriter(luc_index,
+                                            lucene.StandardAnalyzer())
+        #Opening the index before writing to the file gives us a lock
+        #on the index. As long as writing to data files occurs only
+        #through this function, this is guaranteed to be an atomic
+        #operation. Closing the writer releases the lock.
+
+        if os.path.isdir(data_dir) == False:
+            os.makedirs(data_dir)
+        #filesize is used to determine the file offset
+        if os.path.isfile(data_file) == False:
+            filesize = 0
+        else:
+            filesize = os.path.getsize(data_file)
+
+        datahandle = open(data_file, 'a')
+        datahandle.write(str(who_sent))
+        datahandle.write("\n")
+        datahandle.write(str(timestamp))
+        datahandle.write("\n")
+        datahandle.write(str(text))
+        datahandle.write("\n")
+
+        doc = lucene.Document()
+        doc.add(self._makeKeywordField('protocol',str(protocol)))
+        doc.add(self._makeKeywordField('friend_chat',str(friend_chat)))
+        doc.add(self._makeKeywordField('timestamp',str(timestamp)))
+        doc.add(self._makeKeywordField('who_sent',str(who_sent)))
+        doc.add(self._makeUnIndexedField('file_offset',str(filesize)))
+        doc.add(self._makeUnStoredField('text',str(text)))
+
+        luc_writer.addDocument(doc)
+        luc_writer.close()
 
     """
     METHOD: LogModule::getRecentMessages
@@ -102,21 +155,89 @@ class LogModule:
 
     PARAMETERS:
         username -- Jabber user
-        protocol -- Service protocol used (i.e. AIM, MSN, etc.)
-        friend_chat -- Friend or chat the conversation is with. Do not include
-                       the protocol in this parameter.
 
     DESCRIPTION:
-        Returns a list of messages that occurred recently with a friend or
-        in a chat room based on some criteria.
+        Returns a list of messages that occurred recently based on some
+        criteria.
         Current criteria is: occurred in the last 20 minutes.
 
     RETURNS:
         List of LogConversation objects on success
         False on failure
     """
-    def getRecentConversations(self,username, protocol, friend_chat):
-        print 'Not yet written'
+    def getRecentConversations(self,username):
+        #Determine index and data paths
+        index_dir = self.indexdir + username
+        data_dir = self.datadir + username
+
+        #Load the index
+        if os.path.isdir(index_dir) == True:
+            luc_index = lucene.FSDirectory.getDirectory(index_dir)
+
+            #Get the current time in UTC seconds
+            curtime = int(time.time())
+
+            #Convert to a search range
+            searchstart = str(curtime - SECONDS_IN_20_MINUTES)
+            searchend = str(MAX_TIMESTAMP)
+
+            #Build and perform the query
+            qtext = "timestamp:[" + searchstart + " TO " + searchend + "]"
+            searcher = lucene.IndexSearcher(luc_index)
+            qparser = lucene.QueryParser("text", lucene.StandardAnalyzer())
+            query = qparser.parse(qtext)
+            sortmethod = lucene.Sort(["protocol","friend_chat","timestamp"])
+            qresults = searcher.search(query,sortmethod)
+
+            #Fetch the results
+            conversationlist = []
+            for i in range(qresults.length()):
+                mprotocol = qresults.doc(i).get("protocol")
+                mfriend_chat = qresults.doc(i).get("friend_chat")
+                mtimestamp = qresults.doc(i).get("timestamp")
+                mwho_sent = qresults.doc(i).get("who_sent")
+                mfileoffset = qresults.doc(i).get("file_offset")
+                mrank = qresults.score(i)
+
+                #For now just be an idiot and create a conversation for
+                #each new message found
+                #Revise this so it groups by conversation
+                message = LogMessage('text',mtimestamp,mwho_sent)
+                message.setRank(mrank)
+                conversation = LogConversation(mprotocol,mfriend_chat)
+                conversation.addMessage(message)
+
+                conversationlist.append(conversation)
+
+            return conversationlist
+        else:
+            #Index does not exist
+            return False;
+
+
+
+
+    # Functions to make Lucene document fields
+    def _makeKeywordField(self,fieldname,fielddata):
+        return lucene.Field(fieldname,
+                            fielddata,
+                            lucene.Field.Store.YES,
+                            lucene.Field.Index.UN_TOKENIZED)
+
+    def _makeUnIndexedField(self,fieldname,fielddata):
+        return lucene.Field(fieldname,
+                            fielddata,
+                            lucene.Field.Store.YES,
+                            lucene.Field.Index.NO)
+
+    def _makeUnStoredField(self,fieldname,fielddata):
+        return lucene.Field(fieldname,
+                            fielddata,
+                            lucene.Field.Store.NO,
+                            lucene.Field.Index.TOKENIZED)
+
+
+
 
 
     """
@@ -129,10 +250,11 @@ class LogModule:
         query -- Lucene query for searching the user's index
 
     DESCRIPTION:
-        Returns a list of messages that matched the query
+        Returns a list of messages that matched the query.
 
     RETURNS:
-        List of LogConversation objects on success
+        List of LogConversation objects on success. Certain LogMessages (1 or
+        more) in each conversation will contain a rank.
         False on failure
     """
     def searchMessages(self,username, query):
@@ -157,6 +279,15 @@ class LogConversation:
         self.friend_chat = ""
         self.messages = []
 
+    def addMessage(self,msg):
+        self.messages.append(msg)
+
+    def getFriendChat(self):
+        return self.friend_chat
+
+    def getProtocol(self):
+        return self.protocol
+
 
 """
     CLASS: LogMessage
@@ -172,18 +303,21 @@ class LogConversation:
 class LogMessage:
     def __init__(self,message_text,timestamp,whosent):
         self.message_text = ""
-        self.timestamp = ""
+        self.timestamp = 0
         self.whosent = ""
+        self.rank = 0
+
+    def setRank(self,newrank):
+        self.rank = newrank
 
     def getMessageText(self):
-        #NOTE FOR THE FUTURE: we could wait to fetch from the data files until
-        # this function gets called, but we would lose any optimizations we
-        # get from loading all the messages from the same file at once.
-        print 'Not yet written'
+        return self.message_text
 
     def getTimestamp(self):
-        print 'Not yet written'
+        return self.timestamp
 
     def getWhoSent(self):
-        print 'Not yet written'
+        return self.whosent
 
+    def getRank(self):
+        return self.rank
