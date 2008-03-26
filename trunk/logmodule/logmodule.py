@@ -134,16 +134,18 @@ class LogModule:
         datahandle.write("\n")
         datahandle.write(str(timestamp))
         datahandle.write("\n")
+        datahandle.write(str(len( str(text) ))) #what a mess
+        datahandle.write("\n")
         datahandle.write(str(text))
         datahandle.write("\n")
 
         doc = lucene.Document()
-        doc.add(self._makeKeywordField('protocol',str(protocol)))
-        doc.add(self._makeKeywordField('friend_chat',str(friend_chat)))
-        doc.add(self._makeKeywordField('timestamp',str(timestamp)))
-        doc.add(self._makeKeywordField('who_sent',str(who_sent)))
-        doc.add(self._makeUnIndexedField('file_offset',str(filesize)))
-        doc.add(self._makeUnStoredField('text',str(text)))
+        doc.add(self.__makeKeywordField('protocol',str(protocol)))
+        doc.add(self.__makeKeywordField('friend_chat',str(friend_chat)))
+        doc.add(self.__makeKeywordField('timestamp',str(timestamp)))
+        doc.add(self.__makeKeywordField('who_sent',str(who_sent)))
+        doc.add(self.__makeUnIndexedField('file_offset',str(filesize)))
+        doc.add(self.__makeUnStoredField('text',str(text)))
 
         luc_writer.addDocument(doc)
         luc_writer.close()
@@ -199,46 +201,155 @@ class LogModule:
                 mfileoffset = qresults.doc(i).get("file_offset")
                 mrank = qresults.score(i)
 
-                #For now just be an idiot and create a conversation for
-                #each new message found
-                #Revise this so it groups by conversation
-                message = LogMessage('text',mtimestamp,mwho_sent)
+                #This is a really bad and slow method that should
+                #be optimized at a later date.
+                #Simply search through all previously retrieved
+                #conversations and check for a match. If match is
+                #found, add it, otherwise create a new conversation.
+                messagetext = self.__getMessageFromFile(username,mfriend_chat,
+                                                        mprotocol,mfileoffset)
+                message = LogMessage(messagetext,mtimestamp,mwho_sent)
                 message.setRank(mrank)
-                conversation = LogConversation(mprotocol,mfriend_chat)
-                conversation.addMessage(message)
 
-                conversationlist.append(conversation)
+                found = False
+                for j in range(len(conversationlist)):
+                    if conversationlist[j].getProtocol() == mprotocol and \
+                       conversationlist[j].getFriendChat() == mfriend_chat:
+                        found = True
+                        conversationlist[j].addMessage(message)
+                        break
+                if found == False:
+                    conversation = LogConversation(mprotocol,mfriend_chat)
+                    conversationlist.append(conversation)
 
             return conversationlist
         else:
             #Index does not exist
             return False;
 
+    """
+    METHOD: LogModule::__makeKeywordField
 
+    ACCESS: private
 
+    PARAMETERS:
+        fieldname -- Name of the field
+        fielddate -- Data to be stored in the field
 
-    # Functions to make Lucene document fields
-    def _makeKeywordField(self,fieldname,fielddata):
+    DESCRIPTION:
+        Creates a Lucene keyword field in the index. These types
+        of fields are good for single word data or numerical
+        data such as dates and small pieces of data that you
+        might want to use as search parameters.
+        Returned with results: Yes
+        Indexed: Yes
+        Tokenized: No
+
+    RETURNS:
+        Lucene field
+    """
+    def __makeKeywordField(self,fieldname,fielddata):
         return lucene.Field(fieldname,
                             fielddata,
                             lucene.Field.Store.YES,
                             lucene.Field.Index.UN_TOKENIZED)
 
-    def _makeUnIndexedField(self,fieldname,fielddata):
+    """
+    METHOD: LogModule::__makeUnIndexedField
+
+    ACCESS: private
+
+    PARAMETERS:
+        fieldname -- Name of the field
+        fielddate -- Data to be stored in the field
+
+    DESCRIPTION:
+        Creates a Lucene unindexed field in the index. These fields
+        are good for things such as file names or file offsets that
+        store things that are meaningful to the data, but will
+        never need to be used as parameters to a search.
+        Returned with results: Yes
+        Indexed: No
+        Tokenized: No
+
+    RETURNS:
+        Lucene field
+    """
+    def __makeUnIndexedField(self,fieldname,fielddata):
         return lucene.Field(fieldname,
                             fielddata,
                             lucene.Field.Store.YES,
                             lucene.Field.Index.NO)
 
-    def _makeUnStoredField(self,fieldname,fielddata):
+    """
+    METHOD: LogModule::__makeUnStoredField
+
+    ACCESS: private
+
+    PARAMETERS:
+        fieldname -- Name of the field
+        fielddate -- Data to be stored in the field
+
+    DESCRIPTION:
+        Creates a Lucene unstored field in the index. These fields
+        are good for things such as long chunks of text that will
+        be stored in a separate data location but will need to be
+        used as search parameters.
+        Returned with results: No
+        Indexed: Yes
+        Tokenized: Yes
+
+    RETURNS:
+        Lucene field
+    """
+    def __makeUnStoredField(self,fieldname,fielddata):
         return lucene.Field(fieldname,
                             fielddata,
                             lucene.Field.Store.NO,
                             lucene.Field.Index.TOKENIZED)
 
+    """
+    METHOD: LogModule::__getMessageFromFile
 
+    ACCESS: private
 
+    PARAMETERS:
+        username -- Username of account which stored the message
+        friend_chat -- Buddy or chat name
+        protocol -- Protocol used by the buddy or chat
+        offset -- Seek offset that the message begins at in the file
 
+    DESCRIPTION:
+        Retrieves exactly one message from a data file. Assumes the
+        information it receives is correct in that the file exists
+        in the data directory and that the file is at least the size
+        of the offset.
+
+        Files should only be appended to so this function should
+        always be kosher to run in parallel with addMessage.
+
+    RETURNS:
+        String containing the formatted chat message
+    """
+    def __getMessageFromFile(self,username,friend_chat,protocol,offset):
+        #Get the data directory
+        data_dir = self.datadir + username + PATH_SEP + protocol + PATH_SEP
+        data_file = data_dir + friend_chat
+
+        #Get the message
+        filehandle = open(data_file,'r')
+        filehandle.seek(int(offset))
+        while filehandle.read(1) != "\n":
+            pass #ignore who sent
+        while filehandle.read(1) != "\n":
+            pass #ignore timestamp
+        mlen = ""
+        lastread = ""
+        while lastread != "\n":
+            mlen = mlen + lastread
+            lastread = filehandle.read(1)
+        messagetext = filehandle.read(int(mlen))
+        return messagetext
 
     """
     METHOD: LogModule::searchMessages
@@ -275,8 +386,8 @@ class LogModule:
 """
 class LogConversation:
     def __init__(self,protocol,friend_chat):
-        self.protocol = ""
-        self.friend_chat = ""
+        self.protocol = protocol
+        self.friend_chat = friend_chat
         self.messages = []
 
     def addMessage(self,msg):
@@ -302,9 +413,9 @@ class LogConversation:
 """
 class LogMessage:
     def __init__(self,message_text,timestamp,whosent):
-        self.message_text = ""
-        self.timestamp = 0
-        self.whosent = ""
+        self.message_text = message_text
+        self.timestamp = timestamp
+        self.whosent = whosent
         self.rank = 0
 
     def setRank(self,newrank):
