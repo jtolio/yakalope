@@ -16,6 +16,33 @@ yakalope.app = function () {
             return viewport.items.get('buddylist');
         },
         init: function() {
+
+		var LoginWindow = new Ext.Window({
+			title: 'Welcome to Yakalope or BlabLab or 
+something...',
+                        width: 300,
+                        items: new Ext.FormPanel({
+                            labelWidth:75,
+                            frame:true,
+                            defaultType:'textfield',
+                            items:[{
+                                fieldLabel:'Username',
+                                name:'username',
+                                allowBlank:false,
+                            },{
+                                fieldLabel:'Password',
+                                name:'password',
+                                allowBlank:false,
+                                InputType: 'password'
+                            }],
+                        }),
+                        buttons: [{
+                            id: 'login',
+                            text: 'login'
+                        }]
+                });
+           
+                LoginWindow.show();
             
             jabber.init();
                 
