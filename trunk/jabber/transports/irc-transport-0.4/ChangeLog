@@ -1,0 +1,628 @@
+2007-12-16 01:31  normanr
+
+	* irc.py: Add labels to registration fields.  Fix for initial
+	  channel join user mode not setting correctly.
+
+2007-09-26 12:12  normanr
+
+	* irc.py: irclib 1.40 update
+
+2007-09-11 14:49  normanr
+
+	* irc.py: Fix for payload processing, roles and affiliations
+	  tweaked to match the latest XEP, handle disconnection better,
+	  bugfix for no messages for join-on-connect rooms.
+
+2007-09-10 13:02  normanr
+
+	* irc.py: Quick tweak to try and handle advanced channel user modes
+	  on Unreal servers
+
+2007-09-10 12:09  normanr
+
+	* irc.py: Fix for XEP-0045 compliance when sending unavailable
+	  presence (thanks to franky)
+
+2007-08-29 11:14  normanr
+
+	* adhoc.py: Fix trying to disco commands against non-server jids
+
+2007-08-28 12:05  normanr
+
+	* irc.py: Handle message with specified default normal message type
+
+2007-07-22 02:45  normanr
+
+	* adhoc.py, jep0133.py: Added service admin commands for adding and
+	  deleting users
+
+2007-07-22 02:45  normanr
+
+	* config.py, config_example.xml, irc.py: Added option to require
+	  users to register before joining a room
+
+2007-07-22 01:27  normanr
+
+	* irc.py: Suppress MOTD and RULES if they have the same hash as the
+	  last copy we saw.
+
+2007-07-22 00:26  normanr
+
+	* irc.py: Make whitespace at the start and end of line significant
+	  when creating html text for messages
+
+2007-05-31 13:37  normanr
+
+	* irc.py: Implement a very simple allowRegister.  (This won't stop
+	  already registered users from registering more servers, nor will
+	  it stop unregistered users from using adhoc connections)
+
+2007-05-19 00:07  normanr
+
+	* irc.py: Turn MOTD into new-style pending operations, and display
+	  as x-html
+
+2007-05-18 22:37  normanr
+
+	* irc.py: Show irc liststart text when listing raw data
+
+2007-05-18 22:24  normanr
+
+	* irc.py: Update irc color parsing code
+
+2007-05-13 20:03  normanr
+
+	* irc.py: Added channel list via iq:search, some fixes for encoding
+	  and calling convention
+
+2007-04-09 22:23  normanr
+
+	* jep0133.py: moving admin namespace constants from jep0133 to to
+	  protocol
+
+2007-04-09 21:23  normanr
+
+	* irc.py: use namespace constant
+
+2007-04-09 19:51  normanr
+
+	* irc.py: add support for multiple pending operations with the same
+	  key.	add support for disco-info for channels
+
+2007-04-09 17:59  normanr
+
+	* irc.py: Bugfix: XEP 0077 violation: IQ query jabber:iq:register
+	  MUST return <registered/> node if entity is already registered
+
+2007-03-15 22:49  normanr
+
+	* config.py, config_example.xml, irc.py: Handle XCP
+	  component:accept namespace
+
+2006-10-03 22:33  normanr
+
+	* irc.py: minor 'easier to read' typographic fixes
+
+2006-10-01 02:04  normanr
+
+	* irc.py: prevent multiple timer shots caused by received data
+
+2006-10-01 01:07  normanr
+
+	* irc.py: Fix service detection for None nickmask (broken in 1.99).
+	  Refactored nm_is_service to make the outcome easier to figure
+	  out.
+
+2006-09-26 22:56  normanr
+
+	* config_example.xml: minor config typo
+
+2006-09-26 22:20  normanr
+
+	* adhoc.py, commands.py: remove horrid naming conflict
+
+2006-09-26 22:16  normanr
+
+	* irc.py: remove horrid naming conflict
+
+2006-09-21 01:34  normanr
+
+	* commands.py, irc.py: extract ad hoc commands into their own class
+	  (helps tidy up the imports)
+
+2006-09-21 01:31  normanr
+
+	* irc.py: handle /rules like /motd (unreal ircd)
+
+2006-09-21 01:28  normanr
+
+	* irc.py, irc_helpers.py: move irc_ulower to irc_helpers
+
+2006-09-21 01:25  normanr
+
+	* irc.py: make transport retry initial connection
+
+2006-09-21 01:23  normanr
+
+	* irc.py: refactor and tweak services detection
+
+2006-09-21 01:20  normanr
+
+	* irc.py: fixed sending private messages in a channel (broken in
+	  1.93)
+
+2006-09-11 18:35  normanr
+
+	* irc.py: re-organised admin disco nodes
+
+2006-09-11 18:09  normanr
+
+	* config.py, config_example.xml, irc.py: add dumpProtocol config
+	  option
+
+2006-08-09 16:33  normanr
+
+	* irc.py: Reverted some parameter name changing
+
+2006-08-09 16:19  normanr
+
+	* irc.py: fixing some trackbacks
+
+2006-08-09 12:39  normanr
+
+	* irc.py: Make service calls directly (without privmsg)
+
+2006-08-06 22:04  normanr
+
+	* irc.py: fixed disco result with wrong jid
+
+2006-08-06 21:53  normanr
+
+	* irc.py: fixed missing config file error
+
+2006-06-03 16:40  normanr
+
+	* irc.py: cleanup some non-error exceptions
+
+2006-06-03 16:32  normanr
+
+	* irc.py: detect irc disconnection better
+
+2006-06-03 15:53  normanr
+
+	* irc.py: added support for wildfire component binding
+
+2006-06-03 14:15  normanr
+
+	* irc.py, jep0133.py: fixed command namespaces
+
+2006-06-02 00:35  normanr
+
+	* irc.py: added real jids in the admin disco
+
+2006-05-31 01:00  normanr
+
+	* irc.py: Fix KeyError on stale groupchat
+
+2006-05-31 00:32  normanr
+
+	* irc.py: minor tweaks
+
+2006-05-30 21:55  normanr
+
+	* irc.py: General cleanups
+
+2006-05-29 18:32  normanr
+
+	* irc.py, jep0133.py: added admin disco functionality to view all
+	  registered and online users
+
+2006-05-29 17:27  normanr
+
+	* irc.py, jep0133.py: fixed registered users adhoc
+
+2006-05-22 01:53  normanr
+
+	* README.txt, config.py, config_example.xml, irc.py, jep0133.py,
+	  transport.ini, xmlconfig.py: migrated to xml configuration file,
+	  and added a 'connect all users' ad hoc command
+
+2006-05-20 02:01  normanr
+
+	* irc.py: handle presence via ison polling and get initial presence
+	  for subsequent resources
+
+2006-05-19 21:01  normanr
+
+	* irc.py: tried to clean up the initial presence spam a bit
+
+2006-05-17 12:18  normanr
+
+	* irc.py: Fixed chat timeout Traceback
+
+2006-05-16 14:13  normanr
+
+	* irc.py: Fixed bad loop creating material
+
+2006-05-16 14:00  normanr
+
+	* irc.py: Another KeyError, and updated charsets
+
+2006-05-16 13:25  normanr
+
+	* irc.py: Fixed KeyError caused by unregistered presences
+
+2006-05-15 01:48  normanr
+
+	* irc.py, jep0106.py: moved jep-0106 into xmpp
+
+2006-05-14 21:41  normanr
+
+	* irc.py: removed unused old disco code
+
+2006-05-14 21:40  normanr
+
+	* irc.py: added copyright - i'm helping out too
+
+2006-05-14 21:38  normanr
+
+	* irc.py: added common version strings
+
+2006-05-13 16:42  normanr
+
+	* irc.py: initial multiresource work
+
+2006-01-02 21:40  normanr
+
+	* irc.py, transport.ini: Jabberd2 component protocol support
+
+2005-12-26 19:17  normanr
+
+	* irc.py: Fixed default charset selection if user didn't have
+	  preferences
+
+2005-12-11 21:35  normanr
+
+	* irc.py: cleaned up subscriptions
+
+2005-12-11 20:54  normanr
+
+	* irc.py: made failed connections slightly more robust.
+
+2005-11-08 00:23  normanr
+
+	* irc.py: added timestamps to tracebacks
+
+2005-10-22 23:23  normanr
+
+	* irc.py, jep0133.py: added server registrations
+
+2005-10-01 18:37  normanr
+
+	* irc.py: unicode fixes and exception cleanups
+
+2005-09-24 01:54  normanr
+
+	* irc.py: added channel jid decoding, and fixed two minor typos
+
+2005-09-21 18:44  normanr
+
+	* irc.py: general whitespace and null check cleanups
+
+2005-09-18 00:48  normanr
+
+	* irc.py: tidied up namespaces, added commands, prep for enhanced
+	  disco
+
+2005-09-17 17:19  normanr
+
+	* jep0133.py: added restart and online users commands
+
+2005-08-23 22:51  normanr
+
+	* irc.py: config and vCard updates
+
+2005-08-21 02:20  normanr
+
+	* irc.py, jep0133.py: added shutdown command, added x:data forms to
+	  registration, fixed whois info
+
+2005-08-18 22:03  normanr
+
+	* irc.py, transport.ini: Added support for non-fatal exception
+	  handling, exceptions can also be logged to file.
+
+2005-08-13 00:25  normanr
+
+	* irc.py: Many unicode/lowercase fixes.  This should make life much
+	  easier in future - All 'lowercasing' is done at the unicode level
+	  now.
+
+2005-07-27 23:53  normanr
+
+	* irc.py: Unicode fix for channel name when listing from server
+
+2005-07-14 20:26  normanr
+
+	* jep0133.py: active-users and registered-users now work
+
+2005-07-13 22:28  normanr
+
+	* irc.py: nicknameinuse now delivered correctly
+
+2005-07-13 15:34  mikealbon
+
+	* jep0133.py: Dataforms now attached properly.
+
+2005-07-13 00:37  normanr
+
+	* irc.py, jep0106.py, test_jep0106.py: initial jep-0106
+	  implementation
+
+2005-07-13 00:32  normanr
+
+	* irc.py: channel listing for connected servers via disco interface
+
+2005-07-12 16:55  mikealbon
+
+	* irc.py: Fixes to display unicode based jids. All str() functions
+	  are now replaced with JID().__str__() which returns a unicode
+	  type.
+
+2005-07-10 20:33  normanr
+
+	* irc.py: fixed CTCP VERSION reply, it now includes global version
+	  (as reported to XMPP) too.
+
+2005-07-10 20:14  normanr
+
+	* irc.py: vCard requests cause a WHOIS to be executed, the WHOIS
+	  results are returned as a vCard
+
+2005-07-08 23:50  normanr
+
+	* irc.py: added support for server password on joining first
+	  channel
+
+2005-07-08 00:40  normanr
+
+	* irc.py: Cleaned up version reporting. This should make it easier
+	  to update the version on releases too.
+
+2005-07-08 00:19  normanr
+
+	* irc.py: motd is now delivered as a single message
+
+2005-07-08 00:01  normanr
+
+	* irc.py: Various fixes: global warning at startup, version
+	  reporting under windows, swapping splits for nm_to_n, and returns
+	  for raise NodeProcessed
+
+2005-07-07 23:34  normanr
+
+	* irc.py, jep0133.py: Commands now work.  Errors are also returned
+	  if continuing an invalid session.
+
+2005-06-24 20:48  mikealbon
+
+	* irc.py: Lots of Unicode fixes.
+
+2005-05-30 16:01  mikealbon
+
+	* irc.py: Normans Fake presence patch. Allows Ad-hoc from
+	  Pedrito/Psi
+
+2005-05-29 23:32  mikealbon
+
+	* irc.py: Fixes to presence types for better RFC compliance. Thanks
+	  Norman.
+
+2005-05-28 12:01  mikealbon
+
+	* irc.py: Lots of bugsquashing by Norman -- thanks
+
+2005-05-28 11:34  mikealbon
+
+	* jep0133.py: Lots of bug fixes -- thanks Norman
+
+2005-05-24 08:57  mikealbon
+
+	* irc.py: socket exception name fix
+
+2005-05-22 09:36  mikealbon
+
+	* irc.py: Cleaned up some code in the registration function
+	  (changes spotted by Norman -- thanks)
+
+2005-04-20 23:47  mikealbon
+
+	* irc.py: Fixed missed role and affilition on nick change
+
+2005-04-14 23:48  mikealbon
+
+	* irc.py: Text representation fixes and stability fixes. /n now
+	  possible in messages.
+
+2005-03-08 01:14  mikealbon
+
+	* irc.py: Oops a little bug is in there. :( -- Fixed
+
+2005-03-08 01:01  mikealbon
+
+	* irc.py: Fix for register set and whitespace.
+
+2005-03-02 01:10  mikealbon
+
+	* jep0133.py: Initial version of jep0133.py Administration module
+
+2005-02-25 16:00  mikealbon
+
+	* irc.py: Jabberd2 connection support (ejabberd also works too)
+	  Many minor cosmetic changes, and Initial user activity messages
+	  added (as a configurable option)
+
+2004-11-13 01:09  mikealbon
+
+	* irc.py: Multiple resource support, 1st version.
+
+2004-10-29 16:20  mikealbon
+
+	* irc.py: Bugfix: Don't require a resource to leave a channel.
+
+2004-09-30 15:57  mikealbon
+
+	* irc.py: Zombie connection removal (thanks to Norman Rasmussen)
+
+2004-09-30 15:44  mikealbon
+
+	* irc.py: Topic problem fixed (thanks to Norman Rasmussen)
+
+2004-07-26 00:38  mikealbon
+
+	* irc.py: Bug fixes in XHTML generator
+
+2004-07-05 17:52  mikealbon
+
+	* irc.py: Typos and other small fixes
+
+2004-07-05 13:19  mikealbon
+
+	* irc.py: Changed ban handling code to not generate an exception
+	  when the removed item not in list. Also new error code '468'
+	  added for Undernet Bad username support.
+
+2004-06-28 10:00  mikealbon
+
+	* irc.py: Minor Fixes
+
+2004-06-19 16:41  mikealbon
+
+	* irc.py: Channel redirect support.
+
+2004-06-18 09:07  mikealbon
+
+	* irc.py: Fixes for registration on python2.1, uses codecs.lookup()
+	  now.
+
+2004-06-16 16:11  snakeru
+
+	* xmpp-irc: VEEERY preliminary (but working) version of init.d
+	  script.
+
+2004-06-10 12:27  mikealbon
+
+	* irc.py: Update to make user based character set selection work in
+	  both directions.
+
+2004-06-03 14:13  mikealbon
+
+	* irc.py: Initial registration support. Presence and user
+	  subscriptions are not yet supported. 8bit nicknames are supported
+	  but currently not per server.
+
+2004-05-26 13:44  mikealbon
+
+	* irc.py: Bugfix: Nick change now works from XMPP side.
+
+2004-05-26 09:15  mikealbon
+
+	* irc.py: Bug fix for clients sending whitespace in message subject
+	  tags.
+
+2004-05-20 21:33  mikealbon
+
+	* README.txt: Inital Import
+
+2004-05-20 12:35  mikealbon
+
+	* IRC-Transport-Howtouse.html: Inital import of user documentation.
+
+2004-05-20 12:34  mikealbon
+
+	* irclib.py.diff: Fixed Diff to reflect current use and all cases.
+
+2004-05-18 13:48  mikealbon
+
+	* irc.py: Removed string version of namespaces and used library
+	  equivelent. Also added muc#owner form prototype, not finished.
+
+2004-05-17 14:02  mikealbon
+
+	* irc.py: socket handling on jabber disconnect and autoreconnect
+	  was not handled correctly.
+
+2004-05-17 12:49  snakeru
+
+	* irc.py: Removed string module use in honour of string's builtin
+	  methods.  Optimized several conditions for speed.
+
+2004-05-17 12:35  snakeru
+
+	* irc.py: Errors processing changed to xmpp's native (IM-XMPP
+	  style).  Removed all "xmpp.protocol." strings since this
+	  namespace already merged with local.
+
+2004-05-14 22:17  mikealbon
+
+	* irc.py: Guarding to subject setting. Check permission locally.
+
+2004-05-14 15:46  mikealbon
+
+	* irc.py: New channel mode handler, hopefully better than the last.
+	  Paves way to local checking for changing topic etc.
+
+2004-05-14 13:19  mikealbon
+
+	* irc.py: Preliminary support for Membership list editing, also
+	  kicking, giving and removing Chanop and voice privileges.
+
+2004-05-13 13:18  mikealbon
+
+	* irc.py: Fixed a problem with 'Nosuchchannel'
+
+2004-05-12 16:48  mikealbon
+
+	* irc.py: Changes to the API relating to type becoming typ.
+
+2004-05-12 14:53  mikealbon
+
+	* irclib.py.diff: A non-reversed version.
+
+2004-05-12 14:45  mikealbon
+
+	* irclib.py.diff: Diff against python-irclib 0.4.1-1 package to
+	  make socket disconnection handling work in error cases.
+
+2004-05-11 16:02  mikealbon
+
+	* irc.py: Added config file option for character set. All messages
+	  are encoded in that format, UTF-8 inbound is detected.
+
+2004-05-11 15:42  mikealbon
+
+	* irc.py: Minor fixes
+
+2004-05-04 15:11  mikealbon
+
+	* irc.py: Initial mode change support from IRC network.
+
+2004-05-04 14:07  mikealbon
+
+	* irc.py: Removed all traces of splitting the event.source() and
+	  used irclib's functions instead.
+
+2004-05-04 13:27  mikealbon
+
+	* irc.py: Numerous fixes. Migration away from using local functions
+	  to those provided in the library. Single threaded instead of 3
+	  threads. UTF-8 encoding for output to ircserver.
+
+2004-03-04 18:47  snakeru
+
+	* irc.py: Several bugfixes. Do not know exactly what is what :(
+
+2004-03-03 14:00  snakeru
+
+	* irc.py, transport.ini: Initial import.
+

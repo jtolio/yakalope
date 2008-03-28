@@ -1,0 +1,3 @@
+/*
+ * Log Window Class
+ */
