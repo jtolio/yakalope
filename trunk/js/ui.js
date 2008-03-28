@@ -16,7 +16,6 @@ yakalope.app = function () {
             return viewport.items.get('buddylist');
         },
         init: function() {
-            login.loginPage();
             
             jabber.init();
                 
@@ -106,7 +105,7 @@ yakalope.app = function () {
         },
         removeBuddy: function(userName){
             var buddyList = yakalope.app.getBuddyList();
-            return buddyList.removeBuddy(username);
+            buddyList.removeBuddy(username);
         },   
     }
 }();

@@ -21,6 +21,9 @@
     getTreeRoot: function() {
         return this.items.first().root;
     },
+    getTreePane: function() {
+        return this.items.first();
+    },
     addBuddy: function(userName) {
         var friendRoot = this.getTreeRoot().firstChild;
         if (!this.containsBuddy(userName)) {
@@ -35,7 +38,8 @@
         return null;
     },
     removeBuddy: function(userName) {
-        var node = this.getTreeRoot().firstChild;
+        var tree = this.getTreeRoot();
+        var node = tree.firstChild;
         while (node != null) {
             if (node.text == userName) {
                 node.remove();
@@ -57,8 +61,29 @@
         }
         return false;
     },
+    addBuddyDlg: function() {
+        var treeEl = this.getTreePane().getEl();
+        treeEl.mask('add a buddy');
+        //treeEl.unmask();
+    },
+    removeBuddyDlg: function() {
+        var treeEl = this.getTreePane().getEl();
+        treeEl.mask('remove a buddy');
+        treeEl.unmask();
+    },
     initComponent: function() {
         Ext.apply(this,{
+            buttons: [{
+                text:'Add Buddy',
+                id:'addbuddy',
+                handler:this.addBuddyDlg,
+                scope:this,
+            },{
+                text:'Remove Buddy',
+                id:'removebuddy',
+                handler:this.removeBuddyDlg,
+                scope:this,
+            }],
             items: [
                 new Ext.tree.TreePanel({
                     id:'im-tree',
