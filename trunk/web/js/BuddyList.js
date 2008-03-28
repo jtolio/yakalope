@@ -39,7 +39,7 @@
     },
     removeBuddy: function(userName) {
         var tree = this.getTreeRoot();
-        var node = tree.firstChild;
+        var node = tree.firstChild.firstChild;
         while (node != null) {
             if (node.text == userName) {
                 node.remove();
@@ -61,15 +61,47 @@
         }
         return false;
     },
+    callAddBuddy: function(btn, username) {
+        var scope = yakalope.app.getBuddyList();
+        scope.addBuddy(username);
+    },
+    callRemoveBuddy: function(btn, username) {
+        var scope = yakalope.app.getBuddyList();
+        scope.removeBuddy(username);
+    },
     addBuddyDlg: function() {
-        var treeEl = this.getTreePane().getEl();
-        treeEl.mask('add a buddy');
-        //treeEl.unmask();
+        var window = new Ext.Window({
+            id:'add a buddy',
+            layout:'fit',
+            width:'200',
+            height:'300',
+            bodyStyle:'padding:5px 5px 0',
+            closeAction:'hide',
+            plain:false,
+            frame:true,
+            items: new Ext.FormPanel({
+                labelWidth:75,
+                frame:false,
+                defaultType:'textfield',
+                items:[{
+                    fieldLabel:'Buddy Name',
+                    name:'username',
+                    allowBlank:false,
+                },{
+                    fieldLabel:'Transport',
+                    name:'transport',
+                    allowBlank:false,
+                }]
+            }),
+            buttons: [{
+                text:'submit',
+                handler:this.callAddBuddy
+            }],
+        });
+        window.show(this);
     },
     removeBuddyDlg: function() {
-        var treeEl = this.getTreePane().getEl();
-        treeEl.mask('remove a buddy');
-        treeEl.unmask();
+        Ext.MessageBox.prompt('remove a buddy', 'Enter a Buddy to Remove', this.callRemoveBuddy);
     },
     initComponent: function() {
         Ext.apply(this,{
