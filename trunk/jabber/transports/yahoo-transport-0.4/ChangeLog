@@ -1,0 +1,516 @@
+2007-11-06 23:26  normanr
+
+	* yahoo.py, ylib.py: Fixing ping timers
+
+2007-09-27 11:45  normanr
+
+	* yahoo.py: Made registration login failures use the same code path
+	  as normal login failures
+
+2007-09-15 18:34  normanr
+
+	* curphoo/: YahooMD5.py, __init__.py, md5crypt.py: YahooMD5
+	  performace enhancements (~80% faster)
+
+2007-05-31 13:26  normanr
+
+	* yahoo.py: Allow already registered users to change their details
+	  if allowRegister is disabled.  Internal cleanups for when user's
+	  client think that they're online but they're not (possibly due to
+	  transport restart).  Lots of internal cleanups using yobj instead
+	  of accessing the userlist dict all the time.
+
+2007-05-31 13:26  normanr
+
+	* avatar.py: Make avatar fetching work better when the avatar
+	  server is not available.
+
+2007-04-09 22:23  normanr
+
+	* jep0133.py: moving admin namespace constants from jep0133 to to
+	  protocol
+
+2007-03-15 22:49  normanr
+
+	* config.py, config_example.xml, yahoo.py: Handle XCP
+	  component:accept namespace
+
+2007-02-21 21:51  normanr
+
+	* yahoo.py: Bugfix: XEP 0077 violation: IQ query jabber:iq:register
+	  returns <registered/> node in any case (from: Michael Dyrna)
+
+2006-12-20 11:24  normanr
+
+	* config.py, config_example.xml, yahoo.py: Add first pass XCP
+	  support
+
+2006-12-19 10:47  normanr
+
+	* yahoo.py: Force utf-8 encoding on messages
+
+2006-10-16 13:22  normanr
+
+	* yahoo.py: Revert YIDDecode fix that requires python 2.4
+
+2006-10-08 23:01  normanr
+
+	* yahoo.py: implement allowRegister
+
+2006-10-08 22:56  normanr
+
+	* yahoo.py: encode iq:gateway result
+
+2006-10-08 22:47  normanr
+
+	* yahoo.py: fix return from away stauts sending
+
+2006-10-03 23:43  normanr
+
+	* yahoo.py: handle partial connects being closed early
+
+2006-10-03 23:27  normanr
+
+	* yahoo.py: handle unexpected socket error slightly better
+
+2006-10-03 22:33  normanr
+
+	* yahoo.py: minor 'easier to read' typographic fixes
+
+2006-10-03 22:04  normanr
+
+	* yahoo.py, adhoc.py: extract ad hoc commands into their own class
+	  (helps tidy up the imports), also moved some globals into the
+	  transport class
+
+2006-10-03 20:44  normanr
+
+	* yahoo.py, curphoo/cpformat.py: don't strip accented letters
+	  unless requested
+
+2006-10-03 12:10  normanr
+
+	* yahoo.py: Fix NoneType error on empty message
+
+2006-09-25 23:48  normanr
+
+	* yahoo.py: return vcard and avatar data correctly for users in
+	  chatrooms
+
+2006-09-25 23:39  normanr
+
+	* config.py, config_example.xml, yahoo.py: added switch to
+	  enable/disable chatrooms
+
+2006-09-25 22:54  normanr
+
+	* yahoo.py: added jabber:iq:gateway support
+
+2006-09-25 22:08  normanr
+
+	* yahoo.py: make transport retry initial connection
+
+2006-09-25 21:57  normanr
+
+	* yahoo.py, yahoo_helpers.py, ylib.py: upgraded avatar support:
+	  detects avatar changes and send the new hash via presence (both
+	  jep-0008 and jep-0153 style), vcards are now valid if the remote
+	  user doesn't have an avatar
+
+2006-08-24 15:33  normanr
+
+	* yahoo.py: do clean shutdown for *nix too
+
+2006-08-24 14:53  normanr
+
+	* ylib.py: handle corrupt received data right
+
+2006-08-24 14:38  normanr
+
+	* yahoo.py: made login and logout more stable
+
+2006-08-24 13:47  normanr
+
+	* ylib.py: check syntax first
+
+2006-08-24 13:44  normanr
+
+	* ylib.py: add debug for ylib chal
+
+2006-08-24 13:20  normanr
+
+	* avatar.py, yahoo.py, ylib.py: added more dumpProtocol checks,
+	  fixed the KeyError regression
+
+2006-08-11 14:42  normanr
+
+	* yahoo.py: reverting previous checkin - it causes a tightloop,
+	  trying it a different way
+
+2006-08-11 12:40  normanr
+
+	* yahoo.py: attempt to fix the traceback when reconnecting to xmpp
+	  server
+
+2006-08-11 00:34  normanr
+
+	* config.py, config_example.xml, yahoo.py, ylib.py:  - added
+	  support for jids with @'s in them
+	   - added typing notifications
+	   - added option to enable full dump of raw protocols on stdout
+	   - make the transport shutdown cleanly
+
+2006-08-10 19:55  normanr
+
+	* ylib.py: avoid missing handlers causing tracebacks
+
+2006-08-09 17:00  normanr
+
+	* yahoo.py: fixing tracebacks
+
+2006-08-06 22:07  normanr
+
+	* ylib.py: minor avatar fix, hope this doesn't break anything
+
+2006-08-06 21:53  normanr
+
+	* yahoo.py: fixed missing config file error
+
+2006-06-06 16:05  normanr
+
+	* yahoo.py: avatar fix
+
+2006-06-03 15:53  normanr
+
+	* yahoo.py: added support for wildfire component binding
+
+2006-06-03 14:15  normanr
+
+	* jep0133.py, yahoo.py: fixed command namespaces
+
+2006-06-02 00:35  normanr
+
+	* yahoo.py: added real jids in the admin disco
+
+2006-05-31 00:39  normanr
+
+	* config.py, config_example.xml, jep0133.py, transport.ini,
+	  xmlconfig.py, yahoo.py: migrated to xml configuration file, added
+	  ad hoc commands, and added admin disco functionality to view all
+	  registered and online users
+
+2006-05-30 21:55  normanr
+
+	* yahoo.py: General cleanups
+
+2006-05-30 20:56  normanr
+
+	* yahoo.py: Fixed KeyError
+
+2006-05-15 02:10  normanr
+
+	* yahoo.py: added logging and non-fatal for outgoing data
+
+2006-05-15 01:50  normanr
+
+	* yahoo.py: use jep-0106 with case protection for encoding room
+	  names instead of hex
+
+2006-05-14 23:27  normanr
+
+	* htmlutils.py: commented wierd print and converted tabs to spaces
+
+2006-05-14 22:37  normanr
+
+	* yahoo.py: updated copyright, updated version string
+
+2006-05-14 22:35  normanr
+
+	* yahoo.py: migrated to new browser classes, including some fixes
+	  for sub-categories
+
+2006-05-14 16:24  normanr
+
+	* yahoo.py: fix disconnect before connected traceback
+
+2006-05-14 02:45  normanr
+
+	* ylib.py: fix offline user presence
+
+2006-05-13 16:39  normanr
+
+	* ylib.py: minor typos
+
+2006-03-25 07:53  snakeru
+
+	* yahoo.py: Two fixes for registration process (thanks to Arny and
+	  Gonzalo Barrio).
+
+2006-01-03 20:31  normanr
+
+	* yahoo.py: Missed one for Jabberd2 support
+
+2006-01-02 21:40  normanr
+
+	* transport.ini, yahoo.py: Jabberd2 component protocol support
+
+2006-01-02 21:40  normanr
+
+	* curphoo-0.3.12.tar.gz: Cleaned up after curphoo python port
+
+2005-12-11 20:54  normanr
+
+	* yahoo.py: made failed connections slightly more robust.
+
+2005-12-09 00:17  normanr
+
+	* curphoo/YahooMD5.py: More test cases
+
+2005-12-09 00:17  normanr
+
+	* curphoo/yahoo_fn.py: Fixed another edge case
+
+2005-12-04 00:51  normanr
+
+	* curphoo/: YahooMD5.py, yahoo_fn.py: Python 2.3 magic
+
+2005-12-04 00:06  normanr
+
+	* curphoo/YahooMD5.py: Made it work with Python 2.3 (still works
+	  with Python 2.4)
+
+2005-11-17 01:57  normanr
+
+	* ylib.py, curphoo/YahooMD5.py, curphoo/__init__.py,
+	  curphoo/cpformat.py, curphoo/md5crypt.py, curphoo/pysha.py,
+	  curphoo/yahoo_fn.py: Ported the curphoo code that was being used,
+	  to python.  This means no more need to recompile curphoo when you
+	  upgrade python.  Also yahoo transport now runs anywhere python
+	  does, and it's not limited to linux.
+
+2005-11-14 23:30  normanr
+
+	* ylib.py: loggedoff -> closed handler fix
+
+2005-11-12 03:44  normanr
+
+	* yahoo.py: added cvs version, fixed some missing imports, minor
+	  presence tweak
+
+2005-11-12 03:29  normanr
+
+	* transport.ini: added new example configuration settings
+
+2005-11-12 02:23  normanr
+
+	* toolbox.py, yahoo.py, ylib.py: tweaked presence to be closer to
+	  spec (and psi muc build now works with chat)
+
+2005-11-08 00:23  normanr
+
+	* yahoo.py: some calendar and email notifications fixes, also added
+	  timestamps to tracebacks
+
+2005-11-05 16:16  normanr
+
+	* yahoo.py: added exception logging and non-fatal exception
+	  handling
+
+2005-11-05 15:54  normanr
+
+	* yahoo.py: minor fixes for browse and version iq responses
+
+2005-08-26 15:32  normanr
+
+	* roomlist.py: small tab to space fix
+
+2005-08-26 13:14  mikealbon
+
+	* roomlist.py: Fix bad indent
+
+2005-08-23 22:51  normanr
+
+	* yahoo.py: config and vCard updates
+
+2005-08-23 00:31  normanr
+
+	* yahoo.py: encoding fix
+
+2005-07-29 08:35  mikealbon
+
+	* htmlutils.py: More bug squashing in new htmlparser based
+	  roomlister.
+
+2005-07-29 08:34  mikealbon
+
+	* yahoo.py: Fixes, mainly to socket handling, but also some unicode
+	  fixes where utf-8 isn't the system encoding.
+
+2005-07-12 13:55  mikealbon
+
+	* yahoo.py:
+	  Debug output unicode fixes
+
+2005-06-14 09:07  mikealbon
+
+	* roomlist.py: Exceptiono handler for  new XHTML parser code
+
+2005-06-04 14:36  mikealbon
+
+	* roomlist.py: Handle char refs before passing to HTMLParser
+
+2005-06-01 14:26  mikealbon
+
+	* yahoo.py: Bad errors being returned from some IQ requests. No
+	  longer.
+
+2005-06-01 14:25  mikealbon
+
+	* roomlist.py: This version uses the htmlutils version of
+	  Nodebuilder. This is to avoid expat crashes.
+
+2005-06-01 14:24  mikealbon
+
+	* htmlutils.py: Initial import of HTMLParser based Nodebuilder for
+	  yahoo pseudo-XML
+
+2005-06-01 07:58  mikealbon
+
+	* avatar.py: Some robustness changes to make avatar retrieval less
+	  likely to crash the transport
+
+2005-05-24 08:58  mikealbon
+
+	* yahoo.py: strip \x0b from room text
+
+2005-05-24 08:58  mikealbon
+
+	* roomlist.py: Strip more bad characters. this time \x1*
+
+2005-05-22 11:43  mikealbon
+
+	* yahoo.py: Stopped false error messages being sent after real
+	  data. This is in disco#items and disco#info
+
+2005-05-21 10:26  mikealbon
+
+	* yahoo.py: Adjusted the way strings are processed to remove
+	  another bad character. \x0b, this should reduce the number of
+	  Invalid XML crashes.
+
+2005-05-04 09:30  mikealbon
+
+	* yahoo.py: Resource tracking in yahoo chat hack, needs some extra
+	  checking added.
+
+2005-05-04 09:29  mikealbon
+
+	* ylib.py: YChat logoff detection fix
+
+2005-05-03 08:46  mikealbon
+
+	* yahoo_helpers.py: Updates (should have been checked in some time
+	  ago)
+
+2005-04-24 23:57  mikealbon
+
+	* yahoo.py: Fixes to room disco information. (Needs reorganising
+	  now the xml loads properly)
+
+2005-04-24 23:56  mikealbon
+
+	* roomlist.py: Addition of xml declaration to returned data to make
+	  expat more happy. Also removal of all surrogate characters within
+	  the data as xml doesn't allow them.
+
+2005-04-20 08:13  mikealbon
+
+	* ylib.py: Closed case fixes
+
+2005-04-13 22:44  mikealbon
+
+	* ylib.py: Fixed silly presence status bug.
+
+2005-04-13 22:32  mikealbon
+
+	* ylib.py: Fixed mismatched arguement problem by declaring the
+	  connection bad. (hopefully this is the correct choice)
+
+2005-04-03 19:36  mikealbon
+
+	* ylib.py: Use yahoo defined host list.
+
+2005-03-08 01:15  mikealbon
+
+	* yahoo.py: Modified register set to deal with Whitespace.
+
+2005-01-21 13:42  mikealbon
+
+	* yahoo.py: Fix for None status type
+
+2005-01-21 13:35  mikealbon
+
+	* ylib.py: Fix for incorrect status messages being sent out on
+	  login
+
+2005-01-21 13:34  mikealbon
+
+	* yahoo.py: Fix for crash where bad characters are in the status
+	  string
+
+2004-11-13 01:08  mikealbon
+
+	* ylib.py: Updates to the login process to make it more friendly to
+	  the yahoo service. Also error information now returned to xmpp
+	  users in messages as well as errors.
+
+2004-11-13 01:07  mikealbon
+
+	* yahoo.py: Version supports multiple resorces. Groupchat support
+	  is not currently updated to support multiple resources so all
+	  room messages will go to highest priority client.
+
+2004-10-11 14:55  mikealbon
+
+	* migratespool.py: Inital version. To use: run in existing spool
+	  directory, then copy the user.dbm file to your transport
+	  directory.  Only migrates user%server.xml files and not
+	  md5sum/sha1 files.
+
+2004-09-29 00:39  mikealbon
+
+	* yahoo.py: Unpickling failure now handled (but prahaps not in the
+	  best way)
+
+2004-09-29 00:38  mikealbon
+
+	* ylib.py: Added bugfix to status line updates. Character \x05 is
+	  now stripped from status lines.
+
+2004-08-16 21:12  mikealbon
+
+	* yahoo.py: Lots of small bug fixes
+
+2004-08-16 21:11  mikealbon
+
+	* toolbox.py: More tools in the toolbox getting ready for
+	  filetransfer
+
+2004-08-16 21:11  mikealbon
+
+	* ylib.py: Added status messages properly (no icon change message)
+
+2004-07-26 00:40  mikealbon
+
+	* yahoo.py: Bug Fixes, mainly in Login Code.
+
+2004-07-26 00:40  mikealbon
+
+	* ylib.py: Bug fixes, mainly in login code
+
+2004-07-19 12:38  mikealbon
+
+	* avatar.py, curphoo-0.3.12.tar.gz, roomlist.py, toolbox.py,
+	  transport.ini, yahoo.py, yahoo_helpers.py, ylib.py: Initial
+	  release of Yahoo transport
+
