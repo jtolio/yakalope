@@ -10,8 +10,9 @@ lucene.initVM(lucene.CLASSPATH)
     Constants
 """
 PATH_SEP = os.path.sep
+SECONDS_IN_5_MINUTES = 300 #(5 * 60)
 SECONDS_IN_20_MINUTES = 1200 #(20 * 60)
-MAX_TIMESTAMP = "999999999999"
+MAX_TIMESTAMP = "999999999999" #the end of time...
 """
     CLASS: LogModule
 """
@@ -142,7 +143,8 @@ class LogModule:
         doc = lucene.Document()
         doc.add(self.__makeKeywordField('protocol',str(protocol)))
         doc.add(self.__makeKeywordField('friend_chat',str(friend_chat)))
-        doc.add(self.__makeKeywordField('timestamp',str(timestamp)))
+        clean_timestamp = self.__padTimestamp(timestamp)
+        doc.add(self.__makeKeywordField('timestamp',clean_timestamp))
         doc.add(self.__makeKeywordField('who_sent',str(who_sent)))
         doc.add(self.__makeUnIndexedField('file_offset',str(filesize)))
         doc.add(self.__makeUnStoredField('text',str(text)))
@@ -180,8 +182,8 @@ class LogModule:
             curtime = int(time.time())
 
             #Convert to a search range
-            searchstart = str(curtime - SECONDS_IN_20_MINUTES)
-            searchend = str(MAX_TIMESTAMP)
+            searchstart = self.__padTimestamp(curtime - SECONDS_IN_20_MINUTES)
+            searchend = self.__padTimestamp(MAX_TIMESTAMP)
 
             #Build and perform the query
             qtext = "timestamp:[" + searchstart + " TO " + searchend + "]"
@@ -196,9 +198,9 @@ class LogModule:
             for i in range(qresults.length()):
                 mprotocol = qresults.doc(i).get("protocol")
                 mfriend_chat = qresults.doc(i).get("friend_chat")
-                mtimestamp = qresults.doc(i).get("timestamp")
+                mtimestamp = int(qresults.doc(i).get("timestamp"))
                 mwho_sent = qresults.doc(i).get("who_sent")
-                mfileoffset = qresults.doc(i).get("file_offset")
+                mfileoffset = int(qresults.doc(i).get("file_offset"))
                 mrank = qresults.score(i)
 
                 #This is a really bad and slow method that should
@@ -220,6 +222,7 @@ class LogModule:
                         break
                 if found == False:
                     conversation = LogConversation(mprotocol,mfriend_chat)
+                    conversation.addMessage(message)
                     conversationlist.append(conversation)
 
             return conversationlist
@@ -309,6 +312,29 @@ class LogModule:
                             lucene.Field.Index.TOKENIZED)
 
     """
+    METHOD: LogModule::__padTimestamp
+
+    ACCESS: private
+
+    PARAMETERS:
+        mtimestamp -- Timestamp to pad
+
+    DESCRIPTION:
+        Converts a timestamp to a 12 character string, adding zeros
+        to the left to pad it. This will allow timestamps to be
+        compared as strings without issues when the timestamp reaches
+        another decimal digit.
+
+    RETURNS:
+        String of padded timestamp
+    """
+    def __padTimestamp(self,mtimestamp):
+        cleants = str(mtimestamp)
+        while len(cleants) < 12:
+            cleants = "0" + cleants
+        return cleants
+
+    """
     METHOD: LogModule::__getMessageFromFile
 
     ACCESS: private
@@ -338,7 +364,7 @@ class LogModule:
 
         #Get the message
         filehandle = open(data_file,'r')
-        filehandle.seek(int(offset))
+        filehandle.seek(offset)
         while filehandle.read(1) != "\n":
             pass #ignore who sent
         while filehandle.read(1) != "\n":
@@ -358,19 +384,195 @@ class LogModule:
 
     PARAMETERS:
         username -- Jabber user
-        query -- Lucene query for searching the user's index
+        querytext -- Lucene query for searching the user's index
 
     DESCRIPTION:
-        Returns a list of messages that matched the query.
+        Returns a list of messages that matched the query. It assumes that
+        the query is a valid Lucene query. The following rules apply to the
+        results:
+            1. All returned messages will be grouped into conversations.
+            2. Messages up to 5 minutes before (max of 5) will be prepended
+               to the conversation with a rank of 0.
+            3. Messages up to 5 minutes after (max of 5) will be appended to
+               the conversation with a rank of 0.
+            4. If a matched message is found inside the conversation of a
+               previous message, its rank is added to that message and no
+               new conversation is added.
 
     RETURNS:
-        List of LogConversation objects on success. Certain LogMessages (1 or
-        more) in each conversation will contain a rank.
+        List of LogConversation objects on success. Certain LogMessages (1
+        or more) in each conversation will contain a rank > 0.
         False on failure
     """
-    def searchMessages(self,username, query):
-        print 'Not yet written'
+    def searchMessages(self,username,querytext):
+        #Determine index and data paths
+        index_dir = self.indexdir + username
+        data_dir = self.datadir + username
 
+        #Load the index
+        if os.path.isdir(index_dir) == True:
+            luc_index = lucene.FSDirectory.getDirectory(index_dir)
+
+            #Build and perform the query
+            searcher = lucene.IndexSearcher(luc_index)
+            qparser = lucene.QueryParser("text", lucene.StandardAnalyzer())
+            query = qparser.parse(querytext)
+            qresults = searcher.search(query)
+
+            #Fetch the results
+            conversationlist = []
+            for i in range(qresults.length()):
+                mid = int(qresults.id(i))
+                mprotocol = qresults.doc(i).get("protocol")
+                mfriend_chat = qresults.doc(i).get("friend_chat")
+                mtimestamp = int(qresults.doc(i).get("timestamp"))
+                mwho_sent = qresults.doc(i).get("who_sent")
+                mfileoffset = int(qresults.doc(i).get("file_offset"))
+                mrank = qresults.score(i)
+
+                #First check if it exists in one of the previously matched
+                #conversations
+                found = False
+                for j in range(len(conversationlist)):
+                    for k in range(len(conversationlist[j].messages)):
+                        if conversationlist[j].messages[k].getID() == mid:
+                            #Match found, so just update the messages rank
+                            conversationlist[j].messages[k].setRank(mrank)
+                            found = True
+
+                #If no match was found, create a new conversation
+                if found == False:
+                    conversation = LogConversation(mprotocol,mfriend_chat)
+                    messagetext = self.__getMessageFromFile(username,
+                                                            mfriend_chat,
+                                                            mprotocol,
+                                                            mfileoffset)
+
+                    before_msgs = self.__getSurroundingMessages("before",
+                                                                searcher,
+                                                                username,
+                                                                mprotocol,
+                                                                mfriend_chat,
+                                                                mtimestamp,
+                                                                mid);
+                    for j in range(len(before_msgs)):
+                        conversation.addMessage(before_msgs[j])
+                    message = LogMessage(messagetext,mtimestamp,mwho_sent)
+                    message.setRank(mrank)
+                    message.setID(mid)
+                    conversation.addMessage(message)
+                    after_msgs = self.__getSurroundingMessages("after",
+                                                                searcher,
+                                                                username,
+                                                                mprotocol,
+                                                                mfriend_chat,
+                                                                mtimestamp,
+                                                                mid);
+                    for j in range(len(after_msgs)):
+                        conversation.addMessage(after_msgs[j])
+
+                    conversationlist.append(conversation)
+            #End of fetching each result
+
+            return conversationlist
+        else:
+            #Index not found
+            return false
+
+    """
+    METHOD: LogModule::__getSurroundingMessages
+
+    ACCESS: private
+
+    PARAMETERS:
+        when -- Where in relation to the timestamp should the messages be
+                "before" or "after"
+        searcher -- lucene.IndexSearcher object, this is huge optimization
+                    by reusing instead of creating a new one
+        username -- Jabber user
+        protocol -- protocol of the reference point message
+        friend_chat -- friend_chat of the reference point message
+        timestamp -- timestamp of the reference point message
+        docid -- Document ID of the reference point message
+    DESCRIPTION:
+        Takes in information about a reference point message and returns
+        other messages up to 5 minutes before or after the it depending on
+        the when parameter (5 messages max).
+
+    RETURNS:
+        List of conversations ordered by timestamp (earlier first).
+        False on failure
+    """
+    def __getSurroundingMessages(self,when,searcher,username,protocol,
+                                 friend_chat,timestamp,docid):
+        #Determine the query text
+        if when == "before":
+            searchstart = self.__padTimestamp(timestamp - SECONDS_IN_5_MINUTES)
+            searchend = self.__padTimestamp(timestamp)
+        else:
+            searchstart = self.__padTimestamp(timestamp)
+            searchend = self.__padTimestamp(timestamp + SECONDS_IN_5_MINUTES)
+        querytext = "timestamp:[" + searchstart + " TO " + searchend + "]"
+        querytext += " AND protocol:'"+protocol+"'"
+        querytext += " AND friend_chat:'"+friend_chat+"'"
+
+        #Build and perform the query
+        qparser = lucene.QueryParser("text", lucene.StandardAnalyzer())
+        query = qparser.parse(querytext)
+        sortmethod = lucene.Sort("timestamp")
+        qresults = searcher.search(query,sortmethod)
+
+        #Determine which results to include
+        if when == "before":
+            rangestart = 0
+        else:
+            if qresults.length() > 5:
+                rangestart = qresults.length() - 5
+            else:
+                rangestart = 0
+        #We cant assume the results will exclude messages outside the
+        #range we are looking for in the case that many messages in
+        #the conversation have the identical timestamp. We just will
+        #just deal with it in the for loop
+        rangeend = qresults.length()
+
+        #Fetch the results
+        messagelist = []
+        ignore = False
+        for i in range(rangestart,rangeend):
+            mid = int(qresults.id(i))
+            if mid == docid:
+                if when == "before":
+                    #We ran into the reference point message, this means we
+                    #don't need to capture any more and we can return
+                    break
+                else:
+                    #We ran into the reference point message
+                    #The easiest thing to do is declare all messages we have
+                    #found so far as null and reset the list to be returned
+                    #Also, stop ignoring if we reached 5 messages before now
+                    messagelist = []
+                    ignore == False
+            elif ignore == False:
+                mtimestamp = int(qresults.doc(i).get("timestamp"))
+                mwho_sent = qresults.doc(i).get("who_sent")
+                mfileoffset = int(qresults.doc(i).get("file_offset"))
+                messagetext = self.__getMessageFromFile(username,
+                                                        friend_chat,
+                                                        protocol,
+                                                        mfileoffset)
+                message = LogMessage(messagetext,mtimestamp,mwho_sent)
+                message.setID(mid)
+                messagelist.append(message)
+
+                #Only allow up to 5 messages
+                if len(messagelist) == 5:
+                    #Setting an ignore flag allows us to deal with cases
+                    #like when our reference point message is the 7th
+                    #message in a string that all have the same timestamp
+                    #and we are trying to get 5 messages after it
+                    ignore = True
+        return messagelist
 
 """
     CLASS: LogConversation
@@ -417,6 +619,10 @@ class LogMessage:
         self.timestamp = timestamp
         self.whosent = whosent
         self.rank = 0
+        self.idnum = 0
+
+    def setID(self,newid):
+        self.idnum = newid
 
     def setRank(self,newrank):
         self.rank = newrank
@@ -432,3 +638,6 @@ class LogMessage:
 
     def getRank(self):
         return self.rank
+
+    def getID(self):
+        return self.idnum
