@@ -49,7 +49,7 @@ var jabber = {
 
       // setup args for connect method
       oArgs = new Object();
-      oArgs.domain = 'squall.cs.umn.edu';
+      oArgs.domain = 'jabberworld.org';
       oArgs.username = 'testing';
       oArgs.resource = 'yakalope';
       oArgs.pass = 'testing';
@@ -62,25 +62,23 @@ var jabber = {
     }
   },
   
-  sendMsg: function(aForm) {
-    if (aForm.msg.value == '' || aForm.sendTo.value == '')
+  sendMsg: function(user, msg) {
+    /*if (user == '' || msg == '')
       return false;
 
-    if (aForm.sendTo.value.indexOf('@') == -1)
-      aForm.sendTo.value += '@' + con.domain;
+    if (user.indexOf('@') == -1)
+      user += '@' + con.domain;*/
 
     try {
       var aMsg = new JSJaCMessage();
-      aMsg.setTo(new JSJaCJID(aForm.sendTo.value));
-      aMsg.setBody(aForm.msg.value);
+      aMsg.setTo(new JSJaCJID(user.toString()));
+      aMsg.setBody(msg);
       con.send(aMsg);
-
-      aForm.msg.value = '';
-
       return false;
     } catch (e) {
-      html = "<div class='msg error''>Error: " + e.message + "</div>"; 
-      Ext.getCmp('iResp').addMsg(html);
+      //html = "<div class='msg error''>Error: " + e.message + "</div>"; 
+      //Ext.getCmp('iResp').addMsg(html);
+      alert("Error: " + e.message);
       return false;
     }
   },
@@ -92,10 +90,12 @@ var jabber = {
     },
     
     message: function(aJSJaCPacket) {
-      var html = '';
+      /*var html = '';
       html += '<div class="msg"><b>Received Message from ' + aJSJaCPacket.getFromJID() + ':</b>';
       html += aJSJaCPacket.getBody().htmlEnc() + '<br /></div>';
-      Ext.getCmp('iResp').addMsg(html);
+      Ext.getCmp('iResp').addMsg(html);*/
+
+      yakalope.app.addMsg(aJSJaCPacket.getFromJID(), aJSJaCPacket.getBody().htmlEnc());
     },
     
     presence: function(aJSJaCPacket) {
@@ -112,6 +112,7 @@ var jabber = {
           html += ' ('+aJSJaCPacket.getStatus().htmlEnc()+')';
       }
       html += '</div>';
+      yakalope.app.addBuddy(aJSJaCPacket.getFromJID());
     },
     
     error: function(aJSJaCPacket) {
