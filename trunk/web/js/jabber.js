@@ -16,7 +16,7 @@ var jabber = {
   quit: function() {
     if (con && con.connected())
       con.disconnect();
-},
+  },
   
   setupCon: function(con) {
     con.registerHandler('message',jabber.handle.message);
@@ -32,11 +32,9 @@ var jabber = {
   },
   
   doLogin: function() {
-    //document.getElementById('err').innerHTML = ''; // reset
     try {
       // setup args for contructor
       oArgs = new Object();
-      //oArgs.httpbase = aForm.http_base.value;
       oArgs.httpbase = '/http-bind/';
       oArgs.timerval = 2000;
 
@@ -49,7 +47,7 @@ var jabber = {
 
       // setup args for connect method
       oArgs = new Object();
-      oArgs.domain = 'jabberworld.org';
+      oArgs.domain = 'squall.cs.umn.edu';
       oArgs.username = 'testing';
       oArgs.resource = 'yakalope';
       oArgs.pass = 'testing';
@@ -63,12 +61,6 @@ var jabber = {
   },
   
   sendMsg: function(user, msg) {
-    /*if (user == '' || msg == '')
-      return false;
-
-    if (user.indexOf('@') == -1)
-      user += '@' + con.domain;*/
-
     try {
       var aMsg = new JSJaCMessage();
       aMsg.setTo(new JSJaCJID(user.toString()));
@@ -76,8 +68,6 @@ var jabber = {
       con.send(aMsg);
       return false;
     } catch (e) {
-      //html = "<div class='msg error''>Error: " + e.message + "</div>"; 
-      //Ext.getCmp('iResp').addMsg(html);
       alert("Error: " + e.message);
       return false;
     }
@@ -90,11 +80,6 @@ var jabber = {
     },
     
     message: function(aJSJaCPacket) {
-      /*var html = '';
-      html += '<div class="msg"><b>Received Message from ' + aJSJaCPacket.getFromJID() + ':</b>';
-      html += aJSJaCPacket.getBody().htmlEnc() + '<br /></div>';
-      Ext.getCmp('iResp').addMsg(html);*/
-
       yakalope.app.addMsg(aJSJaCPacket.getFromJID(), aJSJaCPacket.getBody().htmlEnc());
     },
     
@@ -116,10 +101,6 @@ var jabber = {
     },
     
     error: function(aJSJaCPacket) {
-      /*Ext.getCmp('iResp').addMsg("An error occured:<br />" +
-        ("Code: " + e.getAttribute('code') + "\nType: " + e.getAttribute('type') +
-        "\nCondition: " + e.firstChild.nodeName).htmlEnc()); 
-      */
       if (con.connected())
         con.disconnect();
     },
@@ -136,23 +117,23 @@ var jabber = {
     },
     
     iqVersion: function(iq) {
-      con.send(iq.reply([
-                         iq.buildNode('name', 'yakalope test'),
-                         iq.buildNode('version', JSJaC.Version),
-                         iq.buildNode('os', navigator.userAgent)
-                         ]));
+      con.send(iq.reply(
+        [iq.buildNode('name', 'yakalope test'),
+         iq.buildNode('version', JSJaC.Version),
+         iq.buildNode('os', navigator.userAgent)]));
       return true;
     },
 
     iqTime: function(iq) {
       var now = new Date();
-      con.send(iq.reply([iq.buildNode('display',
-                                      now.toLocaleString()),
-                         iq.buildNode('utc',
-                                      now.jabberDate()),
-                         iq.buildNode('tz',
-                                      now.toLocaleString().substring(now.toLocaleString().lastIndexOf(' ')+1))
-                         ]));
+      con.send(iq.reply(
+        [iq.buildNode('display',
+            now.toLocaleString()),
+         iq.buildNode('utc',
+            now.jabberDate()),
+         iq.buildNode('tz',
+            now.toLocaleString().substring(now.toLocaleString().lastIndexOf(' ')+1))
+        ]));
       return true;
     },
   }    
