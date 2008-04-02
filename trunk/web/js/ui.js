@@ -107,8 +107,8 @@ yakalope.app = function () {
                     key:chatId,
                     user:this.getUser(),
                 });
-                newChat = chatArea.add(newChat);
-                viewport.doLayout();
+                newChat.show(this);// = chatArea.add(newChat);
+                //viewport.doLayout();
                 return newChat;
             }
             return null;
@@ -133,7 +133,11 @@ yakalope.app = function () {
         removeBuddy: function(userName){
             var buddyList = yakalope.app.getBuddyList();
             buddyList.removeBuddy(username);
-        },   
+        },
+        clearBuddyList: function() {
+            var buddyList = yakalope.app.getBuddyList();
+            buddyList.clearBuddyList();
+        }
     }
 }();
 

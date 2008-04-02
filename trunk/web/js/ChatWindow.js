@@ -3,7 +3,7 @@
  */
 
 
-ChatWindow = Ext.extend(Ext.Panel,{
+ChatWindow = Ext.extend(Ext.Window,{
     
     /* Construction Time Variables */
     
@@ -73,13 +73,6 @@ ChatWindow = Ext.extend(Ext.Panel,{
                     handler: this.sendHandler,
                     scope:this,
                 }]
-            }]
-        },{
-            tools:[{
-                id:'close',
-                handler:function(e, targ, panel){
-                    panel.ownerCt.remove(panel, true);
-                }
             }]
         });
         ChatWindow.superclass.initComponent.apply(this, arguments);

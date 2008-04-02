@@ -48,6 +48,15 @@
             node = node.nextSibling;
         }
     },
+    clearBuddyList: function() {
+        var tree = this.getTreeRoot();
+        var node = tree.firstChild.firstChild;
+        while (node != null) {
+            nextnode = node.nextSibling;
+            node.remove();
+            node = nextnode;
+        }
+    },
     containsBuddy: function(userName) {
         var tree = this.getTreeRoot();
         var node = tree.firstChild;
@@ -61,51 +70,97 @@
         }
         return false;
     },
-    callAddBuddy: function(btn, username) {
+    callAddBuddy: function(username) {
         var scope = yakalope.app.getBuddyList();
         scope.addBuddy(username);
     },
-    callRemoveBuddy: function(btn, username) {
+    callRemoveBuddy: function(username) {
         var scope = yakalope.app.getBuddyList();
         scope.removeBuddy(username);
     },
     addBuddyDlg: function() {
         var window = new Ext.Window({
-            id:'add a buddy',
-            layout:'fit',
-            width:'200',
-            height:'300',
-            bodyStyle:'padding:5px 5px 0',
-            closeAction:'hide',
-            plain:false,
-            frame:true,
+			title: 'Add a Buddy',
+            width: 300,
             items: new Ext.FormPanel({
                 labelWidth:75,
-                frame:false,
+                frame:true,
                 defaultType:'textfield',
                 items:[{
                     fieldLabel:'Buddy Name',
-                    name:'username',
+                    name:'buddyname',
                     allowBlank:false,
                 },{
-                    fieldLabel:'Transport',
-                    name:'transport',
+                    fieldLabel:'Service',
+                    name:'service',
                     allowBlank:false,
-                }]
+                }],
             }),
-            buttons: [{
-                text:'submit',
-                handler:this.callAddBuddy
-            }],
         });
+        var form = window.items.first();
+        form.addButton({
+            text:'Add',
+            name:'add',
+        },
+        function() {
+            var values = form.getForm().getValues();
+            yakalope.app.getBuddyList().callAddBuddy(values.buddyname);
+            window.close();
+        },
+        window);
+        form.addButton({
+            text:'Cancel',
+            name:'cancel',
+        },
+        function() {
+            window.close();
+        },
+        window);
         window.show(this);
     },
     removeBuddyDlg: function() {
-        Ext.MessageBox.prompt('remove a buddy', 'Enter a Buddy to Remove', this.callRemoveBuddy);
+        var window = new Ext.Window({
+			title: 'Remove a Buddy',
+            width: 300,
+            items: new Ext.FormPanel({
+                labelWidth:75,
+                frame:true,
+                defaultType:'textfield',
+                items:[{
+                    fieldLabel:'Buddy Name',
+                    name:'buddyname',
+                    allowBlank:false,
+                },{
+                    fieldLabel:'Service',
+                    name:'service',
+                    allowBlank:false,
+                }],
+            }),
+        });
+        var form = window.items.first();
+        form.addButton({
+                text:'Remove',
+                name:'remove',
+            },
+            function() {
+                var values = form.getForm().getValues();
+                yakalope.app.getBuddyList().callRemoveBuddy(values.buddyname);
+                window.close();
+            },
+            window);
+        form.addButton({
+                text:'Cancel',
+                name:'cancel',
+            },
+            function() {
+                window.close();
+            },
+            window);
+        window.show(this);
     },
     initComponent: function() {
         Ext.apply(this,{
-            buttons: [{
+            tbar: [{
                 text:'Add Buddy',
                 id:'addbuddy',
                 handler:this.addBuddyDlg,
