@@ -1,0 +1,46 @@
+I'm hoping that 0.12 will be a quick release, so if I don't have time
+to do some of these things, they may get dropped. The first 5 are
+definites though. The last ones shouldn't take too long, so they will
+most likely get done also.
+
+I'll be merging changes into trunk as they become stable.
+
+
+For 0.12:
+* Clean up MSNConnection
+* Connect Session and MSNConnection with sigslot, so I can worry less
+  about managing references
+* Make ReconnectingClientFactory behave properly
+* Separate the all the removeMe methods into two parts. def removeMe(self):
+  will set about the destruction of the object, but will not free any
+  resources. def removed(self): will be called when it is safe to free
+  resources. This should clean the code up a lot, and make it work better.
+* Avatar sending with JEP-0008
+* On login failure, respond with presence error, not a message error
+* Steal infodump.py from Daniel
+* Handle adding bad contacts with a presence error reply
+* Password obscuring in xdb
+* Make sure everything runs fine under Psyco
+
+
+For 0.13:
+* epoll installer (point & shoot)
+* Twisted installer, eg run ./getTwisted.py and you suddenly have
+  a known-good version of Twisted and epoll installed in your PyMSNt
+  directory.
+* Port to new (not yet existing) Jabber library, based on Twisted
+* PEP nicks
+* PEP avatars
+* Chatstates
+* Steal XDB and language code from Daniel
+* More adhoc commands
+	- Update to latest version
+	- Restart/Shutdown transport
+	- Set a JID as a destination for log entries with filtering support,
+	  eg only tracebacks, or errors or warnings
+	- Force a resync of a users roster
+	- Send announcement messages to all logged in users
+	- Set a MOTD
+
+
+

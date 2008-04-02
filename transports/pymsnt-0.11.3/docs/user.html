@@ -1,0 +1,125 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+  "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+<meta http-equiv="content-type" content="text/html; charset=iso-8859-1"/>
+<link rel="stylesheet" href="style.css" type="text/css"/>
+<title>Jabber MSN Gateway User Guide</title>
+</head>
+
+<body>
+
+<h1>Jabber MSN Gateway User Guide</h1>
+
+
+<p>Please visit the <a href="http://delx.cjb.net/pymsnt/docs/server.html">Server Administrator Guide</a> if you are a server administrator looking for information on how to configure/install the transport.</p>
+<p>If you have any insights or comments to add to this page please contact me by Jabber or email: james&#64;delx.cjb.net</p>
+
+<hr/>
+
+
+<h2>Usage Guide</h2>
+
+<p>You must already have a Jabber client (a program to connect to a Jabber server) set up with your Jabber account to follow these instructions</p>
+
+<p>These are generic instructions, intended to be useful no matter which Jabber client or what operating system you are using. Please read through them in their entirety before beginning.</p>
+
+<hr/>
+
+<h3>Getting started - Registration</h3>
+<p>
+It is recommended that you register using the <a href="http://delx.cjb.net/pymsnt/webreg">Jabber Transport Registration Form</a>.
+Your Jabber server may have this form available on their website. So have a look there too.
+</p>
+<p>
+To register with your Jabber client, follow these steps.
+</p>
+<ul>
+<li>First, you must check that your Jabber server has the MSN gateway installed. To do this, look for a menu item or button labelled something like "Browse Services", "Service Discovery" or "Transports/Gateways".</li>
+<li>If you see "MSN Transport" in the list you can continue, otherwise you can either ask the person who runs your Jabber server to install the MSN gateway, or you can try using the transports from another server. If there is an option to browse to a different server you may want to use that to use the MSN Gateway on another server.</li>
+<li>To proceed you must be able to choose to register with the MSN Transport from the browse list. You can usually do this by double-clicking it's icon, or clicking it and choosing register.</li>
+<li>Type your MSN passport into the username field (eg, fred@hotmail.com) and fill in your password.</li>
+<li>When you click the register button you will receive a Jabber authorisation message (to do with allowing users to view your online status) for each user on your MSN list. This can be a lot of messages. This step can only be avoided by using the <a href="http://delx.cjb.net/pymsnt/webreg">Transport Registration Form</a> mentioned above. Some clients (notably <a href="http://psi-im.org">Psi</a>) provide an option in the advanced section to auto-accept authorisation requests. You may wish to turn this on before continuing, and then turn it off afterwards. Please note that this flood will only occur once, upon registration of the transport.</li>
+<li>Click the register button, and accept any subscription messages you see.</li>
+<li>You should now be registered with the MSN transport. You should see the users from your MSN contact list appear. These steps will not need to be repeated.</li>
+</ul>
+
+<hr/>
+
+<h3>Adding a friend to your list</h3>
+<p>
+To add a person who only uses MSN to your contact list you must translate their MSN passport (eg, bob@hotmail.com) into a Jabber ID. This is very simple to do.<br/>
+Many clients will do this for you automatically if you tell them to:
+</p>
+<ul>
+<li>In Psi, choose &quot;Add Contact&quot; from the menu.</li>
+<li>Select MSN from the list</li>
+<li>Type your friend's MSN ID in the box</li>
+<li>Click the &quot;Get Jabber ID&quot; button, then click &quot;Add&quot;, and you're done.</li>
+</ul>
+<p>For clients that do not support this, you must manually translate their MSN passport. Here are some examples:</p>
+<ul>
+<li>If the MSN passport is bob@hotmail.com, and your Jabber server's MSN Transport address is msn.host.com, then the Jabber ID of that MSN user is bob%hotmail.com@msn.host.com</li>
+<li>If the MSN passport of the user is fred@yahoo.com, and your Jabber server is tipic.com, then the Jabber ID of that user is fred%yahoo.com@msn.tipic.com</li>
+<li>All that happens is the @ symbol is exchanged for a % sign, and you add @msn.host.com to the end.</li>
+</ul>
+
+
+<hr/>
+
+<h3>Chatting with friends</h3>
+<ul>
+<li>To chat with a MSN user you perform the same process you would for a Jabber user, simply double-click their name in your contact list, and chat type a message.</li>
+<li>To start a groupchat (more than one person in a &quot;room&quot;) with MSN users you must do the following.
+  <ul>
+  <li>Join a room on the msn.host.com server (where host.com is your Jabber server). The room name is not important, just make sure it does not have a % sign in it.</li>
+  <li>Invite your MSN contacts to this room to chat with them</li>
+  <li>Note that you cannot invite other Jabber users to this room. Attempts to do so will fail. This will not be possible in the future either</li>
+  </ul>
+</li>
+</ul>
+
+<hr/>
+
+<h3>Setting personal details</h3>
+<ul>
+<li>Out of all the data in your Jabber vCard, only the photo and your nickname can be sent to MSN users.</li>
+<li>You can set a nickname in Psi by going to Account Setup-&gt;Modify-&gt;Details-&gt;Edit Personal Details. In recent versions this will allow you to set your avatar as well.</li>
+<li>Your Jabber status message appears to MSN users as the &quot;Personal Message&quot;</li>
+</ul>
+
+<hr/>
+
+<h3>Multiple Resources</h3>
+<p>Jabber allows you to log into your account multiple times. For example, you could be logged in at home, at work, and on your laptop simultaneously.</p>
+<p>Because MSN Messenger does not have any concept of this, messages will always go to your <i>highest priority</i> resource by default. It is important to set the client you're using to a higher priority that the ones that you're not.</p>
+<p>If you do happen to send a message to somebody from a lower priority resource, then messages from that person will be sent to that resource until:</p>
+<ul>
+	<li>You log out from that resource.</li>
+	<li>You send a message to that person from another resource.</li>
+	<li>That user closes the chat window on their machine.</li>
+</ul>
+
+<hr/>
+
+<h3>Things that don't work yet</h3>
+<ul>
+<li>Avatars and file transfer are supported, but only in the latest release. So you may need to ask your server administrator to update. Also, you need to make sure your Jabber client supports avatars and file transfer.</li>
+<li>Please do not add yourself to your contact list.</li>
+</ul>
+
+<hr/>
+
+<h3>Misc Notes</h3>
+
+<ul>
+<li>If you wish to remove the MSN transport and all of your MSN contacts from your Jabber contact list you must be sure to remove the MSN transport <em>first</em>, followed by the contacts. If you do it the other way around then your MSN contacts will be removed from the MSN server's contact list too (so the next time you sign in with MSN Messenger you will have no contacts)</li>
+<li>If your MSN transport session seems frozen, and logging in &amp; out doesn't fix it. Try double-clicking the MSN Transport icon in your list, and sending a &quot;end&quot; as a message. That should log you out of MSN and you can try using the transport again.</li>
+</ul>
+
+<hr/>
+<p>Copyright James Bunton &lt;james at delx.cjb.net&gt;. You may freely redistribute this file.</p>
+
+</body>
+
+</html>

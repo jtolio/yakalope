@@ -1,0 +1,9 @@
+Sat 29 Mar 2008 02:07:17 - CVS 1.125
+Traceback (most recent call last):
+  File "irc.py", line 2524, in <module>
+    connection.Process(1)
+  File "/usr/lib/python2.5/site-packages/xmpp/dispatcher.py", line 303, in dispatch
+    handler['func'](session,stanza)
+  File "irc.py", line 1176, in xmpp_iq_register_set
+    server = form.getField('address').getValue().split(':',1)[0]
+AttributeError: 'NoneType' object has no attribute 'split'
