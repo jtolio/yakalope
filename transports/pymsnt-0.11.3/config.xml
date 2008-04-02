@@ -1,0 +1,91 @@
+<pymsnt>
+<!-- This file contains options to be configured by the server administrator. -->
+<!-- Please read through all the options in this file -->
+
+<!-- The JabberID of the transport -->
+<jid>msn.squall.cs.umn.edu</jid>
+<!-- The public IP or DNS name of the machine the transport is running on -->
+<!-- This is needed for file transfer!! This is also used as the IP address for outgoing connections -->
+<host>127.0.0.1</host>
+<!-- The component JID of the transport. Unless you're doing clustering, leave this alone -->
+<!-- <compjid>msn1</compjid> -->
+<!-- The name of the transport in the service discovery list. -->
+<discoName>MSN Transport</discoName>
+
+
+<!-- The location of the spool directory.. if relative, relative to the PyMSNt dir.
+Do not include the jid of the transport -->
+<!-- <spooldir>/path/to/data</spooldir> -->
+<!-- The location of the PID file, relative to the PyMSNt directory -->
+<pid>PyMSNt.pid</pid>
+<!-- If set, the transport will background itself when run -->
+<background/>
+<!-- The Twisted reactor to choose. Pick poll or epoll on Linux, kqueue on BSD. Or leave as default (best found) -->
+<reactor>poll</reactor>
+
+
+<!-- The IP address of the main Jabber server to connect to -->
+<mainServer>127.0.0.1</mainServer>
+<!-- The TCP port to connect to the Jabber server on (this is the default for Jabberd2) -->
+<port>5347</port>
+<!-- The authentication token to use when connecting to the Jabber server -->
+<secret>aHs02hAf@lc0</secret>
+<!-- Use Jabber.com's XCP component protocol extensions. --> 
+<!-- <useXCP/> -->
+
+
+<!-- The default language to use -->
+<lang>en</lang>
+<!-- The website of the Jabber service -->
+<website>http://squall.cs.umn.edu</website>
+
+
+<!-- Comment out the following options to disable them, or uncomment them to enable them -->
+<!-- Send email notification messages to users -->
+<mailNotifications/>
+<!-- Send greeting on login -->
+<!-- <sessionGreeting>You have just started a session with PyMSNt</sessionGreeting> -->
+<!-- Send message on successful registration -->
+<!-- <registerMessage>You have successfully registered with PyMSNt</registerMessage> -->
+<!-- Allow users to register with this transport -->
+<allowRegister/>
+<!-- Get all avatars. If this is set to true then avatars are grabbed for all your contacts immediately. If false then avatars are only grabbed when you're in a chat with a contact -->
+<getAllAvatars/>
+<!-- The amount of time a user has to join a groupchat they are invited to before the transport makes them leave the room. (MSN protocol requires autojoining of groupchats) -->
+<!-- <groupchatTimeout>120</groupchatTimeout> -->
+
+
+<!-- File transfer settings -->
+<!-- The maximum size of a file transfer (in bytes). For unlimited, comment out, or set to 0 -->
+<ftSizeLimit>524288</ftSizeLimit>
+<!-- The maximum rate for file transfer (in bytes). For unlimited, comment out, or set to 0 -->
+<ftRateLimit>2048</ftRateLimit>
+<!-- Please give the port to listen for Jabber socks5 transfers on. -->
+<ftJabberPort>8010</ftJabberPort>
+<!-- Please give the port to listen for HTTP GETs here (Used in old-style OOB file transfers. Best to leave this disabled unless you know you need it.) -->
+<!--<ftOOBPort>8011</ftOOBPort>-->
+<!-- Please give the root URL the transport should send to clients. (You can use an Apache reverse proxy to put this on your ordinary website) -->
+<!-- Eg, the transport will listen on port 8011 for HTTP GETs to /RANDOM_FILE.ext. You can set apache to forward any requests to http://yourhost.com:80/msn/files/RANDOM_FILE.ext to http://yourhost.com:8011/RANDOM_FILE.ext. This saves you from opening extra ports. -->
+<!--<ftOOBRoot>http://host.com/msn/files/</ftOOBRoot>-->
+
+<!-- You can choose which users you wish to have as administrators. These users can perform some tasks with Ad-Hoc commands that others cannot -->
+<!--<admins>
+<jid>admin@host.com</jid>
+</admins>-->
+
+
+<!-- Log settings -->
+
+<!-- The logging level 
+0 -> No logging
+1 -> Log tracebacks
+2 -> Log tracebacks, warnings and errors
+3 -> Log all sorts of informational (mostly useless stuff) 
+4 -> Log the MSN protocol code sent
+-->
+<debugLevel>0</debugLevel>
+
+<!-- The file to log to. Leave this disabled for stdout -->
+<debugFile>debug.log</debugFile>
+
+</pymsnt>

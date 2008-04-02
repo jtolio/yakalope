@@ -1,0 +1,279 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+  "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+<meta http-equiv="content-type" content="text/html; charset=iso-8859-1"/>
+<link rel="stylesheet" href="style.css" type="text/css"/>
+<title>PyMSNt Server Administrator Guide</title>
+</head>
+
+<body>
+
+<h1>PyMSNt Server Administrator Guide</h1>
+
+
+<p>This documentation is for version 0.11 of the transport.</p>
+<p>Please visit <a href="http://delx.cjb.net/pymsnt">http://delx.cjb.net/pymsnt</a> to download the transport and see news updates.</p>
+<p>Please visit the <a href="http://delx.cjb.net/pymsnt/docs/user.html">MSN Transport User's Guide</a> if you are a Jabber user and want to talk to your MSN friends.</p>
+<p>If you have any insights or comments to add to this page please let me know by email or Jabber: james&#64;delx.cjb.net</p> 
+
+<hr/>
+
+
+<h2>Installation Guide</h2>
+
+<p>Instructions/suggestions for other servers and OSs are welcome</p>
+
+<h3>Basic Installation</h3>
+
+<ol>
+
+<li><h4>Python</h4>
+<p>
+Make sure have installed Python 2.3 or newer (I have reports that some older versions work). Most distributions should handle this automatically for you.
+</p>
+<ul>
+<li>Mandrake: <pre>urpmi python</pre></li>
+<li>Debian: <pre>apt-get install python</pre></li>
+<li>Fedora: <pre>yum install python</pre></li>
+<li>Centos 4: <pre>yum install python</pre></li>
+<li>Suse: <pre>yast -i python</pre></li>
+<li>Darwin: You need <a href="http://finkproject.org">fink</a> unstable. <pre>fink install python</pre> (Install Python with fink, because we will use other Python libraries from fink later)</li>
+<li>MS Windows: Download and run the binary installer from <a href="http://www.python.org">http://www.python.org</a>. When complete, add the directory that python.exe is in to your PATH (look in Windows help for details on doing this)</li>
+<li>Others: Use your distribution's installation method, or download and compile the source from <a href="http://www.python.org">http://www.python.org</a></li>
+</ul>
+</li>
+
+<li><h4>Twisted</h4>
+<p>
+Install the Twisted framework (library). Version 1.1 or newer should be fine.
+Please make sure you're using PyMSNt 0.9.3 or newer for Twisted 2.0 support.
+</p>
+<p>
+If you're using Twisted 2.0, either grab the &quot;Sumo&quot; package (easiest),
+or make sure you download at least these modules: core, web, words
+</p>
+<ul>
+<li>Mandrake: You will need to download the pycrypto and python openssl RPMs and install them as well as twisted using urpmi. Unfortunately I cannot provide links. I know you can get them from Mandrake Club though.</li>
+<li>Debian sarge: <pre>apt-get install python-twisted python-crypto python-pyopenssl python-imaging</pre></li>
+<li>Debian: <pre>apt-get install python-twisted python-twisted-words python-crypto python-pyopenssl python-imaging</pre></li>
+<li>Fedora: <pre>yum install python-twisted pyOpenSSL pycrypto</pre></li>
+<li>Centos 4: <pre>yum install python-twisted python-crypto pyOpenSSL</pre></li>
+<li>Suse: <pre>yast -i python-twisted python-openssl python-pycrypto</pre></li>
+<li>Darwin: <pre>fink install twisted-py23 pycrypto-py23 pyopenssl-py23</pre></li>
+<li>MS Windows: Download and run the binary installers for Twisted, PyCrypto and PyOpenSSL from <a href="http://www.twistedmatrix.com">http://www.twistedmatrix.com</a></li>
+<li>Others: Use your distribution's installation method, or download (and compile when necessary) from <a href="http://www.twistedmatrix.com">Twisted</a>, <a href="http://pyopenssl.sourceforge.net/">PyOpenSSL</a> and <a href="http://www.amk.ca/python/code/crypto.html">PyCrypto</a></li>
+</ul>
+</li>
+
+<li><h4>PyMSNt</h4>
+<p>
+Download PyMSNt from <a href="http://delx.cjb.net/pymsnt">delx.cjb.net/pymsnt</a> and decompress it to a suitable location.
+</p>
+</li>
+
+<li><h4>Configure</h4>
+<p>
+Copy the file config-example.xml to config.xml and edit it to suit your environment.<br/>
+Note, with older versions of PyMSNt you were supposed to edit config.py. This is NOT recommended in this version.
+</p>
+<ul>
+<li>The 'jid' setting should be the ID you want PyMSNt to take on the network.
+Example: 'msn.host.com'.</li>
+<li>The 'host' setting should be a public DNS or IP address of the server the transport is running on. This is needed for file transfer!</li>
+<li>The 'mainServer' setting should be the IP address or DNS of the main Jabber server.
+Default: '127.0.0.1'.</li>
+<li>The 'port' setting is the port that PyMSNt and the Jabber server agree to use to connect between them (more details on this below). Default: '5347'.</li>
+<li>The 'secret' setting should match the secret specified for component connections in your main Jabber server. It's a password that only the Jabber server and the transport must know.</li>
+<li>The 'website' setting should be a website to refer users to.</li>
+<li>There are other options in this file that are documented by comments. It is safe to leave them at the default values.</li>
+<li>Ensure that the transport can make outgoing connections on port 443 (HTTPS), 1863, as well as incoming connections on 8010 (for Jabber file transfers).</li>
+</ul>
+</li>
+
+<li><h4>Spool directory</h4>
+<p>
+PyMSNt stores login information (MS Passport account, password and nick) in the spool directory.
+This directory should meet this conditions:
+</p>
+<ul>
+<li>be located in the same place as the README and TODO files</li>
+<li>be writeable by whatever system user will be running PyMSNt</li>
+<li>have the same name as the 'jid' value you specified above in config.xml. (for example: 'msn.host.com')</li>
+</ul>
+<p>
+This directory will be automatically created for you if this is a fresh installation. If you are migrating from an older version of the transport (including the C version), you can copy your existing spool directory into the new location.<br/>
+Don't forget to rename it to the 'jid' value you specified on config.xml
+</p>
+</li>
+
+<li><h4>Configure Jabber server</h4>
+<p>
+Now you have to configure your Jabber server.
+The following section covers this in detail.
+</p>
+</li>
+
+<li><h4>Start PyMSNt</h4>
+<p>
+Now you're ready to start PyMSNt for the first time:
+</p>
+<pre>
+./PyMSNt.py
+</pre>
+<p>
+It will connect to the Jabber server and serve the Discovery JID you specified.
+Note: PyMSNt does not implement the old and deprecated 'Browse' capacity,
+only the newer 'Discovery'.
+</p>
+<p>
+On MS Windows you can run it by opening a DOS console in the PyMSNt directory and running "python PyMSNt.py"
+</p>
+<p>
+You may wish to find a rc.d script to automatically start the transport on Linux, or to make the transport into a service on Windows.
+</p>
+</li>
+
+</ol>
+
+<hr/>
+
+
+<h3>Jabber Server Configuration</h3>
+
+<p>The instructions below assume you are running PyMSNt on the same machine as your main Jabber server</p>
+
+<ul>
+<li><h4>Jabberd1.4.x</h4>
+<p>If you are using Jabberd1.4.x then you need to add this to your jabber.xml file</p>
+<pre>
+  &lt;service id=&quot;msn.host.com&quot;&gt;
+          &lt;host&gt;msn.host.com&lt;/host&gt;
+          &lt;accept&gt;
+                  &lt;ip&gt;127.0.0.1&lt;/ip&gt;
+                  &lt;port&gt;5347&lt;/port&gt;
+                  &lt;secret&gt;secret&lt;/secret&gt;
+          &lt;/accept&gt;
+  &lt;/service&gt;
+</pre>
+<p>
+Check that msn.host.com is the same as the 'jid' setting from config.xml and
+that 5347 is the same as the 'port' setting. Also 'secret' must correspond, and the 'mainServer' setting should be pointing to the same interface as the &lt;ip/&gt; tag is (in this example the loopback interface is used. So 'mainServer' would be '127.0.0.1').
+</p>
+<p>You must also add this to the browse section of your jabber.xml file</p>
+<pre>
+ &lt;service type=&quot;msn&quot; jid=&quot;msn.host.com&quot; name=&quot;MSN Transport&quot;&gt;
+   &lt;ns&gt;jabber:iq:register&lt;/ns&gt;
+   &lt;ns&gt;jabber:iq:gateway&lt;/ns&gt;
+ &lt;/service&gt;
+</pre>
+<p>Once again, msn.host.com must correspond to the 'jid' setting in config.xml</p>
+<p>Once you have made all these changes, restart your Jabberd1.4.x server, then start PyMSNt and it should all work.</p>
+</li>
+
+<li><h4>Jabberd2</h4>
+<p>If you are using Jabberd2 then you shouldn't have to do much configuration. Make sure the 'mainServer' setting is the IP or DNS of your Jabber server, and leave the 'port' setting alone. Double-check that the secret for legacy components in router.xml (for Jabberd2) is the same as the secret setting in config.xml. That should be all. You don't even need to restart Jabberd2.</p>
+<p>You may need to add the following to your Jabberd2 router-users.xml</p>
+<pre>
+&lt;user&gt;
+	&lt;name&gt;msn.host.com&lt;/name&gt;
+	&lt;secret&gt;secret&lt;/secret&gt;
+&lt;/user&gt;
+</pre>
+<p>
+If you are upgrading from the old C version of MSN-t then you need to remove the alias info in your router.xml and the item discovery 
+info in your sm.xml for the old msn transport. These were needed for the old MSN-t, but Jabberd2 can automatically add the new PyMSNt to the browse lists.
+</p>
+</li>
+
+<li><h4>ejabberd</h4>
+<p>
+To configure ejabberd for PyMSNt, as explained in <a
+href="http://ejabberd.jabberstudio.org/guide.html#htoc17">ejabberd Guide</a>:
+</p>
+<ol>
+<li>Edit <i>ejabberd.cfg</i>.</li>
+<li>In the section that says: '<i>{listen,</i>' add those two lines:
+<pre>
+    {5347, ejabberd_service, [{host, "msn.host.com",
+                               [{password, "secret"}]}]},
+
+</pre>
+</li>
+<li>Restart ejabberd and you're done.</li>
+</ol>
+</li>
+
+<li><h4>Wildfire</h4>
+<p>
+In the Wildfire administration console, click the Server tab, and then External Components.
+Enable external components and enter a port (default is 10015) and a default shared secret.
+</p>
+<p>
+Use the port and secret in the PyMSNt config.xml to connect the transport to Wildfire
+</p>
+</li>
+
+</ul>
+
+<hr/>
+
+
+<h2>Clustering</h2>
+
+<p>More to be written... For now, have a look at the compjid option.</p>
+
+<hr/>
+
+<h2>Tips</h2>
+<ul>
+<li>You can send 'end' to the transport's bare JID at any time to completely destroy your session.</li>
+<li>You can specify the transport should use a different config file by passing the name of the file as an argument, eg
+<pre>
+./PyMSNt -c /etc/jabber/pymsnt.xml &amp;
+</pre>
+If you are using multiple configurations it is recommended that you specify using absolute paths to the PID and spool settings in each of the configurations.
+</li>
+<li>There are many settings in the config.xml file, have a look and see if any of them would be useful to you</li>
+<li>The transport will try to talk to the user in their own language, provided their client sends a xml:lang attribute. You can read about this in the <a href="http://xmpp.org">XMPP RFCs</a>. If you want your language to be included, please have a look at lang.py, make a translation and send it to me.</li>
+<li>On Unix platforms sending a SIGHUP will cause the transport to reload the config file and close &amp; open the debug.log file, eg
+<pre>
+kill -1 `cat PyMSNt.pid`
+</pre>
+Run in the directory that PyMSNt.pid is in. This will send a SIGHUP signal to the transport.
+</li>
+<li>If you want your transport to be accessible to other Jabber servers then make sure the JID is resolvable by DNS. Note that not having a resolvable DNS doesn't prevent a determined server admin from using your gateway.</li>
+<li>To disable file transfer, simply comment out the ftJabberPort and ftOOBPort options. This will disable file transfer in both directions.</li>
+<li>To keep the size of the avatar spool directory down, try adding a command like this to your cronfile: <pre>find /path/to/msn.host.com/avatars -atime +30 -delete</pre></li>
+<li>To get the latest version of the transport, run this command: <pre>svn co svn://delx.cjb.net/pymsnt/trunk pymsnt</pre></li>
+</ul>
+<hr/>
+
+<h2>Possible problems:</h2>
+
+<ul>
+<li>On MS Windows, if you can't run PyMSNt, make sure you have Python installed correctly (as well as all of Twisted and PyCrypto/PyOpenSSL), and that python.exe is in your PATH (see above).</li>
+<li>See the <a href="http://delx.cjb.net/pymsnt/docs/user.html">User's Guide to PyMSNt</a> for more details on using the transport</li>
+<li>Do not use Twisted 2.0.0. It is buggy!</li>
+<li>If you are upgrading from the CMSN-t and your Jabber server has been running
+prior to about November 2003 then some of your users' contact lists may have
+msn.host.com/registered in them. These users should delete the transport from their list, and reregister it. There is no need to delete the transport users (so they will not have to reauthorise any contacts).</li>
+<li>Under some circumstances CMSNt will split your spool directory into many subdirectories. To use this spool directory with PyMSNt, you can first run this command in your current spool directory:
+<pre>find -name '*.xml' -exec cp -v {} fixed_msn.host.com \;</pre>
+</li>
+</ul>
+
+<hr/>
+
+
+
+<p>Bug reports and comments go to <a href="mailto:james&#64;delx.cjb.net">James Bunton</a></p>
+<p>I'll gladly help you with any problems, but please look through this whole page, the README &amp; config.xml files first.</p>
+
+<hr/>
+<p>Copyright James Bunton &lt;james at delx.cjb.net&gt;. You may freely redistribute this file.</p>
+
+</body>
+
+
+</html>

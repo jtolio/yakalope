@@ -1,0 +1,18 @@
+    _/_/_/                _/_/    _/_/_/  _/      _/                _/      
+   _/    _/  _/    _/  _/    _/    _/    _/_/  _/_/              _/_/_/_/   
+  _/_/_/    _/    _/  _/_/_/_/    _/    _/  _/  _/  _/_/_/_/_/    _/        
+ _/        _/    _/  _/    _/    _/    _/      _/                _/         
+_/          _/_/_/  _/    _/  _/_/_/  _/      _/                  _/_/      
+               _/                                                           
+          _/_/                                                              
+
+     AIM Transport for Jabber, implemented with Python and Twisted
+
+
+See AUTHORS for developers.  This project is based off of James Bunton's
+PyMSNt code.
+
+See INSTALL for installation instructions.
+
+Also see web site at http://pyaim-t.blathersource.org/ for more detailed
+documentation.

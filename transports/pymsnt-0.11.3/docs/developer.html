@@ -1,0 +1,316 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+  "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+<meta http-equiv="content-type" content="text/html; charset=iso-8859-1"/>
+<link rel="stylesheet" href="style.css" type="text/css"/>
+<title>PyMSNt Client Developer Guide</title>
+</head>
+
+<body>
+
+<h1>PyMSNt Client Developer Guide</h1>
+
+
+<p>Please visit <a href="http://delx.cjb.net/pymsnt">http://delx.cjb.net/pymsnt</a> to download the transport and see news updates</p>
+<p>If you have any insights or comments to add to this page please let me know by email or Jabber: james&#64;delx.cjb.net</p> 
+
+<hr/>
+
+
+<h2>Overview</h2>
+<p>
+All of this document applies to PyMSNt 0.11.
+</p>
+<p>
+This page documents the protocols that PyMSNt understands and uses
+to accomplish various tasks, such as registration sending avatars,
+dynamic nicknames and roster pushes.
+</p>
+<p>
+I don't have the time or inclination to submit all of these as JEPs.
+Anybody is welcome to write them up if they wish, and if a JEP comes
+along with equivalent functionality then I'll most likely depreciate
+these and implement the official standard.
+</p>
+<p>
+Note that with the exception of roster pushes, these protocols are not
+specific to gateway interaction, and SHOULD NOT be applied specially
+to MSN contacts.
+</p>
+
+<hr/>
+
+<h2>Required JEPs</h2>
+<p>
+To register with PyMSNt your client must support JEP-0077, 
+(<a href="http://www.jabber.org/jeps/jep-0077.html">In-Band Registration</a>).
+<br/>
+It is also strongly recommended that you support:
+</p>
+<ul>
+<li>JEP-0022, (<a href="http://www.jabber.org/jeps/jep-0022.html">Message Events</a>)</li>
+<li>JEP-0030, (<a href="http://www.jabber.org/jeps/jep-0030.html">Service Discovery</a>)</li>
+<li>JEP-0045, (<a href="http://www.jabber.org/jeps/jep-0045.html">Multi-User Chat)</a>)</li>
+<li>JEP-0050, (<a href="http://www.jabber.org/jeps/jep-0050.html">Ad-Hoc Commands</a>)</li>
+<li>JEP-0054, (<a href="http://www.jabber.org/jeps/jep-0054.html">vcard-temp</a>)</li>
+<li>JEP-0065, (<a href="http://www.jabber.org/jeps/jep-0065.html">Socks5 Bytestreams</a>)</li>
+<li>JEP-0096, (<a href="http://www.jabber.org/jeps/jep-0096.html">File Transfer</a>)</li>
+<li>JEP-0115, (<a href="http://www.jabber.org/jeps/jep-0115.html">Entity Capabilities</a>)</li>
+<li>JEP-0153, (<a href="http://www.jabber.org/jeps/jep-0153.html">vCard-Based Avatars</a>)</li>
+</ul>
+
+<hr/>
+
+<h2>Basic Presence</h2>
+<p>
+You don't need to do anything special to support this section. It's just
+informational for those who want to know how it works.
+To log in, or set your status all you need to do is send a presence
+packet like the following:
+</p>
+<pre>
+&lt;presence&gt;
+	&lt;show&gt;dnd&lt;/show&gt;
+	&lt;status&gt;My Status Message&lt;/status&gt;
+&lt;/presence&gt;
+</pre>
+<p>
+The Jabber status message and show get mapped to the MSN7 personal message
+and status, respectively. The show tag is mapped to the most appropriate status
+code that MSN has available.
+</p>
+<p>
+This operates exactly in reverse. PyMSNt will send you presence packets
+with the same field mappings whenever MSN contacts change their status.
+So you'll get packets like:
+</p>
+<pre>
+&lt;presence from=&quot;friend%hotmail.com@msn.host.com&quot;&gt;
+	&lt;show&gt;away&lt;/show&gt;
+	&lt;status&gt;My Friend's Status Message&lt;/status&gt;
+&lt;/presence&gt;
+</pre>
+
+<hr/>
+
+<h2>Adding Contacts</h2>
+<p>
+To add a MSN contact you should follow the instructions given in 
+section 6.3, (jabber:iq:gateway) of
+JEP-0100 (<a href="http://www.jabber.org/jeps/jep-0100.html#addressing-gateway">Gateway Interaction</a>).
+</p>
+
+<hr/>
+
+<h2>Typing notification</h2>
+<p>
+PyMSNt supports typing notification according to JEP-0022
+(<a href="http://www.jabber.org/jeps/jep-0022.html">Message Events</a>).
+Only the &lt;composing/&gt; tag is supported.
+</p>
+
+<hr/>
+
+<h2>Request no errors</h2>
+<p>
+You can ask PyMSNt to not send you errors in response to a &lt;message&gt;
+packet that you send. This should only ever be used by drone programs, clients
+that interact with users should always give users the error message.
+</p>
+<p>
+To tell PyMSNt you don't want to hear about any errors do this
+</p>
+<pre>
+&lt;message to=&quot;user%hotmail.com&quot;&gt;
+	&lt;body&gt;
+		Hi friend! If you don't get this message then I won't be
+		told by my transport. It will be silently dropped.
+	&lt;/body&gt;
+	&lt;noerror xmlns=&quot;sapo:noerror&quot;/&gt;
+&lt;/message&gt;
+</pre>
+
+<hr/>
+
+<h2>Groupchat</h2>
+<p>
+PyMSNt only uses a subset of JEP-0045
+(<a href="http://www.jabber.org/jeps/jep-0045.html">Multi-User Chat</a>).
+This subset was originally known as &quot;Groupchat 1.0&quot;.
+If you follow the instructions given in JEP-0045 to join a room with
+any name not containing a % (percent) character, you will be able to
+invite multiple MSN users to the room and chat with them.
+</p>
+
+<hr/>
+
+<h2>Avatars</h2>
+<p>
+PyMSNt implements avatars using the vCard. See <a href="http://www.jabber.org/jeps/jep-0054.html">vcard-temp</a>.
+To get the vCard of a MSN contact you should do this:
+</p>
+<pre>
+&lt;iq type=&quot;get&quot; to=&quot;friend%hotmail.com@msn.host.com&quot; id=&quot;randomvalue&quot; &gt;
+	&lt;vCard xmlns=&quot;vcard-temp&quot;/&gt;
+&lt;/iq&gt;
+
+&lt;iq from=&quot;friend%hotmail.com@msn.host.com&quot; type=&quot;result&quot; id=&quot;randomvalue&quot;&gt;
+	&lt;vCard xmlns=&quot;vcard-temp&quot;&gt;
+		&lt;NICKNAME&gt;Friend's nickname&lt;/NICKNAME&gt;
+		&lt;PHOTO&gt;
+			&lt;TYPE&gt;image/png&lt;/TYPE&gt;
+			&lt;BINVAL&gt;
+				BASE64 PNG DATA GOES HERE
+			&lt;/BINVAL&gt;
+		&lt;/PHOTO&gt;
+	&lt;/vCard&gt;
+&lt;/iq&gt;
+</pre>
+<p>
+Note the NICKNAME tag has the MSN contact's nickname in it.
+The BINVAL field contains the base64 image, the type is given in
+the TYPE field. For MSN users this type will always be &quot;image/png&quot;,
+but you MUST NOT assume this!
+</p>
+<p>
+Once again this protocol works in reverse. PyMSNt fetches your vCard once
+whenever a session is started. If it finds a NICKNAME tag it will set
+your MSN nickname to this value. If it finds a vCard then it will
+make that available to other MSN users.
+</p>
+<p>
+If you want to get avatars or nicknames to dynamically update when changed
+then you need to implement the next section.
+</p>
+
+<hr/>
+
+<h2>Dynamic vCard Updates</h2>
+<p>
+To signal an update of your avatar or nickname send a presence packet
+like below. Do this after you have updated your vCard.
+</p>
+<pre>
+&lt;presence&gt;
+	&lt;show&gt;dnd&lt;/show&gt;
+	&lt;status&gt;My Status Message&lt;/status&gt;
+	&lt;x xmlns=&quot;vcard-temp:x:update&quot;&gt;
+		&lt;photo&gt;hex SHA1 hash of avatar&lt;/photo&gt;
+		&lt;nickname&gt;My Nickname Goes Here&lt;/nickname&gt;
+	&lt;/x&gt;
+&lt;/presence&gt;
+</pre>
+<p>
+In the above example the nickname tag SHOULD be identical to the nickname
+you specify in your vCard's nickname field.
+</p>
+<p>
+This is because if the photo hash hasn't changed, but the nickname tag has, then PyMSNt
+will not fetch the vCard, it will use the value from that tag. However
+if the photo hash has changed, the nickname value will be taken from
+the vCard. Just keep these values the same and you'll never have to worry :)
+</p>
+<p>
+The photo tag has to have the 40 byte hex hash of the avatar you have
+just set in your vCard. Doing the vCard update is covered in
+JEP-0054, (<a href="http://www.jabber.org/jeps/jep-0054.html">vcard-temp</a>).
+</p>
+<p>
+Once again, this works exactly the same in reverse.
+PyMSNt will send you presence packets like this for all of your MSN contacts.
+If the photo hash changes and you haven't cached that avatar, you should
+retrieve retrieve it from the MSN contact's vCard.
+If the nickname changes, then update your on-screen display.
+</p>
+<p>
+Status and show fields behave exactly as described above in &quot;Basic Presence&quot;
+</p>
+
+<hr/>
+
+<h2>Roster Pushes</h2>
+<p>
+The reason for this protocol is to allow users to keep their MSN and
+Jabber lists synchronised. That is, any users they add in MSN, using
+the MSN client should be automatically added and authorised in Jabber.
+This is especially important for their first logon, just after registration.
+Otherwise they have to reauthorise all of the contacts on their MSN list.
+</p>
+<p>
+The way I've implemented it is this. Treat all subscription packets
+just like normal, unless they have a &lt;x&gt; tag qualified by the
+http://delx.cjb.net/protocol/roster-subsync namespace.
+</p>
+<p>
+For more details see <a href="http://delx.cjb.net/pymsnt/jep/roster-subsync/JEP-01XX-0.4.html">http://delx.cjb.net/pymsnt/jep/roster-subsync/JEP-01XX-0.4.html</a>
+</p>
+<p>
+If you receive one of these packets, then it will look like this.
+</p>
+<pre>
+&lt;presence from=&quot;contact%hotmail.com@msn.host.com&quot; to=&quot;user@host.com&quot; type=&quot;subscribe&quot;&gt;
+        &lt;x xmlns=&quot;http://delx.cjb.net/protocol/roster-subsync&quot;&gt;
+                &lt;item name=&quot;Some contact&quot; subscription=&quot;both&quot;&gt;
+                        &lt;group&gt;Friends&lt;/group&gt;
+                        &lt;group&gt;Colleagues&lt;/group&gt;
+                &lt;/item&gt;
+        &lt;/x&gt;
+&lt;/presence&gt;
+</pre>
+<p>
+The most import bit to look it is the subscription attribute of the item tag.
+This tells you what the subscription is on the legacy service, so you should
+send whatever packets you need to in order to make it this way.
+The rest of the information is there if you want to use it.
+</p>
+<p>
+The reason for doing things this way, is that older clients which do not
+support roster-subsync will still get the roster push. However he user will
+have to follow the right steps in order to get the contact added correctly.
+</p>
+
+<h3>Security Concerns</h3>
+<p>
+Obviously you can't just go accepting these packets without any kind of authorisation
+from the user. It would be very easy for a malicious Jabber contact to construct
+a packet like this to get themself onto your contact list if that was the case.
+</p>
+<p>
+PyMSNt will not ever send any of these messages until after you have authorised
+the gateway itself. The process works like this.
+</p>
+<ul>
+<li>User registers with gateway</li>
+<li>Gateway requests authorisation from user</li>
+<li>User's client prompts them to authorise the gateway. At this point
+you should also check with the user if it's ok to accept any incoming
+roster-subsync's from this domain</li>
+<li>User's client authorises gateway</li>
+<li>Gateway sends flood of roster pushes</li>
+<li>User's client automatically synchronises the packets with roster-subsync
+tags, only notifying the user about packets that do not have this tag</li>
+</ul>
+
+<p>
+If you ever receive one or more roster-subsync tag from a domain that the
+user has not specifically allowed or disallowed you should display exactly
+ONE dialog on the screen for the whole domain, asking the user if they
+wish to accept all of these roster pushes.
+</p>
+
+<hr/>
+
+
+
+<p>Bug reports and comments go to <a href="mailto:james&#64;delx.cjb.net">James Bunton</a></p>
+<p>I'll gladly help you with any problems, but please look through this whole page first</p>
+
+<hr/>
+<p>Copyright James Bunton &lt;james at delx.cjb.net&gt;. You may freely redistribute this file.</p>
+
+
+</body>
+
+
+</html>
