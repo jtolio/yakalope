@@ -18,9 +18,9 @@ yakalope.app = function () {
         init: function() {
 
 		var LoginWindow = new Ext.Window({
-			title: 'Welcome to Yakalope or BlabLab or 
-something...',
+			title: 'Welcome to Yakalope or BlabLab or something...',
                         width: 300,
+                        modal: true,
                         items: new Ext.FormPanel({
                             labelWidth:75,
                             frame:true,
