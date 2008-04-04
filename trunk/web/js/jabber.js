@@ -133,10 +133,20 @@ var jabber = {
       if (type == "unavailable") {
         yakalope.app.removeBuddy(from);
       }
+      if (type == "subscribe") {
+        var approve = prompt("allow " + from +"?", "subscribe");
+        alert(approve);
+        if (approve) {
+            jabber.allowSubscription(from);
+        } else {
+            jabber.denySubscription(from);
+        }
+      }  
       if (presence == "away" || presence == "chat" ||
           presence == "dnd"  || presence == "xa") {
         yakalope.app.addBuddy(from);
       }
+      if (presence == "" || 
     },
     
     error: function(aJSJaCPacket) {
