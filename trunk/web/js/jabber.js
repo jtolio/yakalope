@@ -66,9 +66,47 @@ var jabber = {
       aMsg.setTo(new JSJaCJID(user.toString()));
       aMsg.setBody(msg);
       con.send(aMsg);
+      alert(aMsg.xml());
       return false;
     } catch (e) {
       alert("Error: " + e.message);
+      return false;
+    }
+  },
+  
+  getRoster: function() {
+    try {
+      var roster = new JSJaCIQ();
+      roster.setIQ(null, 'get', 'roster_1');
+      roster.setQuery('jabber:iq:roster');
+      //roster.setFrom('');
+      con.send(roster);
+    } catch (e) {
+      alert("Error getting roster: " + e.message);
+      return false;
+    }
+  },
+  
+  subscribe: function(buddy) {
+    try {
+      var presence = new JSJaCPacket('presence');
+      presence.setTo(new JSJaCJID(buddy));
+      presence.setType('subscribe');
+      con.send(presence);
+    } catch (e) {
+      alert("Error adding buddy: " + e.message);
+      return false;
+    }
+  },
+  
+  unsubscribe: function(buddy) {
+    try {
+      var presence = new JSJaCPacket('presence');
+      presence.setTo(new JSJaCJID(buddy));
+      presence.setType('unsubscribe');
+      con.send(presence);
+    } catch (e) {
+      alert("Error removing buddy: " + e.message);
       return false;
     }
   },
@@ -136,6 +174,10 @@ var jabber = {
             now.toLocaleString().substring(now.toLocaleString().lastIndexOf(' ')+1))
         ]));
       return true;
+    },
+    
+    iqRoster: function(iq) {
+      
     },
   }    
 }
