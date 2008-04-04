@@ -47,13 +47,13 @@ yakalope.app = function () {
                 }]
                 */
              });
-             var form = LoginWindow.items.first();
+            /*var form = LoginWindow.items.first();
              form.addButton({
              }, function() {
                 var values = form.getForm().getValues();
                 values.username;
                 value.password;
-             );
+             );*/
              LoginWindow.show();
                 
             jabber.init();

@@ -29,6 +29,7 @@ var jabber = {
 
     con.registerIQGet('query', NS_VERSION, jabber.handle.iqVersion);
     con.registerIQGet('query', NS_TIME, jabber.handle.iqTime);
+    con.registerIQGet('query', NS_ROSTER, jabber.handle.iqRoster);
   },
   
   doLogin: function() {
@@ -47,7 +48,7 @@ var jabber = {
 
       // setup args for connect method
       oArgs = new Object();
-      oArgs.domain = 'squall.cs.umn.edu';
+      oArgs.domain = 'jabberworld.org';
       oArgs.username = 'testing';
       oArgs.resource = 'yakalope';
       oArgs.pass = 'testing';
@@ -88,32 +89,36 @@ var jabber = {
   },
   
   subscribe: function(buddy) {
-    try {
-      var presence = new JSJaCPacket('presence');
-      presence.setTo(new JSJaCJID(buddy));
-      presence.setType('subscribe');
-      con.send(presence);
-    } catch (e) {
-      alert("Error adding buddy: " + e.message);
-      return false;
-    }
+    this.__subscription(buddy, 'subscribe');
   },
   
   unsubscribe: function(buddy) {
+    this.__subscription(buddy, 'unsubscribe');
+  },
+  
+  allowSubscription: function(buddy) {
+    this.__subscription(buddy, 'subscribed');
+  },
+  
+  denySubscription: function(buddy) {
+    this.__subscription(buddy, 'unsubscribed');
+  },
+  
+  __subscription: function(buddy, subType) {
     try {
       var presence = new JSJaCPacket('presence');
       presence.setTo(new JSJaCJID(buddy));
-      presence.setType('unsubscribe');
+      presence.setType(subType);
       con.send(presence);
     } catch (e) {
-      alert("Error removing buddy: " + e.message);
+      alert("Error sending '" + subType + "': " + e.message);
       return false;
     }
   },
   
   handle: {
     iq: function(aIQ) {
-      Ext.getCmp('iResp').addMsg("<div class='msg'>IN (raw): " + aIQ.xml().htmlEnc() + '</div>');
+      alert("IN (raw): " + aIQ.xml());
       con.send(aIQ.errorReply(ERR_FEATURE_NOT_IMPLEMENTED));
     },
     
@@ -146,7 +151,6 @@ var jabber = {
           presence == "dnd"  || presence == "xa") {
         yakalope.app.addBuddy(from);
       }
-      if (presence == "" || 
     },
     
     error: function(aJSJaCPacket) {
@@ -187,7 +191,7 @@ var jabber = {
     },
     
     iqRoster: function(iq) {
-      
+      alert(iq.xml());
     },
   }    
 }
