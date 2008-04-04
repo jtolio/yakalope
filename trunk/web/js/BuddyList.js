@@ -79,6 +79,15 @@
         scope.removeBuddy(username);
     },
     addBuddyDlg: function() {
+       /*var servicesStore = new Ext.data.SimpleStore({
+            fields:['Service'],
+            data: [
+                ['MSN'],
+                ['AIM'],
+                ['ICQ'],
+                ['IRC']
+            ],
+        });*/
         var window = new Ext.Window({
 			title: 'Add a Buddy',
             width: 300,
@@ -105,6 +114,7 @@
         function() {
             var values = form.getForm().getValues();
             yakalope.app.getBuddyList().callAddBuddy(values.buddyname);
+            yakalope.app.subscribeBuddy(values.buddyname, values.service);
             window.close();
         },
         window);

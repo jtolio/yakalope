@@ -84,20 +84,21 @@ var jabber = {
     },
     
     presence: function(aJSJaCPacket) {
-      var html = '<div class="msg">';
-      if (!aJSJaCPacket.getType() && !aJSJaCPacket.getShow()) 
-        html += '<b>'+aJSJaCPacket.getFromJID()+' has become available.</b>';
-      else {
-        html += '<b>'+aJSJaCPacket.getFromJID()+' has set his presence to ';
-        if (aJSJaCPacket.getType())
-          html += aJSJaCPacket.getType() + '.</b>';
-        else
-          html += aJSJaCPacket.getShow() + '.</b>';
-        if (aJSJaCPacket.getStatus())
-          html += ' ('+aJSJaCPacket.getStatus().htmlEnc()+')';
+      var from = aJSJaCPacket.getFrom();
+      var presence = aJSJaCPacket.getShow();
+      if (aJSJaCPacket.getType()) {
+        var type = aJSJaCPacket.getType();
       }
-      html += '</div>';
-      yakalope.app.addBuddy(aJSJaCPacket.getFromJID());
+      if (aJSJaCPacket.getStatus()) {
+        var status = aJSJaCPacket.getStatus();
+      }
+      if (type == "unavailable") {
+        yakalope.app.removeBuddy(from);
+      }
+      if (presence == "away" || presence == "chat" ||
+          presence == "dnd"  || presence == "xa") {
+        yakalope.app.addBuddy(from);
+      }
     },
     
     error: function(aJSJaCPacket) {
