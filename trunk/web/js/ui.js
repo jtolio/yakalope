@@ -5,6 +5,7 @@ Ext.namespace('yakalope');
     
 yakalope.app = function () {
     var viewport;
+    var username;
     return {
         getViewport: function() {
             return viewport;
@@ -129,6 +130,14 @@ yakalope.app = function () {
                 var newChatWindow = yakalope.app.createNewChatWindow(chatId);
                 newChatWindow.addMsg(chatId, msg);
             }
+        },
+        subscribeBuddy: function(username, domain) {
+            var user = username + '@' + domain;
+            jabber.subscribe(user);
+        },
+        unsubscribeBuddy: function(username, domain){
+            var user = username + '@' + domain;
+            jabber.unsubscribe(user);
         },
         addBuddy: function(userName) {
             var buddyList = yakalope.app.getBuddyList();
