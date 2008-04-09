@@ -1,0 +1,10 @@
+% Configure ejabberd.cfg like this: 
+
+  % log chat messages for all vhosts in current directory in text format
+  {mod_log_chat,  [{daemon_path="path/to/externallogger.daemon"}]},
+
+
+  % log only messages for vh1.myjabberserver.net vhost
+  {mod_log_chat,  [{host_config,
+		    [{"vh1.myjabberserver.net", [{daemon_path, "/var/log/ejabberd/vh1.myjabberserver.net"}]}]}]},
+
