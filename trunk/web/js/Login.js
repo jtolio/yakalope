@@ -4,6 +4,9 @@ var Login = {
         title: 'Welcome to Yakalope or BlabLab or something...',
         width: 300,
         modal:true,
+        closeAction: 'show',
+        resizable:false,
+        draggable:false,
         items: new Ext.FormPanel({
             labelWidth:75,
             frame:true,
@@ -30,8 +33,7 @@ var Login = {
             name:'login',
          },
          function() {
-            var counter = 0;
-            var values = LoginWindowForm.getForm().getValues();
+                var values = LoginWindowForm.getForm().getValues();
                 //if(jabber.doLogin(values.username, values.password)){
                 jabber.doLogin(values.username, values.password);
                 LoginWindow.close();
