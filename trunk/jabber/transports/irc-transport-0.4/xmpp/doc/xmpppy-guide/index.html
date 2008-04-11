@@ -1,0 +1,719 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.70)-->
+<HTML>
+<HEAD>
+<TITLE>xmpppy: a practical guide</TITLE>
+<META NAME="description" CONTENT="xmpppy: a practical guide">
+<META NAME="keywords" CONTENT="main">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+
+</HEAD>
+
+<BODY >
+
+<P>
+
+<H1 ALIGN="CENTER">xmpppy: a practical guide</H1>
+<DIV CLASS="author_info">
+
+<P ALIGN="CENTER"><STRONG>Sebastian Moors</STRONG></P>
+<P ALIGN="CENTER"><STRONG>07.10.2006 <BR>
+<BR>
+<BR>
+Version 0.02b <BR>
+<BR>
+<BR><!-- MATH
+ $LastChangedRevision: 32$
+ -->
+<SPAN CLASS="MATH">
+</SPAN> <BR>
+<BR>
+<BR>
+http://xmpppy-guide.berlios.de/</STRONG></P>
+</DIV>
+
+<P>
+
+<BR>
+
+<H2><A NAME="SECTION00100000000000000000">
+Contents</A>
+</H2>
+<!--Table of Contents-->
+
+<UL CLASS="TofC">
+<LI><A NAME="tex2html30"
+  HREF="main.html#SECTION00200000000000000000">Introduction</A>
+<UL>
+<LI><A NAME="tex2html31"
+  HREF="main.html#SECTION00210000000000000000">Motivation</A>
+<LI><A NAME="tex2html32"
+  HREF="main.html#SECTION00220000000000000000">What's so cool about jabber ?</A>
+<LI><A NAME="tex2html33"
+  HREF="main.html#SECTION00230000000000000000">Why xmpppy ?</A>
+<LI><A NAME="tex2html34"
+  HREF="main.html#SECTION00240000000000000000">Existing documentation</A>
+<LI><A NAME="tex2html35"
+  HREF="main.html#SECTION00250000000000000000">License</A>
+<LI><A NAME="tex2html36"
+  HREF="main.html#SECTION00260000000000000000">Examples</A>
+</UL>
+<BR>
+<LI><A NAME="tex2html37"
+  HREF="main.html#SECTION00300000000000000000">Installation</A>
+<LI><A NAME="tex2html38"
+  HREF="main.html#SECTION00400000000000000000">Prerequisites</A>
+<LI><A NAME="tex2html39"
+  HREF="main.html#SECTION00500000000000000000">Basic concepts</A>
+<UL>
+<LI><A NAME="tex2html40"
+  HREF="main.html#SECTION00510000000000000000">Sending messages</A>
+<UL>
+<LI><A NAME="tex2html41"
+  HREF="main.html#SECTION00511000000000000000">Connecting to the server</A>
+<LI><A NAME="tex2html42"
+  HREF="main.html#SECTION00512000000000000000">Messages and message types</A>
+</UL>
+<LI><A NAME="tex2html43"
+  HREF="main.html#SECTION00520000000000000000">Receiving messages</A>
+<LI><A NAME="tex2html44"
+  HREF="main.html#SECTION00530000000000000000">Setting the resource</A>
+<LI><A NAME="tex2html45"
+  HREF="main.html#SECTION00540000000000000000">Handling presence events</A>
+<UL>
+<LI><A NAME="tex2html46"
+  HREF="main.html#SECTION00541000000000000000">Simple presence handling</A>
+<LI><A NAME="tex2html47"
+  HREF="main.html#SECTION00542000000000000000">Retrieving the status</A>
+</UL>
+<LI><A NAME="tex2html48"
+  HREF="main.html#SECTION00550000000000000000">Roster management</A>
+<LI><A NAME="tex2html49"
+  HREF="main.html#SECTION00560000000000000000">Disconnect handling</A>
+</UL>
+<BR>
+<LI><A NAME="tex2html50"
+  HREF="main.html#SECTION00600000000000000000">Advanced concepts</A>
+<UL>
+<LI><A NAME="tex2html51"
+  HREF="main.html#SECTION00610000000000000000">Groupchat</A>
+<LI><A NAME="tex2html52"
+  HREF="main.html#SECTION00620000000000000000">Something about Knigge</A>
+</UL>
+<BR>
+<LI><A NAME="tex2html53"
+  HREF="main.html#SECTION00700000000000000000">Resources</A>
+<UL>
+<LI><A NAME="tex2html54"
+  HREF="main.html#SECTION00710000000000000000">Websites</A>
+<LI><A NAME="tex2html55"
+  HREF="main.html#SECTION00720000000000000000">Books</A>
+<LI><A NAME="tex2html56"
+  HREF="main.html#SECTION00730000000000000000">Projects using xmpppy</A>
+</UL></UL>
+<!--End of Table of Contents-->
+
+<P>
+
+<H1><A NAME="SECTION00200000000000000000">
+Introduction</A>
+</H1>
+
+<H1><A NAME="SECTION00210000000000000000">
+Motivation</A>
+</H1>
+This tutorial was started because there was a need for a small xmpppy-tutorial fitting the gap between the small examples and the bare api specs. The small examples distributed with it are fine, but when you're building you're own bot and fiddling around with things like rostermanagement, you wish that there's something between the bare API-Specs and the small examples. So i decided to write down my experiences and publish them..
+<BR>
+This paper should help you to get started and covers the basic issues of programming with xmpppy.
+If you want to programm a bot, you will find some hints in the last chapters.
+I assume that you have already python knowledge, python basics are not covered by this tutorial.
+<BR>
+<BR>
+Furthermore no Jabber specific terms (such as "jid") will be explained here. Please use google to clarify this things.
+<BR>
+<BR>
+This tutorial was written for a linux audience. I don't know if xmpppy works on Windows or *nix, so you've got to solve os-dependend problems by yourself.
+<BR>
+<BR>
+If you like to contribute to this document or found a bug feel free to contact me.
+<BR>
+<BR>
+Mail: <SPAN  CLASS="textit">smoors@users.berlios.de</SPAN>
+
+<P>
+
+<H1><A NAME="SECTION00220000000000000000">
+What's so cool about jabber ?</A>
+</H1>
+Jabber/xmpp is an Open Source instant messaging protocol. It is described in the RFCs
+3920 - 3923 and is based on XML. A lot of Open Source and even commercial servers, clients and libraries are available.
+It has several advanced features such as encryption and conferences.
+Jabber beats ICQ and other protocols because the closed protocols are changing often and the libraries have to deal
+with that fact. Informations about these protocols are often the result of reverse engineering. This work has to be
+done every time the protocol changes. As you might know, this is a great problem for small software projects..
+<BR>
+
+<BR>
+<P>
+
+<H1><A NAME="SECTION00230000000000000000">
+Why xmpppy ?</A>
+</H1>
+
+<P>
+I used xmpppy because it was available as a debian package and it's small. The design of xmpppy was exactly the thing i was looking for. There are high level functions for sending messages, but you can also build your messages as xml-strings if you wish to or if you need special features.
+<BR>
+xmpppy is the inofficial successor of jabber.py, which i used before. The jabber.py project is dead now, so i migrated to xmpppy, which inherited some code from jabber.py and has a similar API.
+<BR>
+If you're interested in other libraries, have a look at <SPAN  CLASS="textit">http://www.jabber.org</SPAN>.
+
+<P>
+
+<H1><A NAME="SECTION00240000000000000000">
+Existing documentation</A>
+</H1>
+Before you start with this tutorial you should gather informations about xmpppy and jabber.
+You will need the API-Overview which is available at the project homepage. There are also some example programs available. The examples in this book are mainly based on these online examples.
+<BR>
+<BR>
+Spend some time on the jabber.org or ask the wikipedia. If you're not new to this things, skip this..
+<BR>
+<BR>
+For the best available documentation on jabber in general you should take a look at the RFCs. They're easier to read than you might expect and contain a lot of useful informations.
+<BR>
+<BR>
+If you look for a concrete implementation of something, have a look at the projects using xmpppy under "Resources".
+<BR>
+<BR>
+If you want to get in contact with the xmpppy developers or just want to keep track of the current development, join the xmpppy-devel mailing list at <SPAN  CLASS="textit">https://lists.sourceforge.net/lists/listinfo/xmpppy-devel</SPAN>.
+
+<P>
+
+<H1><A NAME="SECTION00250000000000000000">
+License</A>
+</H1>
+
+<P>
+This work is licensed under the creative commons license Attribution-NonCommercial 2.5.
+You can obtain it at <SPAN  CLASS="textit">http://creativecommons.org/licenses/by-nc/2.5/</SPAN>
+
+<P>
+
+<H1><A NAME="SECTION00260000000000000000">
+Examples</A>
+</H1>
+
+<P>
+All example scripts used in this tutorial can be obtained from the projects homepage ( http://xmpppy-guide.berlios.de).
+
+<P>
+If you copy and paste code from the tutorial, remember that the line numbers are not used in python
+and are only used for referencing.
+
+<P>
+
+<H1><A NAME="SECTION00300000000000000000">
+Installation</A>
+</H1>
+
+<P>
+Use the package-management tool of your distribution to determine if a xmpppy package exists.
+If there are no adequate packages or if you want the newest version, you have to build the software from the sources.
+<BR>
+Get the newest tarball from the download page at the project's homepage (<SPAN  CLASS="textit">http://xmpppy.sourceforge.net</SPAN>) and extract it (<SPAN  CLASS="textit">The filenames and URLs are examples</SPAN>)
+<PRE>
+wget http://optusnet.dl.sourceforge.net/sourceforge/xmpppy/xmpppy-0.3.1.tar.gz
+tar xzf xmpppy-0.3.1.tar.gz
+cd xmpppy-0.3.1
+python setup.py install
+</PRE>
+If you need more informations, have a look at the README file distributed with xmpppy.
+
+<P>
+
+<H1><A NAME="SECTION00400000000000000000">
+Prerequisites</A>
+</H1>
+
+<P>
+Before we start with coding, you should check some preconditions. An important thing is the right jabber client. I would therefore recommend the use of psi. Psi is a feature-rich jabber-only client. It supports service browsing and it implements the most features as described in the RFC. Especially the group chat support is better implemented than in the most other clients.
+<BR>
+Of course you can use a mutliprotocol client like Gaim or kopete too, but they implement some things on a different way.. For example gaim makes no difference between the multiple message types (chat, message..).
+<BR>
+<BR>
+If you want to develop something with groupchat, you may want to setup your own jabber server.
+This may be recommended if you're new to xmpppy and you don't know exactly what you're doing.
+Think about the possibility of disturbing other people or - in the worst case - killing a server.
+If your bot gets out of control and sends every 10ms a message to the server, the server admin might be a little bit disgusted of your public beta testing. So keep in mind that there are other people (and of course bots) out there while your bot uses a public server.
+<BR>
+<BR>
+Furthermore i assume that you have already registered a jabber account.
+<BR>
+<BR>
+If you're completely new to jabber, you should read something about the underlying techniques such as XML-Streams. A good starting point is the xmpp-core RFC.
+
+<P>
+
+<H1><A NAME="SECTION00500000000000000000">
+Basic concepts</A>
+</H1>
+
+<P>
+
+<H1><A NAME="SECTION00510000000000000000">
+Sending messages</A>
+</H1>
+
+<P>
+And now for something completely different.
+Every tutorial on programming starts with a tiny "Hello World" program, so why break with this tradition.
+Our program connects to a jabber server, authenticates itself with a username/password combination and sends a "Hello
+World!" message to a specified jid. It doesn't make much sense, but its a good start. Maybe you can use it  in shell scripts or something..
+
+<P>
+<PRE>
+01  #!/usr/bin/python
+02  import sys,os,xmpp
+03  
+04  msg="Hello World!"
+05  jid="user@domain.tld"
+06  pwd="secret"
+07  
+08  recipient="destination@domain.tld"
+09  
+10  jid=xmpp.protocol.JID(jid)
+11  
+12  cl=xmpp.Client(jid.getDomain(),debug=[])
+13  	
+14  cl.connect()
+15  
+16  cl.auth(jid.getNode(),pwd)
+17  
+18  cl.send(xmpp.protocol.Message(recipient,msg))
+19  
+20  cl.disconnect()
+</PRE>
+
+<H2><A NAME="SECTION00511000000000000000">
+Connecting to the server</A>
+</H2>
+The first thing to do in every jabber session is to connect to your jabber server.
+Line 11 shows you how to do this. xmpp.Client() returns a Client instance, which is our basic object.
+You can think of the client-object as your connection to the server. If your server uses an unusual port, you can pass it to the xmpp.Client constructor. Its signature is: xmpp.Client(server,port,debug).
+<BR>
+<BR>
+The most work happens in Line 13 and 15. We're connecting to the server and trying to authenticate. That means the server just checks if our password is correct. jid.getNode() returns everything before the "@" in your jid.
+<BR>
+<BR>
+Line 17 finally does the magic: It sends a message (with content <SPAN  CLASS="textit">msg</SPAN>) to <SPAN  CLASS="textit">recipient</SPAN>.
+After that, we should disconnect from the server to make a gracefull exit.
+
+<P>
+
+<H2><A NAME="SECTION00512000000000000000">
+Messages and message types</A>
+</H2>
+
+<P>
+You may have noticed that message you received from that script was shown to you on a different way than normal chat messages. If you use a pure jabber client like psi, which is very near to the jabber standart, the message might be shown like an email or something. That is because the xmpp protocol defines multiple message types. Less xmpp-compliant messengers like kopete make no difference between them.
+<BR>
+<BR>
+RFC 3921 2.1.1 defines 5 message types:	chat,error,groupchat,headline and normal. For detailed informations see <SPAN  CLASS="textit">http://www.apps.ietf.org/rfc/rfc3921.html</SPAN>.
+<BR>
+At this time we want to focus on 'chat' and 'normal'. In our example above, we did not define any message type, so
+psi interprets this as "normal". "normal" is described as a single message, without history. I suppose
+you want to change that behaviour to 'chat' messages, so we have to set the type explicitly.
+Now switch to the API and look after the methods of xmpp.Protocol. You'll discover a method called setType.
+That sounds suitable, eh? Change line 17 to:
+<PRE>
+cl.send(xmpp.protocol.Message(recipient,msg,"chat"))
+</PRE>
+
+<P>
+
+<H1><A NAME="SECTION00520000000000000000">
+Receiving messages</A>
+</H1>
+
+<P>
+Receiving messages is a little bit more complicated than sending messages. You need an event loop and an handler to do this.
+<BR>
+Message handlers are a basic concept for acting on events. This means that you have to tell the xmpp.Client Object which method it should call if a message arrives. But first of all explanations, have a look at the code:
+<BR>
+<BR>
+<PRE>
+01  #!/usr/bin/python
+02  import sys
+03  import xmpp
+04  import os
+05  import signal
+06  import time
+07  
+08  def messageCB(conn,msg):
+09  	print "Sender: " + str(msg.getFrom())
+10  	print "Content: " + str(msg.getBody())
+11  	print msg
+12  
+13  
+14  def StepOn(conn):
+15  	try:
+16          	conn.Process(1)
+17  	except KeyboardInterrupt:
+18  		return 0
+19  	return 1
+20  
+21  def GoOn(conn):
+22  	while StepOn(conn):
+23  		pass
+24  
+25  def main():
+26  
+27  	jid="user@domain.tld"
+28  	pwd="secret"
+29  
+30  	jid=xmpp.protocol.JID(jid)
+31  
+32  	cl = xmpp.Client(jid.getDomain(), debug=[])
+33  
+34  	cl.connect()
+35  
+36  	cl.auth(jid,pwd)
+37  
+38  	cl.RegisterHandler('message', messageCB)
+39  
+40  	#cl.sendInitPresence()
+41  
+42  	GoOn(cl)
+43  
+44  main()
+</PRE>
+We should focus on the main() method to understand how everything works. The most code should appear familiar to you. Line 37 holds one new method: <PRE>	RegisterHandler('message', messageCB)
+</PRE>
+As you may have already guessed, the method "messageCB" is registered as a callback handler for incoming messages. So if you want to react an incoming messages, write a method called "messageCB" (as in line 8)
+and place your message-handling code here. Be sure that your method takes 2 parameters.
+The first parameter is the connection.The second parameter an x.protocol.Message instance. It is printed on your terminal if a message arrives. Search the API-Docs for it and experiment with the given methods gather experience. Maybe you could combine it with the example from Chapter 1 to react on certain messages.
+<BR>
+<BR>
+If this example doesn't work for you, uncomment line 38. cl.sendInitPresence() tells our server that we're online. Some servers (for example Google's gtalk service) won't send messages to you if you're not marked as 'online'. A detailed look on presence handling is given in the next chapter.
+
+<P>
+
+<H1><A NAME="SECTION00530000000000000000">
+Setting the resource</A>
+</H1>
+
+<P>
+The resource of a jid is a nice jabber feature. With the use of different resources, a jid can be logged into a server server several times. This means you can be online with more then one client 	at the same time.
+Setting the jid is a very simple thing: A third argument has to be passed to the auth() method.
+So the authentication step may look like this:
+
+<P>
+<PRE>
+cl.auth(jid.getNode(),pwd,"laptop")
+</PRE>
+
+<H1><A NAME="SECTION00540000000000000000">
+Handling presence events</A>
+</H1>
+
+<P>
+
+<H2><A NAME="SECTION00541000000000000000">
+Simple presence handling</A>
+</H2>
+
+<P>
+Presence events are those messages which contain informations about your status and subscription.
+You may have wondered why our bot from example 2 wasn't shown as "online" in your contact list.
+This was because we didn't notify the server that the bot is online. This could be done by "sendInitPresence()". Go back to example 2 and uncomment the appropriate line. If the bot is in your roster, he will be marked as "online".
+<BR>
+<BR>
+The next thing about presence covers subscription. "subscription" in generally means: "Allow somebody to see if you're online and allow him to add you to his roster".
+To handle this events, we have to register a presence handler. This is done on the same way as the message handler in example 2.
+
+<P>
+<PRE>
+01  #!/usr/bin/python
+02  import sys
+03  import xmpp
+04  import os
+05  import signal
+06  import time
+07  
+08  def presenceCB(conn,msg):
+09  	print str(msg)
+10  	prs_type=msg.getType()
+11  	who=msg.getFrom()
+12  	if prs_type == "subscribe":
+13  		conn.send(xmpp.Presence(to=who, typ = 'subscribed'))
+14  		conn.send(xmpp.Presence(to=who, typ = 'subscribe'))
+15  
+16  
+17  def StepOn(conn):
+18      try:
+19          conn.Process(1)
+20      except KeyboardInterrupt:
+21  	    return 0
+22      return 1
+23  
+24  def GoOn(conn):
+25      while StepOn(conn):
+26  	    pass
+27  
+28  
+29  def main():
+30  	jid="user@domain.tld"
+31  	pwd="sectret"
+32  
+33  	jid=xmpp.protocol.JID(jid)
+34  
+35  	cl = xmpp.Client(jid.getDomain(), debug=[])
+36  
+37  	cl.connect()
+38  
+39  	cl.auth(jid.getNode(),pwd)
+40  
+41  
+42  	cl.RegisterHandler('presence', presenceCB)
+43  	cl.sendInitPresence()
+44  
+45  	GoOn(cl)
+46  
+47  main()
+</PRE>
+This is the most simple presence handler. When you receive a message containing "subscribe", return a "subscribed" answer and ask him for subscription. That means subscribing everyone who asks.
+You can imagine that this is not the right thing for real world applications. I prefer limits like a maximal roster size and a policy to add users to the roster. This may differ for your bot..
+<BR>
+Think about who should be able to use your bot and block everyone else.
+
+<H2><A NAME="SECTION00542000000000000000">
+Retrieving the status</A>
+</H2>
+
+<P>
+Many applications need the status of an user. They want to know if he's online or offline or maybe only away.
+This is not as easy as it seems. There's no direct way to get the Status of a given jid. You have to analyse the presence messages the oponnents send. If a user gets online or if you go online, everyone who has subscribed to you will send a presence message. Of course this works only if the user is online.
+If a user logs out, he sends you a presence message with the Status "Logged out". Everytime he changes his status, you will receive a corresponding status message.
+My workaround for the problem: keep track of the actual status with a dictionary. Take the jid as the key
+and set their value if you receive a presence message for the jid.
+<BR>
+<BR>
+If you know a better way to do this, please contact me !
+
+<P>
+
+<H1><A NAME="SECTION00550000000000000000">
+Roster management</A>
+</H1>
+The roster is the jabber synonym for the better known term "contact list". You can easily fetch, add or remove entries.
+In the most cases you won't have to deal with this, because the most actions are done automatically.
+For example if you subscribe to someones presence, he will be added to your roster.
+A common example for a manual use of roster functions is to retrieve the jids contained in your roster.
+
+<P>
+Therefore xmpppy offers you a higher level class to operate on rosters: x.roster.Roster
+<BR>
+The class should be self-explanatory if you have a look at
+<BR><SPAN  CLASS="textit">http://xmpppy.sourceforge.net/apidocs/public/x.roster.Roster-class.html</SPAN>.
+
+<P>
+
+<H1><A NAME="SECTION00560000000000000000">
+Disconnect handling</A>
+</H1>
+
+<P>
+A lot of applications are acting on disconnects. This could happen if your jabber server crashes or if you have lost your internet connection. The action may differ, but a possible action would be displaying a message and reconnect..
+To act on disconnects, add a disconnect-handler. This is done analogical to the known event handlers.
+Write a function <SPAN  CLASS="textit">DisconnectHandler(self)</SPAN> and register it via <SPAN  CLASS="textit">RegisterDisconnectHandler(self, DisconnectHandler)</SPAN>.
+
+<P>
+
+<P>
+
+<H1><A NAME="SECTION00600000000000000000">
+Advanced concepts</A>
+</H1>
+
+<H1><A NAME="SECTION00610000000000000000">
+Groupchat</A>
+</H1>
+
+<P>
+I suppose most of you have experiences with many-to-many chats like IRC. Jabber has its own many-to-many chat which is implement by two protocols: <SPAN  CLASS="textit">groupchat 1.0</SPAN> and <SPAN  CLASS="textit">multi user chat (MUC)</SPAN>.
+The MUC protocol is based on groupchat and allows a lot of advanced features like user privileges and passwort-protected rooms.
+Because of the simple implementation groupchat will focused here.
+If you need <SPAN  CLASS="textit">MUC</SPAN>, have a look at <SPAN  CLASS="textit">http://www.jabber.org/jeps/jep-0045.html</SPAN>.
+<BR>
+<BR>
+Using <SPAN  CLASS="textit">groupchat 1.0</SPAN> is very easy because it is based on presence messages.
+First we have to think about what we want to do. Let's imagine that we want to join the room "castle_anthrax" with the nickname "zoot". The server is called "conference.holy-gra.il".
+To enter a room, the only thing to do is sending a presence message with the room and your nickname to your conference server.
+<BR>
+To speak in python:
+<PRE>
+room = "castle_anthrax@conference.holy-gra.il/zoot"
+cl.send(xmpp.Presence(to=room))
+</PRE>
+Of course it could happen that someone in this room has already chosen the nickname "zoot". This will cause an error 409 ("Conflict") and we have to try another nickname.
+<BR>
+If nobody named "zoot" is in there, we'll receive a presence message from everybody in that room (including yourself).
+The "from" attribut of the message looks like this: <SPAN  CLASS="textit">castle_anthrax@conference.holy-gra.il/galahad</SPAN>, which means that somebody named galahad is already in this room.This might be interesting for you if you write a jabber client and you have to keep track of the nicks in the room.
+<BR>
+Receiving messages is divided in 2 parts. If someone sends a public message, you'll receive a message with the type "groupchat".This message will be sent to every user in that room.A private message is send as a chat type message.
+<BR>
+Sending message is as easy as receiving messages. Just send a groupchat message to the room-jid or send a chat message to a room-member, if you like some private chit-chat..
+<BR>
+<BR>
+The following example is based on recv.py, the script used in chapter 2: receiving messages.
+
+<P>
+<PRE>
+01  #!/usr/bin/python
+02  import sys
+03  import xmpp
+04  import os
+05  import signal
+06  import time
+07  
+08  def messageCB(conn,msg):
+09  	if msg.getType() == "groupchat":
+10  		print str(msg.getFrom()) +": "+  str(msg.getBody())
+11  	if msg.getType() == "chat":
+12  		print "private: " + str(msg.getFrom()) +  ":" +str(msg.getBody())
+13  
+14  def presenceCB(conn,msg):
+15  	print msg
+16  
+17  
+18  
+19  
+20  def StepOn(conn):
+21      try:
+22          conn.Process(1)
+23      except KeyboardInterrupt:
+24  	    return 0
+25      return 1
+26  
+27  def GoOn(conn):
+28      while StepOn(conn):
+29  	    pass
+30  
+31  
+32  def main():
+33  
+34  	jid="user@domain.tld"
+35  	pwd="secret"
+36  
+37  	jid=xmpp.protocol.JID(jid)
+38  
+39  	cl = xmpp.Client(jid.getDomain(), debug=[])
+40  
+41  	cl.connect()
+42  
+43  	cl.auth(jid.getNode(),pwd)
+44  
+45  
+46  	cl.sendInitPresence()
+47  
+48  	cl.RegisterHandler('message', messageCB)
+49  
+50  	room = "castle_anthrax@conference.holy-gra.il/zoot"
+51  	print "Joining " + room
+52  
+53  	cl.send(xmpp.Presence(to=room))
+54  
+55  
+56  	GoOn(cl)
+57  
+58  main()
+59  
+60  
+61
+</PRE>
+
+<H1><A NAME="SECTION00620000000000000000">
+Something about Knigge</A>
+</H1>
+
+<P>
+If you don't know Knigge, see <SPAN  CLASS="textit">http://en.wikipedia.org/wiki/Knigge</SPAN>.
+<BR>
+His main work is a book called "Ueber den Umgang mit Menschen" ("On Human Relations").
+<BR>
+As it appears clear that there are (social) rules for human relation, not everybody knows that there a rules
+for bot communication too.
+<BR>
+<BR>
+As i already noted in chapter 3, developing bots is more than a technical thing.
+You should consider that you are responsible for your bot. Imagine you got something wrong and your bot is crashing his server by sending messages every millisecond. That's not a great deal if you use a dedicated server for testing, but that's unusual.
+<BR>
+<BR>
+The following hints are loosely based on the rules given by
+<BR>
+<SPAN  CLASS="textit">http://web.swissjabber.chindex.php/Regeln_zum_Betrieb_von_Bots_und_Robots</SPAN>.
+As a result of abuse by out-of-control bots, some server admins ban every bot which is not written with the following rules in mind:
+
+<UL>
+<LI>use a "help" command which identifies the function and the administrator of your bot
+</LI>
+<LI>ignore messages from jids not including a "@"
+</LI>
+<LI>perfom regular logins only in an interval of five minutes
+</LI>
+<LI>reply only to jids with the status: available, chat, away, xa or dnd
+</LI>
+<LI>don't reply on error messages
+</LI>
+</UL>
+
+<P>
+
+<H1><A NAME="SECTION00700000000000000000">
+Resources</A>
+</H1>
+
+<P>
+
+<H1><A NAME="SECTION00710000000000000000">
+Websites</A>
+</H1>
+xmpppy homepage:		<SPAN  CLASS="textit">http://xmpppy.sourceforge.net</SPAN>
+<BR>
+Jabber foundation:		<SPAN  CLASS="textit">http://jabber.org</SPAN>
+<BR>
+<BR>
+RFC 3920: xmpp core		<SPAN  CLASS="textit">http://www.ietf.org/rfc/rfc3920.txt</SPAN>
+<BR>
+RFC 3921: IM and presence	<SPAN  CLASS="textit">http://www.ietf.org/rfc/rfc3921.txt</SPAN>
+<BR>
+RFC 3922: CPIM			<SPAN  CLASS="textit">http://www.ietf.org/rfc/rfc3922.txt</SPAN>
+<BR>
+RFC 3923: End2End signing and Object Encryption	<SPAN  CLASS="textit">http://www.ietf.org/rfc/rfc3923.txt</SPAN>
+<BR>
+<BR>
+Python central:			<SPAN  CLASS="textit">http://python.org</SPAN>
+<BR>
+psi client:			<SPAN  CLASS="textit">http://psi-im.org/</SPAN>
+
+<P>
+
+<H1><A NAME="SECTION00720000000000000000">
+Books</A>
+</H1>
+Adams,DJ: Programming jabber	<SPAN  CLASS="textit">http://www.oreilly.com/catalog/jabber/</SPAN>
+
+<P>
+
+<H1><A NAME="SECTION00730000000000000000">
+Projects using xmpppy</A>
+</H1>
+Gajim			<SPAN  CLASS="textit">http://www.gajim.org/</SPAN>
+
+<P>
+
+</BODY>
+</HTML>

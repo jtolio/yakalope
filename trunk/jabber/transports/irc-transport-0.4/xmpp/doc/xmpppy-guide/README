@@ -1,0 +1,20 @@
+This document was imported with from
+http://developer.berlios.de/projects/xmpppy-guide/
+Very minor changes were applied after converting it with latex2html
+
+Author is Sebastian Moors
+License is unknown but Sebastian Moors explicitly allowed me 
+to include this document into 0.4 release:
+========================================
+From: Sebastian Moors sebastian dot moors at googlemail dot com
+To: xmpppy-devel at lists dot sourceforge dot net
+Date: Wed, 4 Oct 2006 09:39:12 +0200
+
+> BTW - can we include this document into upcoming 0.4 release of xmpppy? I.e.
+> put it into tarball?
+Of course, that would be great.
+========================================
+
+--
+Alexey Nezhdanov
+2006.10.09
