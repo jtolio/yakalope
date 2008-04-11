@@ -120,14 +120,15 @@
 	<!--<xdbDriver>xmlfiles</xdbDriver>-->
 
 	<!-- For MySQL -->
-	<!--<xdbDriver>mysql</xdbDriver>-->
-	<!--<xdbDriver_mysql>-->
-	<!--<username>pyaimt</username>-->
-	<!--<password>pyaimt</password>-->
-	<!--<database>pyaimt</database>-->
-	<!--<server>localhost</server>-->
-	<!--<format>encrypted</format>--> <!-- Enable encryption of passwords -->
-	<!--</xdbDriver_mysql>-->
+
+	<xdbDriver>mysql</xdbDriver>
+	<xdbDriver_mysql>
+  <username>pyaimt</username>
+	<password>Pr4de32kgE</password>
+	<database>pyaimt</database>
+	<server>localhost</server>
+	<format>encrypted</format> <!-- Enable encryption of passwords -->
+	</xdbDriver_mysql>
 
 	<!-- For XMLFiles -->
 	<xdbDriver>xmlfiles</xdbDriver>
