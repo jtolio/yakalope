@@ -32,7 +32,7 @@ var jabber = {
     con.registerIQGet('query', NS_ROSTER, jabber.handle.iqRoster);
   },
   
-  doLogin: function() {
+  doLogin: function(username, password) {
     try {
       // setup args for contructor
       oArgs = new Object();
@@ -48,15 +48,17 @@ var jabber = {
 
       // setup args for connect method
       oArgs = new Object();
-      oArgs.domain = 'jabberworld.org';
-      oArgs.username = 'testing';
+      oArgs.domain = 'squall.cs.umn.edu';
+      //oArgs.username = 'testing';
+      //oArgs.pass = 'testing';
+      oArgs.username = username;
+      oArgs.pass = password;
       oArgs.resource = 'yakalope';
-      oArgs.pass = 'testing';
       oArgs.register = false;
       con.connect(oArgs);
+//wait until valid or timeout
+      return true;
     } catch (e) {
-      alert(e.toString());
-    } finally {
       return false;
     }
   },
@@ -72,6 +74,15 @@ var jabber = {
     } catch (e) {
       alert("Error: " + e.message);
       return false;
+    }
+  },
+
+  isConnected: function() {
+    if (con == null){
+        return false;
+    }
+    else{
+        return con.connected();
     }
   },
   
@@ -167,6 +178,8 @@ var jabber = {
     },
     
     disconnected: function() {
+        yakalope.app.clearBuddyList();
+        Login.login();
     },
     
     iqVersion: function(iq) {
