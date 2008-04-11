@@ -18,10 +18,9 @@ yakalope.app = function () {
         },
         init: function() {
 
-            if (jabber.isConnected() == false){
+            if (jabber.isConnected() == false) {
                 Login.login();
-            }
-
+            }               
             jabber.init();
                 
             /* Setup Layout of Main Window */
@@ -58,7 +57,11 @@ yakalope.app = function () {
             },{
                 region:'south',
                 buttons:[{
-                    text:'Log Out',
+                    text:'Connect',
+                    id:'connect',
+                    handler:jabber.doLogin,
+                },{
+                    text:'Disconnect',
                     id:'disconnect',
                     handler:jabber.quit,
                 }]
@@ -108,13 +111,13 @@ yakalope.app = function () {
             var user = username + '@' + domain;
             jabber.unsubscribe(user);
         },
-        addBuddy: function(userName) {
+        addBuddy: function(buddy) {
             var buddyList = yakalope.app.getBuddyList();
-            return buddyList.addBuddy(userName);
+            return buddyList.addBuddy(buddy);
         },
-        removeBuddy: function(userName){
+        removeBuddy: function(buddy){
             var buddyList = yakalope.app.getBuddyList();
-            buddyList.removeBuddy(username);
+            buddyList.removeBuddy(buddy);
         },
         clearBuddyList: function() {
             var buddyList = yakalope.app.getBuddyList();

@@ -24,24 +24,26 @@
     getTreePane: function() {
         return this.items.first();
     },
-    addBuddy: function(userName) {
+    addBuddy: function(buddy) {
         var friendRoot = this.getTreeRoot().firstChild;
-        if (!this.containsBuddy(userName)) {
+        if (!this.containsBuddy(buddy)) {
             var newBuddy = new Ext.tree.AsyncTreeNode({
-                text:userName,
+                id:buddy.jid,
+                text:jid.toString(),
+                object:buddy,
                 iconCls:'user',
-                leaf:true, 
+                leaf:true,
             });
             newBuddy.on('click', this.onClick);
             return friendRoot.appendChild(newBuddy);
         }
         return null;
     },
-    removeBuddy: function(userName) {
+    removeBuddy: function(buddy) {
         var tree = this.getTreeRoot();
         var node = tree.firstChild.firstChild;
         while (node != null) {
-            if (node.text == userName) {
+            if (node.id.toString() == buddy.jid.toString()) {
                 node.remove();
                 break;
             }
@@ -57,12 +59,12 @@
             node = nextnode;
         }
     },
-    containsBuddy: function(userName) {
+    containsBuddy: function(buddy) {
         var tree = this.getTreeRoot();
         var node = tree.firstChild;
         node = node.firstChild;
         while (node != null) {
-            if (node.text == userName) {
+            if (node.id.toString() == buddy.jid.toString()) {
                 return true;
             } else {
                 node = node.nextSibling;
