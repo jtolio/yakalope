@@ -1,0 +1,412 @@
+<?xml version="1.0" encoding="ascii"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>xmpp.browser</title>
+  <link rel="stylesheet" href="epydoc.css" type="text/css" />
+  <script type="text/javascript" src="epydoc.js"></script>
+</head>
+
+<body bgcolor="white" text="black" link="blue" vlink="#204080"
+      alink="#204080">
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="xmpp-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="100%">
+      <span class="breadcrumbs">
+        <a href="xmpp-module.html">Package&nbsp;xmpp</a> ::
+        Module&nbsp;browser
+      </span>
+    </td>
+    <td>
+      <table cellpadding="0" cellspacing="0">
+        <!-- hide/show private -->
+        <tr><td align="right"><span class="options">[<a href="javascript:void(0);" class="privatelink"
+    onclick="toggle_private();">hide&nbsp;private</a>]</span></td></tr>
+        <tr><td align="right"><span class="options"
+            >[<a href="frames.html" target="_top">frames</a
+            >]&nbsp;|&nbsp;<a href="xmpp.browser-pysrc.html"
+            target="_top">no&nbsp;frames</a>]</span></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<h1 class="epydoc">Source Code for <a href="xmpp.browser-module.html">Module xmpp.browser</a></h1>
+<pre class="py-src">
+<a name="L1"></a><tt class="py-lineno">  1</tt>  <tt class="py-line"><tt class="py-comment">##   browser.py</tt> </tt>
+<a name="L2"></a><tt class="py-lineno">  2</tt>  <tt class="py-line"><tt class="py-comment"></tt><tt class="py-comment">##</tt> </tt>
+<a name="L3"></a><tt class="py-lineno">  3</tt>  <tt class="py-line"><tt class="py-comment"></tt><tt class="py-comment">##   Copyright (C) 2004 Alexey "Snake" Nezhdanov</tt> </tt>
+<a name="L4"></a><tt class="py-lineno">  4</tt>  <tt class="py-line"><tt class="py-comment"></tt><tt class="py-comment">##</tt> </tt>
+<a name="L5"></a><tt class="py-lineno">  5</tt>  <tt class="py-line"><tt class="py-comment"></tt><tt class="py-comment">##   This program is free software; you can redistribute it and/or modify</tt> </tt>
+<a name="L6"></a><tt class="py-lineno">  6</tt>  <tt class="py-line"><tt class="py-comment"></tt><tt class="py-comment">##   it under the terms of the GNU General Public License as published by</tt> </tt>
+<a name="L7"></a><tt class="py-lineno">  7</tt>  <tt class="py-line"><tt class="py-comment"></tt><tt class="py-comment">##   the Free Software Foundation; either version 2, or (at your option)</tt> </tt>
+<a name="L8"></a><tt class="py-lineno">  8</tt>  <tt class="py-line"><tt class="py-comment"></tt><tt class="py-comment">##   any later version.</tt> </tt>
+<a name="L9"></a><tt class="py-lineno">  9</tt>  <tt class="py-line"><tt class="py-comment"></tt><tt class="py-comment">##</tt> </tt>
+<a name="L10"></a><tt class="py-lineno"> 10</tt>  <tt class="py-line"><tt class="py-comment"></tt><tt class="py-comment">##   This program is distributed in the hope that it will be useful,</tt> </tt>
+<a name="L11"></a><tt class="py-lineno"> 11</tt>  <tt class="py-line"><tt class="py-comment"></tt><tt class="py-comment">##   but WITHOUT ANY WARRANTY; without even the implied warranty of</tt> </tt>
+<a name="L12"></a><tt class="py-lineno"> 12</tt>  <tt class="py-line"><tt class="py-comment"></tt><tt class="py-comment">##   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</tt> </tt>
+<a name="L13"></a><tt class="py-lineno"> 13</tt>  <tt class="py-line"><tt class="py-comment"></tt><tt class="py-comment">##   GNU General Public License for more details.</tt> </tt>
+<a name="L14"></a><tt class="py-lineno"> 14</tt>  <tt class="py-line"><tt class="py-comment"></tt> </tt>
+<a name="L15"></a><tt class="py-lineno"> 15</tt>  <tt class="py-line"><tt class="py-comment"># $Id: browser.py,v 1.12 2007/05/13 17:55:14 normanr Exp $</tt> </tt>
+<a name="L16"></a><tt class="py-lineno"> 16</tt>  <tt class="py-line"><tt class="py-comment"></tt> </tt>
+<a name="L17"></a><tt class="py-lineno"> 17</tt>  <tt class="py-line"><tt class="py-docstring">"""Browser module provides DISCO server framework for your application.</tt> </tt>
+<a name="L18"></a><tt class="py-lineno"> 18</tt>  <tt class="py-line"><tt class="py-docstring">This functionality can be used for very different purposes - from publishing</tt> </tt>
+<a name="L19"></a><tt class="py-lineno"> 19</tt>  <tt class="py-line"><tt class="py-docstring">software version and supported features to building of "jabber site" that users</tt> </tt>
+<a name="L20"></a><tt class="py-lineno"> 20</tt>  <tt class="py-line"><tt class="py-docstring">can navigate with their disco browsers and interact with active content.</tt> </tt>
+<a name="L21"></a><tt class="py-lineno"> 21</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L22"></a><tt class="py-lineno"> 22</tt>  <tt class="py-line"><tt class="py-docstring">Such functionality is achieved via registering "DISCO handlers" that are</tt> </tt>
+<a name="L23"></a><tt class="py-lineno"> 23</tt>  <tt class="py-line"><tt class="py-docstring">automatically called when user requests some node of your disco tree.</tt> </tt>
+<a name="L24"></a><tt class="py-lineno"> 24</tt>  <tt class="py-line"><tt class="py-docstring">"""</tt> </tt>
+<a name="L25"></a><tt class="py-lineno"> 25</tt>  <tt class="py-line"> </tt>
+<a name="L26"></a><tt class="py-lineno"> 26</tt>  <tt class="py-line"><tt class="py-keyword">from</tt> <tt id="link-0" class="py-name" targets="Module xmpp.dispatcher=xmpp.dispatcher-module.html"><a title="xmpp.dispatcher" class="py-name" href="#" onclick="return doclink('link-0', 'dispatcher', 'link-0');">dispatcher</a></tt> <tt class="py-keyword">import</tt> <tt class="py-op">*</tt> </tt>
+<a name="L27"></a><tt class="py-lineno"> 27</tt>  <tt class="py-line"><tt class="py-keyword">from</tt> <tt id="link-1" class="py-name" targets="Module xmpp.client=xmpp.client-module.html"><a title="xmpp.client" class="py-name" href="#" onclick="return doclink('link-1', 'client', 'link-1');">client</a></tt> <tt class="py-keyword">import</tt> <tt id="link-2" class="py-name" targets="Class xmpp.client.PlugIn=xmpp.client.PlugIn-class.html,Method xmpp.client.PlugIn.PlugIn()=xmpp.client.PlugIn-class.html#PlugIn,Method xmpp.transports.TLS.PlugIn()=xmpp.transports.TLS-class.html#PlugIn"><a title="xmpp.client.PlugIn
+xmpp.client.PlugIn.PlugIn
+xmpp.transports.TLS.PlugIn" class="py-name" href="#" onclick="return doclink('link-2', 'PlugIn', 'link-2');">PlugIn</a></tt> </tt>
+<a name="L28"></a><tt class="py-lineno"> 28</tt>  <tt class="py-line"> </tt>
+<a name="Browser"></a><div id="Browser-def"><a name="L29"></a><tt class="py-lineno"> 29</tt> <a class="py-toggle" href="#" id="Browser-toggle" onclick="return toggle('Browser');">-</a><tt class="py-line"><tt class="py-keyword">class</tt> <a class="py-def-name" href="xmpp.browser.Browser-class.html">Browser</a><tt class="py-op">(</tt><tt class="py-base-class">PlugIn</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="Browser-collapsed" style="display:none;" pad="+++" indent="++++"></div><div id="Browser-expanded"><a name="L30"></a><tt class="py-lineno"> 30</tt>  <tt class="py-line">    <tt class="py-docstring">""" WARNING! This class is for components only. It will not work in client mode!</tt> </tt>
+<a name="L31"></a><tt class="py-lineno"> 31</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L32"></a><tt class="py-lineno"> 32</tt>  <tt class="py-line"><tt class="py-docstring">        Standart xmpppy class that is ancestor of PlugIn and can be attached</tt> </tt>
+<a name="L33"></a><tt class="py-lineno"> 33</tt>  <tt class="py-line"><tt class="py-docstring">        to your application.</tt> </tt>
+<a name="L34"></a><tt class="py-lineno"> 34</tt>  <tt class="py-line"><tt class="py-docstring">        All processing will be performed in the handlers registered in the browser</tt> </tt>
+<a name="L35"></a><tt class="py-lineno"> 35</tt>  <tt class="py-line"><tt class="py-docstring">        instance. You can register any number of handlers ensuring that for each</tt> </tt>
+<a name="L36"></a><tt class="py-lineno"> 36</tt>  <tt class="py-line"><tt class="py-docstring">        node/jid combination only one (or none) handler registered.</tt> </tt>
+<a name="L37"></a><tt class="py-lineno"> 37</tt>  <tt class="py-line"><tt class="py-docstring">        You can register static information or the fully-blown function that will</tt> </tt>
+<a name="L38"></a><tt class="py-lineno"> 38</tt>  <tt class="py-line"><tt class="py-docstring">        calculate the answer dynamically.</tt> </tt>
+<a name="L39"></a><tt class="py-lineno"> 39</tt>  <tt class="py-line"><tt class="py-docstring">        Example of static info (see JEP-0030, examples 13-14):</tt> </tt>
+<a name="L40"></a><tt class="py-lineno"> 40</tt>  <tt class="py-line"><tt class="py-docstring">        # cl - your xmpppy connection instance.</tt> </tt>
+<a name="L41"></a><tt class="py-lineno"> 41</tt>  <tt class="py-line"><tt class="py-docstring">        b=xmpp.browser.Browser()</tt> </tt>
+<a name="L42"></a><tt class="py-lineno"> 42</tt>  <tt class="py-line"><tt class="py-docstring">        b.PlugIn(cl)</tt> </tt>
+<a name="L43"></a><tt class="py-lineno"> 43</tt>  <tt class="py-line"><tt class="py-docstring">        items=[]</tt> </tt>
+<a name="L44"></a><tt class="py-lineno"> 44</tt>  <tt class="py-line"><tt class="py-docstring">        item={}</tt> </tt>
+<a name="L45"></a><tt class="py-lineno"> 45</tt>  <tt class="py-line"><tt class="py-docstring">        item['jid']='catalog.shakespeare.lit'</tt> </tt>
+<a name="L46"></a><tt class="py-lineno"> 46</tt>  <tt class="py-line"><tt class="py-docstring">        item['node']='books'</tt> </tt>
+<a name="L47"></a><tt class="py-lineno"> 47</tt>  <tt class="py-line"><tt class="py-docstring">        item['name']='Books by and about Shakespeare'</tt> </tt>
+<a name="L48"></a><tt class="py-lineno"> 48</tt>  <tt class="py-line"><tt class="py-docstring">        items.append(item)</tt> </tt>
+<a name="L49"></a><tt class="py-lineno"> 49</tt>  <tt class="py-line"><tt class="py-docstring">        item={}</tt> </tt>
+<a name="L50"></a><tt class="py-lineno"> 50</tt>  <tt class="py-line"><tt class="py-docstring">        item['jid']='catalog.shakespeare.lit'</tt> </tt>
+<a name="L51"></a><tt class="py-lineno"> 51</tt>  <tt class="py-line"><tt class="py-docstring">        item['node']='clothing'</tt> </tt>
+<a name="L52"></a><tt class="py-lineno"> 52</tt>  <tt class="py-line"><tt class="py-docstring">        item['name']='Wear your literary taste with pride'</tt> </tt>
+<a name="L53"></a><tt class="py-lineno"> 53</tt>  <tt class="py-line"><tt class="py-docstring">        items.append(item)</tt> </tt>
+<a name="L54"></a><tt class="py-lineno"> 54</tt>  <tt class="py-line"><tt class="py-docstring">        item={}</tt> </tt>
+<a name="L55"></a><tt class="py-lineno"> 55</tt>  <tt class="py-line"><tt class="py-docstring">        item['jid']='catalog.shakespeare.lit'</tt> </tt>
+<a name="L56"></a><tt class="py-lineno"> 56</tt>  <tt class="py-line"><tt class="py-docstring">        item['node']='music'</tt> </tt>
+<a name="L57"></a><tt class="py-lineno"> 57</tt>  <tt class="py-line"><tt class="py-docstring">        item['name']='Music from the time of Shakespeare'</tt> </tt>
+<a name="L58"></a><tt class="py-lineno"> 58</tt>  <tt class="py-line"><tt class="py-docstring">        items.append(item)</tt> </tt>
+<a name="L59"></a><tt class="py-lineno"> 59</tt>  <tt class="py-line"><tt class="py-docstring">        info={'ids':[], 'features':[]}</tt> </tt>
+<a name="L60"></a><tt class="py-lineno"> 60</tt>  <tt class="py-line"><tt class="py-docstring">        b.setDiscoHandler({'items':items,'info':info})</tt> </tt>
+<a name="L61"></a><tt class="py-lineno"> 61</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L62"></a><tt class="py-lineno"> 62</tt>  <tt class="py-line"><tt class="py-docstring">        items should be a list of item elements.</tt> </tt>
+<a name="L63"></a><tt class="py-lineno"> 63</tt>  <tt class="py-line"><tt class="py-docstring">        every item element can have any of these four keys: 'jid', 'node', 'name', 'action'</tt> </tt>
+<a name="L64"></a><tt class="py-lineno"> 64</tt>  <tt class="py-line"><tt class="py-docstring">        info should be a dicionary and must have keys 'ids' and 'features'.</tt> </tt>
+<a name="L65"></a><tt class="py-lineno"> 65</tt>  <tt class="py-line"><tt class="py-docstring">        Both of them should be lists:</tt> </tt>
+<a name="L66"></a><tt class="py-lineno"> 66</tt>  <tt class="py-line"><tt class="py-docstring">            ids is a list of dictionaries and features is a list of text strings.</tt> </tt>
+<a name="L67"></a><tt class="py-lineno"> 67</tt>  <tt class="py-line"><tt class="py-docstring">        Example (see JEP-0030, examples 1-2)</tt> </tt>
+<a name="L68"></a><tt class="py-lineno"> 68</tt>  <tt class="py-line"><tt class="py-docstring">        # cl - your xmpppy connection instance.</tt> </tt>
+<a name="L69"></a><tt class="py-lineno"> 69</tt>  <tt class="py-line"><tt class="py-docstring">        b=xmpp.browser.Browser()</tt> </tt>
+<a name="L70"></a><tt class="py-lineno"> 70</tt>  <tt class="py-line"><tt class="py-docstring">        b.PlugIn(cl)</tt> </tt>
+<a name="L71"></a><tt class="py-lineno"> 71</tt>  <tt class="py-line"><tt class="py-docstring">        items=[]</tt> </tt>
+<a name="L72"></a><tt class="py-lineno"> 72</tt>  <tt class="py-line"><tt class="py-docstring">        ids=[]</tt> </tt>
+<a name="L73"></a><tt class="py-lineno"> 73</tt>  <tt class="py-line"><tt class="py-docstring">        ids.append({'category':'conference','type':'text','name':'Play-Specific Chatrooms'})</tt> </tt>
+<a name="L74"></a><tt class="py-lineno"> 74</tt>  <tt class="py-line"><tt class="py-docstring">        ids.append({'category':'directory','type':'chatroom','name':'Play-Specific Chatrooms'})</tt> </tt>
+<a name="L75"></a><tt class="py-lineno"> 75</tt>  <tt class="py-line"><tt class="py-docstring">        features=[NS_DISCO_INFO,NS_DISCO_ITEMS,NS_MUC,NS_REGISTER,NS_SEARCH,NS_TIME,NS_VERSION]</tt> </tt>
+<a name="L76"></a><tt class="py-lineno"> 76</tt>  <tt class="py-line"><tt class="py-docstring">        info={'ids':ids,'features':features}</tt> </tt>
+<a name="L77"></a><tt class="py-lineno"> 77</tt>  <tt class="py-line"><tt class="py-docstring">        # info['xdata']=xmpp.protocol.DataForm() # JEP-0128</tt> </tt>
+<a name="L78"></a><tt class="py-lineno"> 78</tt>  <tt class="py-line"><tt class="py-docstring">        b.setDiscoHandler({'items':[],'info':info})</tt> </tt>
+<a name="L79"></a><tt class="py-lineno"> 79</tt>  <tt class="py-line"><tt class="py-docstring">    """</tt> </tt>
+<a name="Browser.__init__"></a><div id="Browser.__init__-def"><a name="L80"></a><tt class="py-lineno"> 80</tt> <a class="py-toggle" href="#" id="Browser.__init__-toggle" onclick="return toggle('Browser.__init__');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="xmpp.browser.Browser-class.html#__init__">__init__</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="Browser.__init__-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="Browser.__init__-expanded"><a name="L81"></a><tt class="py-lineno"> 81</tt>  <tt class="py-line">        <tt class="py-docstring">"""Initialises internal variables. Used internally."""</tt> </tt>
+<a name="L82"></a><tt class="py-lineno"> 82</tt>  <tt class="py-line">        <tt id="link-3" class="py-name"><a title="xmpp.client.PlugIn
+xmpp.client.PlugIn.PlugIn
+xmpp.transports.TLS.PlugIn" class="py-name" href="#" onclick="return doclink('link-3', 'PlugIn', 'link-2');">PlugIn</a></tt><tt class="py-op">.</tt><tt id="link-4" class="py-name" targets="Method xmpp.auth.Bind.__init__()=xmpp.auth.Bind-class.html#__init__,Method xmpp.auth.ComponentBind.__init__()=xmpp.auth.ComponentBind-class.html#__init__,Method xmpp.auth.NonSASL.__init__()=xmpp.auth.NonSASL-class.html#__init__,Method xmpp.auth.SASL.__init__()=xmpp.auth.SASL-class.html#__init__,Method xmpp.browser.Browser.__init__()=xmpp.browser.Browser-class.html#__init__,Method xmpp.client.CommonClient.__init__()=xmpp.client.CommonClient-class.html#__init__,Method xmpp.client.Component.__init__()=xmpp.client.Component-class.html#__init__,Method xmpp.client.PlugIn.__init__()=xmpp.client.PlugIn-class.html#__init__,Method xmpp.commands.Command_Handler_Prototype.__init__()=xmpp.commands.Command_Handler_Prototype-class.html#__init__,Method xmpp.commands.Commands.__init__()=xmpp.commands.Commands-class.html#__init__,Method xmpp.commands.TestCommand.__init__()=xmpp.commands.TestCommand-class.html#__init__,Method xmpp.debug.Debug.__init__()=xmpp.debug.Debug-class.html#__init__,Method xmpp.debug.NoDebug.__init__()=xmpp.debug.NoDebug-class.html#__init__,Method xmpp.dispatcher.Dispatcher.__init__()=xmpp.dispatcher.Dispatcher-class.html#__init__,Method xmpp.filetransfer.IBB.__init__()=xmpp.filetransfer.IBB-class.html#__init__,Method xmpp.protocol.DataField.__init__()=xmpp.protocol.DataField-class.html#__init__,Method xmpp.protocol.DataForm.__init__()=xmpp.protocol.DataForm-class.html#__init__,Method xmpp.protocol.Error.__init__()=xmpp.protocol.Error-class.html#__init__,Method xmpp.protocol.ErrorNode.__init__()=xmpp.protocol.ErrorNode-class.html#__init__,Method xmpp.protocol.Iq.__init__()=xmpp.protocol.Iq-class.html#__init__,Method xmpp.protocol.JID.__init__()=xmpp.protocol.JID-class.html#__init__,Method xmpp.protocol.Message.__init__()=xmpp.protocol.Message-class.html#__init__,Method xmpp.protocol.Presence.__init__()=xmpp.protocol.Presence-class.html#__init__,Method xmpp.protocol.Protocol.__init__()=xmpp.protocol.Protocol-class.html#__init__,Method xmpp.roster.Roster.__init__()=xmpp.roster.Roster-class.html#__init__,Method xmpp.session.Session.__init__()=xmpp.session.Session-class.html#__init__,Method xmpp.simplexml.Node.__init__()=xmpp.simplexml.Node-class.html#__init__,Method xmpp.simplexml.NodeBuilder.__init__()=xmpp.simplexml.NodeBuilder-class.html#__init__,Method xmpp.simplexml.T.__init__()=xmpp.simplexml.T-class.html#__init__,Method xmpp.transports.HTTPPROXYsocket.__init__()=xmpp.transports.HTTPPROXYsocket-class.html#__init__,Method xmpp.transports.TCPsocket.__init__()=xmpp.transports.TCPsocket-class.html#__init__,Method xmpp.transports.error.__init__()=xmpp.transports.error-class.html#__init__"><a title="xmpp.auth.Bind.__init__
+xmpp.auth.ComponentBind.__init__
+xmpp.auth.NonSASL.__init__
+xmpp.auth.SASL.__init__
+xmpp.browser.Browser.__init__
+xmpp.client.CommonClient.__init__
+xmpp.client.Component.__init__
+xmpp.client.PlugIn.__init__
+xmpp.commands.Command_Handler_Prototype.__init__
+xmpp.commands.Commands.__init__
+xmpp.commands.TestCommand.__init__
+xmpp.debug.Debug.__init__
+xmpp.debug.NoDebug.__init__
+xmpp.dispatcher.Dispatcher.__init__
+xmpp.filetransfer.IBB.__init__
+xmpp.protocol.DataField.__init__
+xmpp.protocol.DataForm.__init__
+xmpp.protocol.Error.__init__
+xmpp.protocol.ErrorNode.__init__
+xmpp.protocol.Iq.__init__
+xmpp.protocol.JID.__init__
+xmpp.protocol.Message.__init__
+xmpp.protocol.Presence.__init__
+xmpp.protocol.Protocol.__init__
+xmpp.roster.Roster.__init__
+xmpp.session.Session.__init__
+xmpp.simplexml.Node.__init__
+xmpp.simplexml.NodeBuilder.__init__
+xmpp.simplexml.T.__init__
+xmpp.transports.HTTPPROXYsocket.__init__
+xmpp.transports.TCPsocket.__init__
+xmpp.transports.error.__init__" class="py-name" href="#" onclick="return doclink('link-4', '__init__', 'link-4');">__init__</a></tt><tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">)</tt> </tt>
+<a name="L83"></a><tt class="py-lineno"> 83</tt>  <tt class="py-line">        <tt class="py-name">DBG_LINE</tt><tt class="py-op">=</tt><tt class="py-string">'browser'</tt> </tt>
+<a name="L84"></a><tt class="py-lineno"> 84</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">_exported_methods</tt><tt class="py-op">=</tt><tt class="py-op">[</tt><tt class="py-op">]</tt> </tt>
+<a name="L85"></a><tt class="py-lineno"> 85</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">_handlers</tt><tt class="py-op">=</tt><tt class="py-op">{</tt><tt class="py-string">''</tt><tt class="py-op">:</tt><tt class="py-op">{</tt><tt class="py-op">}</tt><tt class="py-op">}</tt> </tt>
+</div><a name="L86"></a><tt class="py-lineno"> 86</tt>  <tt class="py-line"> </tt>
+<a name="Browser.plugin"></a><div id="Browser.plugin-def"><a name="L87"></a><tt class="py-lineno"> 87</tt> <a class="py-toggle" href="#" id="Browser.plugin-toggle" onclick="return toggle('Browser.plugin');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="xmpp.browser.Browser-class.html#plugin">plugin</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">owner</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="Browser.plugin-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="Browser.plugin-expanded"><a name="L88"></a><tt class="py-lineno"> 88</tt>  <tt class="py-line">        <tt class="py-docstring">""" Registers it's own iq handlers in your application dispatcher instance.</tt> </tt>
+<a name="L89"></a><tt class="py-lineno"> 89</tt>  <tt class="py-line"><tt class="py-docstring">            Used internally."""</tt> </tt>
+<a name="L90"></a><tt class="py-lineno"> 90</tt>  <tt class="py-line">        <tt class="py-name">owner</tt><tt class="py-op">.</tt><tt id="link-5" class="py-name" targets="Method xmpp.dispatcher.Dispatcher.RegisterHandler()=xmpp.dispatcher.Dispatcher-class.html#RegisterHandler"><a title="xmpp.dispatcher.Dispatcher.RegisterHandler" class="py-name" href="#" onclick="return doclink('link-5', 'RegisterHandler', 'link-5');">RegisterHandler</a></tt><tt class="py-op">(</tt><tt class="py-string">'iq'</tt><tt class="py-op">,</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-6" class="py-name" targets="Method xmpp.browser.Browser._DiscoveryHandler()=xmpp.browser.Browser-class.html#_DiscoveryHandler"><a title="xmpp.browser.Browser._DiscoveryHandler" class="py-name" href="#" onclick="return doclink('link-6', '_DiscoveryHandler', 'link-6');">_DiscoveryHandler</a></tt><tt class="py-op">,</tt><tt class="py-name">typ</tt><tt class="py-op">=</tt><tt class="py-string">'get'</tt><tt class="py-op">,</tt><tt class="py-name">ns</tt><tt class="py-op">=</tt><tt id="link-7" class="py-name" targets="Variable xmpp.protocol.NS_DISCO_INFO=xmpp.protocol-module.html#NS_DISCO_INFO"><a title="xmpp.protocol.NS_DISCO_INFO" class="py-name" href="#" onclick="return doclink('link-7', 'NS_DISCO_INFO', 'link-7');">NS_DISCO_INFO</a></tt><tt class="py-op">)</tt> </tt>
+<a name="L91"></a><tt class="py-lineno"> 91</tt>  <tt class="py-line">        <tt class="py-name">owner</tt><tt class="py-op">.</tt><tt id="link-8" class="py-name"><a title="xmpp.dispatcher.Dispatcher.RegisterHandler" class="py-name" href="#" onclick="return doclink('link-8', 'RegisterHandler', 'link-5');">RegisterHandler</a></tt><tt class="py-op">(</tt><tt class="py-string">'iq'</tt><tt class="py-op">,</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-9" class="py-name"><a title="xmpp.browser.Browser._DiscoveryHandler" class="py-name" href="#" onclick="return doclink('link-9', '_DiscoveryHandler', 'link-6');">_DiscoveryHandler</a></tt><tt class="py-op">,</tt><tt class="py-name">typ</tt><tt class="py-op">=</tt><tt class="py-string">'get'</tt><tt class="py-op">,</tt><tt class="py-name">ns</tt><tt class="py-op">=</tt><tt id="link-10" class="py-name" targets="Variable xmpp.protocol.NS_DISCO_ITEMS=xmpp.protocol-module.html#NS_DISCO_ITEMS"><a title="xmpp.protocol.NS_DISCO_ITEMS" class="py-name" href="#" onclick="return doclink('link-10', 'NS_DISCO_ITEMS', 'link-10');">NS_DISCO_ITEMS</a></tt><tt class="py-op">)</tt> </tt>
+</div><a name="L92"></a><tt class="py-lineno"> 92</tt>  <tt class="py-line"> </tt>
+<a name="Browser.plugout"></a><div id="Browser.plugout-def"><a name="L93"></a><tt class="py-lineno"> 93</tt> <a class="py-toggle" href="#" id="Browser.plugout-toggle" onclick="return toggle('Browser.plugout');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="xmpp.browser.Browser-class.html#plugout">plugout</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="Browser.plugout-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="Browser.plugout-expanded"><a name="L94"></a><tt class="py-lineno"> 94</tt>  <tt class="py-line">        <tt class="py-docstring">""" Unregisters browser's iq handlers from your application dispatcher instance.</tt> </tt>
+<a name="L95"></a><tt class="py-lineno"> 95</tt>  <tt class="py-line"><tt class="py-docstring">            Used internally."""</tt> </tt>
+<a name="L96"></a><tt class="py-lineno"> 96</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">_owner</tt><tt class="py-op">.</tt><tt id="link-11" class="py-name" targets="Method xmpp.dispatcher.Dispatcher.UnregisterHandler()=xmpp.dispatcher.Dispatcher-class.html#UnregisterHandler"><a title="xmpp.dispatcher.Dispatcher.UnregisterHandler" class="py-name" href="#" onclick="return doclink('link-11', 'UnregisterHandler', 'link-11');">UnregisterHandler</a></tt><tt class="py-op">(</tt><tt class="py-string">'iq'</tt><tt class="py-op">,</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-12" class="py-name"><a title="xmpp.browser.Browser._DiscoveryHandler" class="py-name" href="#" onclick="return doclink('link-12', '_DiscoveryHandler', 'link-6');">_DiscoveryHandler</a></tt><tt class="py-op">,</tt><tt class="py-name">typ</tt><tt class="py-op">=</tt><tt class="py-string">'get'</tt><tt class="py-op">,</tt><tt class="py-name">ns</tt><tt class="py-op">=</tt><tt id="link-13" class="py-name"><a title="xmpp.protocol.NS_DISCO_INFO" class="py-name" href="#" onclick="return doclink('link-13', 'NS_DISCO_INFO', 'link-7');">NS_DISCO_INFO</a></tt><tt class="py-op">)</tt> </tt>
+<a name="L97"></a><tt class="py-lineno"> 97</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">_owner</tt><tt class="py-op">.</tt><tt id="link-14" class="py-name"><a title="xmpp.dispatcher.Dispatcher.UnregisterHandler" class="py-name" href="#" onclick="return doclink('link-14', 'UnregisterHandler', 'link-11');">UnregisterHandler</a></tt><tt class="py-op">(</tt><tt class="py-string">'iq'</tt><tt class="py-op">,</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-15" class="py-name"><a title="xmpp.browser.Browser._DiscoveryHandler" class="py-name" href="#" onclick="return doclink('link-15', '_DiscoveryHandler', 'link-6');">_DiscoveryHandler</a></tt><tt class="py-op">,</tt><tt class="py-name">typ</tt><tt class="py-op">=</tt><tt class="py-string">'get'</tt><tt class="py-op">,</tt><tt class="py-name">ns</tt><tt class="py-op">=</tt><tt id="link-16" class="py-name"><a title="xmpp.protocol.NS_DISCO_ITEMS" class="py-name" href="#" onclick="return doclink('link-16', 'NS_DISCO_ITEMS', 'link-10');">NS_DISCO_ITEMS</a></tt><tt class="py-op">)</tt> </tt>
+</div><a name="L98"></a><tt class="py-lineno"> 98</tt>  <tt class="py-line"> </tt>
+<a name="Browser._traversePath"></a><div id="Browser._traversePath-def"><a name="L99"></a><tt class="py-lineno"> 99</tt> <a class="py-toggle" href="#" id="Browser._traversePath-toggle" onclick="return toggle('Browser._traversePath');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="xmpp.browser.Browser-class.html#_traversePath">_traversePath</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt><tt class="py-param">node</tt><tt class="py-op">,</tt><tt class="py-param">jid</tt><tt class="py-op">,</tt><tt class="py-param">set</tt><tt class="py-op">=</tt><tt class="py-number">0</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="Browser._traversePath-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="Browser._traversePath-expanded"><a name="L100"></a><tt class="py-lineno">100</tt>  <tt class="py-line">        <tt class="py-docstring">""" Returns dictionary and key or None,None</tt> </tt>
+<a name="L101"></a><tt class="py-lineno">101</tt>  <tt class="py-line"><tt class="py-docstring">            None - root node (w/o "node" attribute)</tt> </tt>
+<a name="L102"></a><tt class="py-lineno">102</tt>  <tt class="py-line"><tt class="py-docstring">            /a/b/c - node</tt> </tt>
+<a name="L103"></a><tt class="py-lineno">103</tt>  <tt class="py-line"><tt class="py-docstring">            /a/b/  - branch</tt> </tt>
+<a name="L104"></a><tt class="py-lineno">104</tt>  <tt class="py-line"><tt class="py-docstring">            Set returns '' or None as the key</tt> </tt>
+<a name="L105"></a><tt class="py-lineno">105</tt>  <tt class="py-line"><tt class="py-docstring">            get returns '' or None as the key or None as the dict.</tt> </tt>
+<a name="L106"></a><tt class="py-lineno">106</tt>  <tt class="py-line"><tt class="py-docstring">            Used internally."""</tt> </tt>
+<a name="L107"></a><tt class="py-lineno">107</tt>  <tt class="py-line">        <tt class="py-keyword">if</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">_handlers</tt><tt class="py-op">.</tt><tt class="py-name">has_key</tt><tt class="py-op">(</tt><tt class="py-name">jid</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> <tt class="py-name">cur</tt><tt class="py-op">=</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">_handlers</tt><tt class="py-op">[</tt><tt class="py-name">jid</tt><tt class="py-op">]</tt> </tt>
+<a name="L108"></a><tt class="py-lineno">108</tt>  <tt class="py-line">        <tt class="py-keyword">elif</tt> <tt class="py-name">set</tt><tt class="py-op">:</tt> </tt>
+<a name="L109"></a><tt class="py-lineno">109</tt>  <tt class="py-line">            <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">_handlers</tt><tt class="py-op">[</tt><tt class="py-name">jid</tt><tt class="py-op">]</tt><tt class="py-op">=</tt><tt class="py-op">{</tt><tt class="py-op">}</tt> </tt>
+<a name="L110"></a><tt class="py-lineno">110</tt>  <tt class="py-line">            <tt class="py-name">cur</tt><tt class="py-op">=</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">_handlers</tt><tt class="py-op">[</tt><tt class="py-name">jid</tt><tt class="py-op">]</tt> </tt>
+<a name="L111"></a><tt class="py-lineno">111</tt>  <tt class="py-line">        <tt class="py-keyword">else</tt><tt class="py-op">:</tt> <tt class="py-name">cur</tt><tt class="py-op">=</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">_handlers</tt><tt class="py-op">[</tt><tt class="py-string">''</tt><tt class="py-op">]</tt> </tt>
+<a name="L112"></a><tt class="py-lineno">112</tt>  <tt class="py-line">        <tt class="py-keyword">if</tt> <tt class="py-name">node</tt> <tt class="py-keyword">is</tt> <tt class="py-name">None</tt><tt class="py-op">:</tt> <tt class="py-name">node</tt><tt class="py-op">=</tt><tt class="py-op">[</tt><tt class="py-name">None</tt><tt class="py-op">]</tt> </tt>
+<a name="L113"></a><tt class="py-lineno">113</tt>  <tt class="py-line">        <tt class="py-keyword">else</tt><tt class="py-op">:</tt> <tt class="py-name">node</tt><tt class="py-op">=</tt><tt class="py-name">node</tt><tt class="py-op">.</tt><tt class="py-name">replace</tt><tt class="py-op">(</tt><tt class="py-string">'/'</tt><tt class="py-op">,</tt><tt class="py-string">' /'</tt><tt class="py-op">)</tt><tt class="py-op">.</tt><tt class="py-name">split</tt><tt class="py-op">(</tt><tt class="py-string">'/'</tt><tt class="py-op">)</tt> </tt>
+<a name="L114"></a><tt class="py-lineno">114</tt>  <tt class="py-line">        <tt class="py-keyword">for</tt> <tt class="py-name">i</tt> <tt class="py-keyword">in</tt> <tt class="py-name">node</tt><tt class="py-op">:</tt> </tt>
+<a name="L115"></a><tt class="py-lineno">115</tt>  <tt class="py-line">            <tt class="py-keyword">if</tt> <tt class="py-name">i</tt><tt class="py-op">&lt;&gt;</tt><tt class="py-string">''</tt> <tt class="py-keyword">and</tt> <tt class="py-name">cur</tt><tt class="py-op">.</tt><tt class="py-name">has_key</tt><tt class="py-op">(</tt><tt class="py-name">i</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> <tt class="py-name">cur</tt><tt class="py-op">=</tt><tt class="py-name">cur</tt><tt class="py-op">[</tt><tt class="py-name">i</tt><tt class="py-op">]</tt> </tt>
+<a name="L116"></a><tt class="py-lineno">116</tt>  <tt class="py-line">            <tt class="py-keyword">elif</tt> <tt class="py-name">set</tt> <tt class="py-keyword">and</tt> <tt class="py-name">i</tt><tt class="py-op">&lt;&gt;</tt><tt class="py-string">''</tt><tt class="py-op">:</tt> <tt class="py-name">cur</tt><tt class="py-op">[</tt><tt class="py-name">i</tt><tt class="py-op">]</tt><tt class="py-op">=</tt><tt class="py-op">{</tt><tt class="py-name">dict</tt><tt class="py-op">:</tt><tt class="py-name">cur</tt><tt class="py-op">,</tt><tt class="py-name">str</tt><tt class="py-op">:</tt><tt class="py-name">i</tt><tt class="py-op">}</tt><tt class="py-op">;</tt> <tt class="py-name">cur</tt><tt class="py-op">=</tt><tt class="py-name">cur</tt><tt class="py-op">[</tt><tt class="py-name">i</tt><tt class="py-op">]</tt> </tt>
+<a name="L117"></a><tt class="py-lineno">117</tt>  <tt class="py-line">            <tt class="py-keyword">elif</tt> <tt class="py-name">set</tt> <tt class="py-keyword">or</tt> <tt class="py-name">cur</tt><tt class="py-op">.</tt><tt class="py-name">has_key</tt><tt class="py-op">(</tt><tt class="py-string">''</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> <tt class="py-keyword">return</tt> <tt class="py-name">cur</tt><tt class="py-op">,</tt><tt class="py-string">''</tt> </tt>
+<a name="L118"></a><tt class="py-lineno">118</tt>  <tt class="py-line">            <tt class="py-keyword">else</tt><tt class="py-op">:</tt> <tt class="py-keyword">return</tt> <tt class="py-name">None</tt><tt class="py-op">,</tt><tt class="py-name">None</tt> </tt>
+<a name="L119"></a><tt class="py-lineno">119</tt>  <tt class="py-line">        <tt class="py-keyword">if</tt> <tt class="py-name">cur</tt><tt class="py-op">.</tt><tt class="py-name">has_key</tt><tt class="py-op">(</tt><tt class="py-number">1</tt><tt class="py-op">)</tt> <tt class="py-keyword">or</tt> <tt class="py-name">set</tt><tt class="py-op">:</tt> <tt class="py-keyword">return</tt> <tt class="py-name">cur</tt><tt class="py-op">,</tt><tt class="py-number">1</tt> </tt>
+<a name="L120"></a><tt class="py-lineno">120</tt>  <tt class="py-line">        <tt class="py-keyword">raise</tt> <tt class="py-string">"Corrupted data"</tt> </tt>
+</div><a name="L121"></a><tt class="py-lineno">121</tt>  <tt class="py-line"> </tt>
+<a name="Browser.setDiscoHandler"></a><div id="Browser.setDiscoHandler-def"><a name="L122"></a><tt class="py-lineno">122</tt> <a class="py-toggle" href="#" id="Browser.setDiscoHandler-toggle" onclick="return toggle('Browser.setDiscoHandler');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="xmpp.browser.Browser-class.html#setDiscoHandler">setDiscoHandler</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt><tt class="py-param">handler</tt><tt class="py-op">,</tt><tt class="py-param">node</tt><tt class="py-op">=</tt><tt class="py-string">''</tt><tt class="py-op">,</tt><tt class="py-param">jid</tt><tt class="py-op">=</tt><tt class="py-string">''</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="Browser.setDiscoHandler-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="Browser.setDiscoHandler-expanded"><a name="L123"></a><tt class="py-lineno">123</tt>  <tt class="py-line">        <tt class="py-docstring">""" This is the main method that you will use in this class.</tt> </tt>
+<a name="L124"></a><tt class="py-lineno">124</tt>  <tt class="py-line"><tt class="py-docstring">            It is used to register supplied DISCO handler (or dictionary with static info)</tt> </tt>
+<a name="L125"></a><tt class="py-lineno">125</tt>  <tt class="py-line"><tt class="py-docstring">            as handler of some disco tree branch.</tt> </tt>
+<a name="L126"></a><tt class="py-lineno">126</tt>  <tt class="py-line"><tt class="py-docstring">            If you do not specify the node this handler will be used for all queried nodes.</tt> </tt>
+<a name="L127"></a><tt class="py-lineno">127</tt>  <tt class="py-line"><tt class="py-docstring">            If you do not specify the jid this handler will be used for all queried JIDs.</tt> </tt>
+<a name="L128"></a><tt class="py-lineno">128</tt>  <tt class="py-line"><tt class="py-docstring">            </tt> </tt>
+<a name="L129"></a><tt class="py-lineno">129</tt>  <tt class="py-line"><tt class="py-docstring">            Usage:</tt> </tt>
+<a name="L130"></a><tt class="py-lineno">130</tt>  <tt class="py-line"><tt class="py-docstring">            cl.Browser.setDiscoHandler(someDict,node,jid)</tt> </tt>
+<a name="L131"></a><tt class="py-lineno">131</tt>  <tt class="py-line"><tt class="py-docstring">            or</tt> </tt>
+<a name="L132"></a><tt class="py-lineno">132</tt>  <tt class="py-line"><tt class="py-docstring">            cl.Browser.setDiscoHandler(someDISCOHandler,node,jid)</tt> </tt>
+<a name="L133"></a><tt class="py-lineno">133</tt>  <tt class="py-line"><tt class="py-docstring">            where</tt> </tt>
+<a name="L134"></a><tt class="py-lineno">134</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L135"></a><tt class="py-lineno">135</tt>  <tt class="py-line"><tt class="py-docstring">            someDict={</tt> </tt>
+<a name="L136"></a><tt class="py-lineno">136</tt>  <tt class="py-line"><tt class="py-docstring">                'items':[</tt> </tt>
+<a name="L137"></a><tt class="py-lineno">137</tt>  <tt class="py-line"><tt class="py-docstring">                          {'jid':'jid1','action':'action1','node':'node1','name':'name1'},</tt> </tt>
+<a name="L138"></a><tt class="py-lineno">138</tt>  <tt class="py-line"><tt class="py-docstring">                          {'jid':'jid2','action':'action2','node':'node2','name':'name2'},</tt> </tt>
+<a name="L139"></a><tt class="py-lineno">139</tt>  <tt class="py-line"><tt class="py-docstring">                          {'jid':'jid3','node':'node3','name':'name3'},</tt> </tt>
+<a name="L140"></a><tt class="py-lineno">140</tt>  <tt class="py-line"><tt class="py-docstring">                          {'jid':'jid4','node':'node4'}</tt> </tt>
+<a name="L141"></a><tt class="py-lineno">141</tt>  <tt class="py-line"><tt class="py-docstring">                        ],</tt> </tt>
+<a name="L142"></a><tt class="py-lineno">142</tt>  <tt class="py-line"><tt class="py-docstring">                'info' :{</tt> </tt>
+<a name="L143"></a><tt class="py-lineno">143</tt>  <tt class="py-line"><tt class="py-docstring">                          'ids':[</tt> </tt>
+<a name="L144"></a><tt class="py-lineno">144</tt>  <tt class="py-line"><tt class="py-docstring">                                  {'category':'category1','type':'type1','name':'name1'},</tt> </tt>
+<a name="L145"></a><tt class="py-lineno">145</tt>  <tt class="py-line"><tt class="py-docstring">                                  {'category':'category2','type':'type2','name':'name2'},</tt> </tt>
+<a name="L146"></a><tt class="py-lineno">146</tt>  <tt class="py-line"><tt class="py-docstring">                                  {'category':'category3','type':'type3','name':'name3'},</tt> </tt>
+<a name="L147"></a><tt class="py-lineno">147</tt>  <tt class="py-line"><tt class="py-docstring">                                ], </tt> </tt>
+<a name="L148"></a><tt class="py-lineno">148</tt>  <tt class="py-line"><tt class="py-docstring">                          'features':['feature1','feature2','feature3','feature4'], </tt> </tt>
+<a name="L149"></a><tt class="py-lineno">149</tt>  <tt class="py-line"><tt class="py-docstring">                          'xdata':DataForm</tt> </tt>
+<a name="L150"></a><tt class="py-lineno">150</tt>  <tt class="py-line"><tt class="py-docstring">                        }</tt> </tt>
+<a name="L151"></a><tt class="py-lineno">151</tt>  <tt class="py-line"><tt class="py-docstring">                     }</tt> </tt>
+<a name="L152"></a><tt class="py-lineno">152</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L153"></a><tt class="py-lineno">153</tt>  <tt class="py-line"><tt class="py-docstring">            and/or</tt> </tt>
+<a name="L154"></a><tt class="py-lineno">154</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L155"></a><tt class="py-lineno">155</tt>  <tt class="py-line"><tt class="py-docstring">            def someDISCOHandler(session,request,TYR):</tt> </tt>
+<a name="L156"></a><tt class="py-lineno">156</tt>  <tt class="py-line"><tt class="py-docstring">                # if TYR=='items':  # returns items list of the same format as shown above</tt> </tt>
+<a name="L157"></a><tt class="py-lineno">157</tt>  <tt class="py-line"><tt class="py-docstring">                # elif TYR=='info': # returns info dictionary of the same format as shown above</tt> </tt>
+<a name="L158"></a><tt class="py-lineno">158</tt>  <tt class="py-line"><tt class="py-docstring">                # else: # this case is impossible for now.</tt> </tt>
+<a name="L159"></a><tt class="py-lineno">159</tt>  <tt class="py-line"><tt class="py-docstring">        """</tt> </tt>
+<a name="L160"></a><tt class="py-lineno">160</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-17" class="py-name" targets="Method xmpp.client.PlugIn.DEBUG()=xmpp.client.PlugIn-class.html#DEBUG,Method xmpp.simplexml.NodeBuilder.DEBUG()=xmpp.simplexml.NodeBuilder-class.html#DEBUG,Method xmpp.transports.HTTPPROXYsocket.DEBUG()=xmpp.transports.HTTPPROXYsocket-class.html#DEBUG"><a title="xmpp.client.PlugIn.DEBUG
+xmpp.simplexml.NodeBuilder.DEBUG
+xmpp.transports.HTTPPROXYsocket.DEBUG" class="py-name" href="#" onclick="return doclink('link-17', 'DEBUG', 'link-17');">DEBUG</a></tt><tt class="py-op">(</tt><tt class="py-string">'Registering handler %s for "%s" node-&gt;%s'</tt><tt class="py-op">%</tt><tt class="py-op">(</tt><tt class="py-name">handler</tt><tt class="py-op">,</tt><tt class="py-name">jid</tt><tt class="py-op">,</tt><tt class="py-name">node</tt><tt class="py-op">)</tt><tt class="py-op">,</tt> <tt class="py-string">'info'</tt><tt class="py-op">)</tt> </tt>
+<a name="L161"></a><tt class="py-lineno">161</tt>  <tt class="py-line">        <tt class="py-name">node</tt><tt class="py-op">,</tt><tt class="py-name">key</tt><tt class="py-op">=</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-18" class="py-name" targets="Method xmpp.browser.Browser._traversePath()=xmpp.browser.Browser-class.html#_traversePath"><a title="xmpp.browser.Browser._traversePath" class="py-name" href="#" onclick="return doclink('link-18', '_traversePath', 'link-18');">_traversePath</a></tt><tt class="py-op">(</tt><tt class="py-name">node</tt><tt class="py-op">,</tt><tt class="py-name">jid</tt><tt class="py-op">,</tt><tt class="py-number">1</tt><tt class="py-op">)</tt> </tt>
+<a name="L162"></a><tt class="py-lineno">162</tt>  <tt class="py-line">        <tt class="py-name">node</tt><tt class="py-op">[</tt><tt class="py-name">key</tt><tt class="py-op">]</tt><tt class="py-op">=</tt><tt class="py-name">handler</tt> </tt>
+</div><a name="L163"></a><tt class="py-lineno">163</tt>  <tt class="py-line"> </tt>
+<a name="Browser.getDiscoHandler"></a><div id="Browser.getDiscoHandler-def"><a name="L164"></a><tt class="py-lineno">164</tt> <a class="py-toggle" href="#" id="Browser.getDiscoHandler-toggle" onclick="return toggle('Browser.getDiscoHandler');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="xmpp.browser.Browser-class.html#getDiscoHandler">getDiscoHandler</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt><tt class="py-param">node</tt><tt class="py-op">=</tt><tt class="py-string">''</tt><tt class="py-op">,</tt><tt class="py-param">jid</tt><tt class="py-op">=</tt><tt class="py-string">''</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="Browser.getDiscoHandler-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="Browser.getDiscoHandler-expanded"><a name="L165"></a><tt class="py-lineno">165</tt>  <tt class="py-line">        <tt class="py-docstring">""" Returns the previously registered DISCO handler</tt> </tt>
+<a name="L166"></a><tt class="py-lineno">166</tt>  <tt class="py-line"><tt class="py-docstring">            that is resonsible for this node/jid combination.</tt> </tt>
+<a name="L167"></a><tt class="py-lineno">167</tt>  <tt class="py-line"><tt class="py-docstring">            Used internally."""</tt> </tt>
+<a name="L168"></a><tt class="py-lineno">168</tt>  <tt class="py-line">        <tt class="py-name">node</tt><tt class="py-op">,</tt><tt class="py-name">key</tt><tt class="py-op">=</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-19" class="py-name"><a title="xmpp.browser.Browser._traversePath" class="py-name" href="#" onclick="return doclink('link-19', '_traversePath', 'link-18');">_traversePath</a></tt><tt class="py-op">(</tt><tt class="py-name">node</tt><tt class="py-op">,</tt><tt class="py-name">jid</tt><tt class="py-op">)</tt> </tt>
+<a name="L169"></a><tt class="py-lineno">169</tt>  <tt class="py-line">        <tt class="py-keyword">if</tt> <tt class="py-name">node</tt><tt class="py-op">:</tt> <tt class="py-keyword">return</tt> <tt class="py-name">node</tt><tt class="py-op">[</tt><tt class="py-name">key</tt><tt class="py-op">]</tt> </tt>
+</div><a name="L170"></a><tt class="py-lineno">170</tt>  <tt class="py-line"> </tt>
+<a name="Browser.delDiscoHandler"></a><div id="Browser.delDiscoHandler-def"><a name="L171"></a><tt class="py-lineno">171</tt> <a class="py-toggle" href="#" id="Browser.delDiscoHandler-toggle" onclick="return toggle('Browser.delDiscoHandler');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="xmpp.browser.Browser-class.html#delDiscoHandler">delDiscoHandler</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt><tt class="py-param">node</tt><tt class="py-op">=</tt><tt class="py-string">''</tt><tt class="py-op">,</tt><tt class="py-param">jid</tt><tt class="py-op">=</tt><tt class="py-string">''</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="Browser.delDiscoHandler-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="Browser.delDiscoHandler-expanded"><a name="L172"></a><tt class="py-lineno">172</tt>  <tt class="py-line">        <tt class="py-docstring">""" Unregisters DISCO handler that is resonsible for this</tt> </tt>
+<a name="L173"></a><tt class="py-lineno">173</tt>  <tt class="py-line"><tt class="py-docstring">            node/jid combination. When handler is unregistered the branch</tt> </tt>
+<a name="L174"></a><tt class="py-lineno">174</tt>  <tt class="py-line"><tt class="py-docstring">            is handled in the same way that it's parent branch from this moment.</tt> </tt>
+<a name="L175"></a><tt class="py-lineno">175</tt>  <tt class="py-line"><tt class="py-docstring">        """</tt> </tt>
+<a name="L176"></a><tt class="py-lineno">176</tt>  <tt class="py-line">        <tt class="py-name">node</tt><tt class="py-op">,</tt><tt class="py-name">key</tt><tt class="py-op">=</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-20" class="py-name"><a title="xmpp.browser.Browser._traversePath" class="py-name" href="#" onclick="return doclink('link-20', '_traversePath', 'link-18');">_traversePath</a></tt><tt class="py-op">(</tt><tt class="py-name">node</tt><tt class="py-op">,</tt><tt class="py-name">jid</tt><tt class="py-op">)</tt> </tt>
+<a name="L177"></a><tt class="py-lineno">177</tt>  <tt class="py-line">        <tt class="py-keyword">if</tt> <tt class="py-name">node</tt><tt class="py-op">:</tt> </tt>
+<a name="L178"></a><tt class="py-lineno">178</tt>  <tt class="py-line">            <tt class="py-name">handler</tt><tt class="py-op">=</tt><tt class="py-name">node</tt><tt class="py-op">[</tt><tt class="py-name">key</tt><tt class="py-op">]</tt> </tt>
+<a name="L179"></a><tt class="py-lineno">179</tt>  <tt class="py-line">            <tt class="py-keyword">del</tt> <tt class="py-name">node</tt><tt class="py-op">[</tt><tt class="py-name">dict</tt><tt class="py-op">]</tt><tt class="py-op">[</tt><tt class="py-name">node</tt><tt class="py-op">[</tt><tt class="py-name">str</tt><tt class="py-op">]</tt><tt class="py-op">]</tt> </tt>
+<a name="L180"></a><tt class="py-lineno">180</tt>  <tt class="py-line">            <tt class="py-keyword">return</tt> <tt class="py-name">handler</tt> </tt>
+</div><a name="L181"></a><tt class="py-lineno">181</tt>  <tt class="py-line"> </tt>
+<a name="Browser._DiscoveryHandler"></a><div id="Browser._DiscoveryHandler-def"><a name="L182"></a><tt class="py-lineno">182</tt> <a class="py-toggle" href="#" id="Browser._DiscoveryHandler-toggle" onclick="return toggle('Browser._DiscoveryHandler');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="xmpp.browser.Browser-class.html#_DiscoveryHandler">_DiscoveryHandler</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt><tt class="py-param">conn</tt><tt class="py-op">,</tt><tt class="py-param">request</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="Browser._DiscoveryHandler-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="Browser._DiscoveryHandler-expanded"><a name="L183"></a><tt class="py-lineno">183</tt>  <tt class="py-line">        <tt class="py-docstring">""" Servers DISCO iq request from the remote client.</tt> </tt>
+<a name="L184"></a><tt class="py-lineno">184</tt>  <tt class="py-line"><tt class="py-docstring">            Automatically determines the best handler to use and calls it</tt> </tt>
+<a name="L185"></a><tt class="py-lineno">185</tt>  <tt class="py-line"><tt class="py-docstring">            to handle the request. Used internally.</tt> </tt>
+<a name="L186"></a><tt class="py-lineno">186</tt>  <tt class="py-line"><tt class="py-docstring">        """</tt> </tt>
+<a name="L187"></a><tt class="py-lineno">187</tt>  <tt class="py-line">        <tt class="py-name">node</tt><tt class="py-op">=</tt><tt class="py-name">request</tt><tt class="py-op">.</tt><tt id="link-21" class="py-name" targets="Method xmpp.protocol.Iq.getQuerynode()=xmpp.protocol.Iq-class.html#getQuerynode"><a title="xmpp.protocol.Iq.getQuerynode" class="py-name" href="#" onclick="return doclink('link-21', 'getQuerynode', 'link-21');">getQuerynode</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L188"></a><tt class="py-lineno">188</tt>  <tt class="py-line">        <tt class="py-keyword">if</tt> <tt class="py-name">node</tt><tt class="py-op">:</tt> </tt>
+<a name="L189"></a><tt class="py-lineno">189</tt>  <tt class="py-line">            <tt class="py-name">nodestr</tt><tt class="py-op">=</tt><tt class="py-name">node</tt> </tt>
+<a name="L190"></a><tt class="py-lineno">190</tt>  <tt class="py-line">        <tt class="py-keyword">else</tt><tt class="py-op">:</tt> </tt>
+<a name="L191"></a><tt class="py-lineno">191</tt>  <tt class="py-line">            <tt class="py-name">nodestr</tt><tt class="py-op">=</tt><tt class="py-string">'None'</tt> </tt>
+<a name="L192"></a><tt class="py-lineno">192</tt>  <tt class="py-line">        <tt class="py-name">handler</tt><tt class="py-op">=</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-22" class="py-name" targets="Method xmpp.browser.Browser.getDiscoHandler()=xmpp.browser.Browser-class.html#getDiscoHandler"><a title="xmpp.browser.Browser.getDiscoHandler" class="py-name" href="#" onclick="return doclink('link-22', 'getDiscoHandler', 'link-22');">getDiscoHandler</a></tt><tt class="py-op">(</tt><tt class="py-name">node</tt><tt class="py-op">,</tt><tt class="py-name">request</tt><tt class="py-op">.</tt><tt id="link-23" class="py-name" targets="Method xmpp.protocol.Protocol.getTo()=xmpp.protocol.Protocol-class.html#getTo"><a title="xmpp.protocol.Protocol.getTo" class="py-name" href="#" onclick="return doclink('link-23', 'getTo', 'link-23');">getTo</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+<a name="L193"></a><tt class="py-lineno">193</tt>  <tt class="py-line">        <tt class="py-keyword">if</tt> <tt class="py-keyword">not</tt> <tt class="py-name">handler</tt><tt class="py-op">:</tt> </tt>
+<a name="L194"></a><tt class="py-lineno">194</tt>  <tt class="py-line">            <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-24" class="py-name"><a title="xmpp.client.PlugIn.DEBUG
+xmpp.simplexml.NodeBuilder.DEBUG
+xmpp.transports.HTTPPROXYsocket.DEBUG" class="py-name" href="#" onclick="return doclink('link-24', 'DEBUG', 'link-17');">DEBUG</a></tt><tt class="py-op">(</tt><tt class="py-string">"No Handler for request with jid-&gt;%s node-&gt;%s ns-&gt;%s"</tt><tt class="py-op">%</tt><tt class="py-op">(</tt><tt class="py-name">request</tt><tt class="py-op">.</tt><tt id="link-25" class="py-name"><a title="xmpp.protocol.Protocol.getTo" class="py-name" href="#" onclick="return doclink('link-25', 'getTo', 'link-23');">getTo</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">.</tt><tt id="link-26" class="py-name" targets="Method xmpp.protocol.JID.__str__()=xmpp.protocol.JID-class.html#__str__,Method xmpp.simplexml.Node.__str__()=xmpp.simplexml.Node-class.html#__str__,Method xmpp.transports.error.__str__()=xmpp.transports.error-class.html#__str__"><a title="xmpp.protocol.JID.__str__
+xmpp.simplexml.Node.__str__
+xmpp.transports.error.__str__" class="py-name" href="#" onclick="return doclink('link-26', '__str__', 'link-26');">__str__</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">.</tt><tt class="py-name">encode</tt><tt class="py-op">(</tt><tt class="py-string">'utf8'</tt><tt class="py-op">)</tt><tt class="py-op">,</tt><tt class="py-name">nodestr</tt><tt class="py-op">.</tt><tt class="py-name">encode</tt><tt class="py-op">(</tt><tt class="py-string">'utf8'</tt><tt class="py-op">)</tt><tt class="py-op">,</tt><tt class="py-name">request</tt><tt class="py-op">.</tt><tt id="link-27" class="py-name" targets="Method xmpp.protocol.Iq.getQueryNS()=xmpp.protocol.Iq-class.html#getQueryNS"><a title="xmpp.protocol.Iq.getQueryNS" class="py-name" href="#" onclick="return doclink('link-27', 'getQueryNS', 'link-27');">getQueryNS</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">.</tt><tt class="py-name">encode</tt><tt class="py-op">(</tt><tt class="py-string">'utf8'</tt><tt class="py-op">)</tt><tt class="py-op">)</tt><tt class="py-op">,</tt><tt class="py-string">'error'</tt><tt class="py-op">)</tt> </tt>
+<a name="L195"></a><tt class="py-lineno">195</tt>  <tt class="py-line">            <tt class="py-name">conn</tt><tt class="py-op">.</tt><tt id="link-28" class="py-name" targets="Method xmpp.dispatcher.Dispatcher.send()=xmpp.dispatcher.Dispatcher-class.html#send,Method xmpp.transports.TCPsocket.send()=xmpp.transports.TCPsocket-class.html#send"><a title="xmpp.dispatcher.Dispatcher.send
+xmpp.transports.TCPsocket.send" class="py-name" href="#" onclick="return doclink('link-28', 'send', 'link-28');">send</a></tt><tt class="py-op">(</tt><tt id="link-29" class="py-name" targets="Class xmpp.protocol.Error=xmpp.protocol.Error-class.html"><a title="xmpp.protocol.Error" class="py-name" href="#" onclick="return doclink('link-29', 'Error', 'link-29');">Error</a></tt><tt class="py-op">(</tt><tt class="py-name">request</tt><tt class="py-op">,</tt><tt id="link-30" class="py-name" targets="Variable xmpp.ERR_ITEM_NOT_FOUND=xmpp-module.html#ERR_ITEM_NOT_FOUND,Variable xmpp.auth.ERR_ITEM_NOT_FOUND=xmpp.auth-module.html#ERR_ITEM_NOT_FOUND,Variable xmpp.browser.ERR_ITEM_NOT_FOUND=xmpp.browser-module.html#ERR_ITEM_NOT_FOUND,Variable xmpp.commands.ERR_ITEM_NOT_FOUND=xmpp.commands-module.html#ERR_ITEM_NOT_FOUND,Variable xmpp.dispatcher.ERR_ITEM_NOT_FOUND=xmpp.dispatcher-module.html#ERR_ITEM_NOT_FOUND,Variable xmpp.features.ERR_ITEM_NOT_FOUND=xmpp.features-module.html#ERR_ITEM_NOT_FOUND,Variable xmpp.filetransfer.ERR_ITEM_NOT_FOUND=xmpp.filetransfer-module.html#ERR_ITEM_NOT_FOUND,Variable xmpp.protocol.ERR_ITEM_NOT_FOUND=xmpp.protocol-module.html#ERR_ITEM_NOT_FOUND,Variable xmpp.roster.ERR_ITEM_NOT_FOUND=xmpp.roster-module.html#ERR_ITEM_NOT_FOUND,Variable xmpp.session.ERR_ITEM_NOT_FOUND=xmpp.session-module.html#ERR_ITEM_NOT_FOUND,Variable xmpp.transports.ERR_ITEM_NOT_FOUND=xmpp.transports-module.html#ERR_ITEM_NOT_FOUND"><a title="xmpp.ERR_ITEM_NOT_FOUND
+xmpp.auth.ERR_ITEM_NOT_FOUND
+xmpp.browser.ERR_ITEM_NOT_FOUND
+xmpp.commands.ERR_ITEM_NOT_FOUND
+xmpp.dispatcher.ERR_ITEM_NOT_FOUND
+xmpp.features.ERR_ITEM_NOT_FOUND
+xmpp.filetransfer.ERR_ITEM_NOT_FOUND
+xmpp.protocol.ERR_ITEM_NOT_FOUND
+xmpp.roster.ERR_ITEM_NOT_FOUND
+xmpp.session.ERR_ITEM_NOT_FOUND
+xmpp.transports.ERR_ITEM_NOT_FOUND" class="py-name" href="#" onclick="return doclink('link-30', 'ERR_ITEM_NOT_FOUND', 'link-30');">ERR_ITEM_NOT_FOUND</a></tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+<a name="L196"></a><tt class="py-lineno">196</tt>  <tt class="py-line">            <tt class="py-keyword">raise</tt> <tt id="link-31" class="py-name" targets="Class xmpp.protocol.NodeProcessed=xmpp.protocol.NodeProcessed-class.html"><a title="xmpp.protocol.NodeProcessed" class="py-name" href="#" onclick="return doclink('link-31', 'NodeProcessed', 'link-31');">NodeProcessed</a></tt> </tt>
+<a name="L197"></a><tt class="py-lineno">197</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-32" class="py-name"><a title="xmpp.client.PlugIn.DEBUG
+xmpp.simplexml.NodeBuilder.DEBUG
+xmpp.transports.HTTPPROXYsocket.DEBUG" class="py-name" href="#" onclick="return doclink('link-32', 'DEBUG', 'link-17');">DEBUG</a></tt><tt class="py-op">(</tt><tt class="py-string">"Handling request with jid-&gt;%s node-&gt;%s ns-&gt;%s"</tt><tt class="py-op">%</tt><tt class="py-op">(</tt><tt class="py-name">request</tt><tt class="py-op">.</tt><tt id="link-33" class="py-name"><a title="xmpp.protocol.Protocol.getTo" class="py-name" href="#" onclick="return doclink('link-33', 'getTo', 'link-23');">getTo</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">.</tt><tt id="link-34" class="py-name"><a title="xmpp.protocol.JID.__str__
+xmpp.simplexml.Node.__str__
+xmpp.transports.error.__str__" class="py-name" href="#" onclick="return doclink('link-34', '__str__', 'link-26');">__str__</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">.</tt><tt class="py-name">encode</tt><tt class="py-op">(</tt><tt class="py-string">'utf8'</tt><tt class="py-op">)</tt><tt class="py-op">,</tt><tt class="py-name">nodestr</tt><tt class="py-op">.</tt><tt class="py-name">encode</tt><tt class="py-op">(</tt><tt class="py-string">'utf8'</tt><tt class="py-op">)</tt><tt class="py-op">,</tt><tt class="py-name">request</tt><tt class="py-op">.</tt><tt id="link-35" class="py-name"><a title="xmpp.protocol.Iq.getQueryNS" class="py-name" href="#" onclick="return doclink('link-35', 'getQueryNS', 'link-27');">getQueryNS</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">.</tt><tt class="py-name">encode</tt><tt class="py-op">(</tt><tt class="py-string">'utf8'</tt><tt class="py-op">)</tt><tt class="py-op">)</tt><tt class="py-op">,</tt><tt class="py-string">'ok'</tt><tt class="py-op">)</tt> </tt>
+<a name="L198"></a><tt class="py-lineno">198</tt>  <tt class="py-line">        <tt class="py-name">rep</tt><tt class="py-op">=</tt><tt class="py-name">request</tt><tt class="py-op">.</tt><tt id="link-36" class="py-name" targets="Method xmpp.protocol.Iq.buildReply()=xmpp.protocol.Iq-class.html#buildReply,Method xmpp.protocol.Message.buildReply()=xmpp.protocol.Message-class.html#buildReply"><a title="xmpp.protocol.Iq.buildReply
+xmpp.protocol.Message.buildReply" class="py-name" href="#" onclick="return doclink('link-36', 'buildReply', 'link-36');">buildReply</a></tt><tt class="py-op">(</tt><tt class="py-string">'result'</tt><tt class="py-op">)</tt> </tt>
+<a name="L199"></a><tt class="py-lineno">199</tt>  <tt class="py-line">        <tt class="py-keyword">if</tt> <tt class="py-name">node</tt><tt class="py-op">:</tt> <tt class="py-name">rep</tt><tt class="py-op">.</tt><tt id="link-37" class="py-name" targets="Method xmpp.protocol.Iq.setQuerynode()=xmpp.protocol.Iq-class.html#setQuerynode"><a title="xmpp.protocol.Iq.setQuerynode" class="py-name" href="#" onclick="return doclink('link-37', 'setQuerynode', 'link-37');">setQuerynode</a></tt><tt class="py-op">(</tt><tt class="py-name">node</tt><tt class="py-op">)</tt> </tt>
+<a name="L200"></a><tt class="py-lineno">200</tt>  <tt class="py-line">        <tt class="py-name">q</tt><tt class="py-op">=</tt><tt class="py-name">rep</tt><tt class="py-op">.</tt><tt id="link-38" class="py-name" targets="Method xmpp.simplexml.Node.getTag()=xmpp.simplexml.Node-class.html#getTag"><a title="xmpp.simplexml.Node.getTag" class="py-name" href="#" onclick="return doclink('link-38', 'getTag', 'link-38');">getTag</a></tt><tt class="py-op">(</tt><tt class="py-string">'query'</tt><tt class="py-op">)</tt> </tt>
+<a name="L201"></a><tt class="py-lineno">201</tt>  <tt class="py-line">        <tt class="py-keyword">if</tt> <tt class="py-name">request</tt><tt class="py-op">.</tt><tt id="link-39" class="py-name"><a title="xmpp.protocol.Iq.getQueryNS" class="py-name" href="#" onclick="return doclink('link-39', 'getQueryNS', 'link-27');">getQueryNS</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">==</tt><tt id="link-40" class="py-name"><a title="xmpp.protocol.NS_DISCO_ITEMS" class="py-name" href="#" onclick="return doclink('link-40', 'NS_DISCO_ITEMS', 'link-10');">NS_DISCO_ITEMS</a></tt><tt class="py-op">:</tt> </tt>
+<a name="L202"></a><tt class="py-lineno">202</tt>  <tt class="py-line">            <tt class="py-comment"># handler must return list: [{jid,action,node,name}]</tt> </tt>
+<a name="L203"></a><tt class="py-lineno">203</tt>  <tt class="py-line"><tt class="py-comment"></tt>            <tt class="py-keyword">if</tt> <tt class="py-name">type</tt><tt class="py-op">(</tt><tt class="py-name">handler</tt><tt class="py-op">)</tt><tt class="py-op">==</tt><tt class="py-name">dict</tt><tt class="py-op">:</tt> <tt class="py-name">lst</tt><tt class="py-op">=</tt><tt class="py-name">handler</tt><tt class="py-op">[</tt><tt class="py-string">'items'</tt><tt class="py-op">]</tt> </tt>
+<a name="L204"></a><tt class="py-lineno">204</tt>  <tt class="py-line">            <tt class="py-keyword">else</tt><tt class="py-op">:</tt> <tt class="py-name">lst</tt><tt class="py-op">=</tt><tt class="py-name">handler</tt><tt class="py-op">(</tt><tt class="py-name">conn</tt><tt class="py-op">,</tt><tt class="py-name">request</tt><tt class="py-op">,</tt><tt class="py-string">'items'</tt><tt class="py-op">)</tt> </tt>
+<a name="L205"></a><tt class="py-lineno">205</tt>  <tt class="py-line">            <tt class="py-keyword">if</tt> <tt class="py-name">lst</tt><tt class="py-op">==</tt><tt class="py-name">None</tt><tt class="py-op">:</tt> </tt>
+<a name="L206"></a><tt class="py-lineno">206</tt>  <tt class="py-line">                <tt class="py-name">conn</tt><tt class="py-op">.</tt><tt id="link-41" class="py-name"><a title="xmpp.dispatcher.Dispatcher.send
+xmpp.transports.TCPsocket.send" class="py-name" href="#" onclick="return doclink('link-41', 'send', 'link-28');">send</a></tt><tt class="py-op">(</tt><tt id="link-42" class="py-name"><a title="xmpp.protocol.Error" class="py-name" href="#" onclick="return doclink('link-42', 'Error', 'link-29');">Error</a></tt><tt class="py-op">(</tt><tt class="py-name">request</tt><tt class="py-op">,</tt><tt id="link-43" class="py-name"><a title="xmpp.ERR_ITEM_NOT_FOUND
+xmpp.auth.ERR_ITEM_NOT_FOUND
+xmpp.browser.ERR_ITEM_NOT_FOUND
+xmpp.commands.ERR_ITEM_NOT_FOUND
+xmpp.dispatcher.ERR_ITEM_NOT_FOUND
+xmpp.features.ERR_ITEM_NOT_FOUND
+xmpp.filetransfer.ERR_ITEM_NOT_FOUND
+xmpp.protocol.ERR_ITEM_NOT_FOUND
+xmpp.roster.ERR_ITEM_NOT_FOUND
+xmpp.session.ERR_ITEM_NOT_FOUND
+xmpp.transports.ERR_ITEM_NOT_FOUND" class="py-name" href="#" onclick="return doclink('link-43', 'ERR_ITEM_NOT_FOUND', 'link-30');">ERR_ITEM_NOT_FOUND</a></tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+<a name="L207"></a><tt class="py-lineno">207</tt>  <tt class="py-line">                <tt class="py-keyword">raise</tt> <tt id="link-44" class="py-name"><a title="xmpp.protocol.NodeProcessed" class="py-name" href="#" onclick="return doclink('link-44', 'NodeProcessed', 'link-31');">NodeProcessed</a></tt> </tt>
+<a name="L208"></a><tt class="py-lineno">208</tt>  <tt class="py-line">            <tt class="py-keyword">for</tt> <tt class="py-name">item</tt> <tt class="py-keyword">in</tt> <tt class="py-name">lst</tt><tt class="py-op">:</tt> <tt class="py-name">q</tt><tt class="py-op">.</tt><tt id="link-45" class="py-name" targets="Method xmpp.simplexml.Node.addChild()=xmpp.simplexml.Node-class.html#addChild"><a title="xmpp.simplexml.Node.addChild" class="py-name" href="#" onclick="return doclink('link-45', 'addChild', 'link-45');">addChild</a></tt><tt class="py-op">(</tt><tt class="py-string">'item'</tt><tt class="py-op">,</tt><tt class="py-name">item</tt><tt class="py-op">)</tt> </tt>
+<a name="L209"></a><tt class="py-lineno">209</tt>  <tt class="py-line">        <tt class="py-keyword">elif</tt> <tt class="py-name">request</tt><tt class="py-op">.</tt><tt id="link-46" class="py-name"><a title="xmpp.protocol.Iq.getQueryNS" class="py-name" href="#" onclick="return doclink('link-46', 'getQueryNS', 'link-27');">getQueryNS</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">==</tt><tt id="link-47" class="py-name"><a title="xmpp.protocol.NS_DISCO_INFO" class="py-name" href="#" onclick="return doclink('link-47', 'NS_DISCO_INFO', 'link-7');">NS_DISCO_INFO</a></tt><tt class="py-op">:</tt> </tt>
+<a name="L210"></a><tt class="py-lineno">210</tt>  <tt class="py-line">            <tt class="py-keyword">if</tt> <tt class="py-name">type</tt><tt class="py-op">(</tt><tt class="py-name">handler</tt><tt class="py-op">)</tt><tt class="py-op">==</tt><tt class="py-name">dict</tt><tt class="py-op">:</tt> <tt class="py-name">dt</tt><tt class="py-op">=</tt><tt class="py-name">handler</tt><tt class="py-op">[</tt><tt class="py-string">'info'</tt><tt class="py-op">]</tt> </tt>
+<a name="L211"></a><tt class="py-lineno">211</tt>  <tt class="py-line">            <tt class="py-keyword">else</tt><tt class="py-op">:</tt> <tt class="py-name">dt</tt><tt class="py-op">=</tt><tt class="py-name">handler</tt><tt class="py-op">(</tt><tt class="py-name">conn</tt><tt class="py-op">,</tt><tt class="py-name">request</tt><tt class="py-op">,</tt><tt class="py-string">'info'</tt><tt class="py-op">)</tt> </tt>
+<a name="L212"></a><tt class="py-lineno">212</tt>  <tt class="py-line">            <tt class="py-keyword">if</tt> <tt class="py-name">dt</tt><tt class="py-op">==</tt><tt class="py-name">None</tt><tt class="py-op">:</tt> </tt>
+<a name="L213"></a><tt class="py-lineno">213</tt>  <tt class="py-line">                <tt class="py-name">conn</tt><tt class="py-op">.</tt><tt id="link-48" class="py-name"><a title="xmpp.dispatcher.Dispatcher.send
+xmpp.transports.TCPsocket.send" class="py-name" href="#" onclick="return doclink('link-48', 'send', 'link-28');">send</a></tt><tt class="py-op">(</tt><tt id="link-49" class="py-name"><a title="xmpp.protocol.Error" class="py-name" href="#" onclick="return doclink('link-49', 'Error', 'link-29');">Error</a></tt><tt class="py-op">(</tt><tt class="py-name">request</tt><tt class="py-op">,</tt><tt id="link-50" class="py-name"><a title="xmpp.ERR_ITEM_NOT_FOUND
+xmpp.auth.ERR_ITEM_NOT_FOUND
+xmpp.browser.ERR_ITEM_NOT_FOUND
+xmpp.commands.ERR_ITEM_NOT_FOUND
+xmpp.dispatcher.ERR_ITEM_NOT_FOUND
+xmpp.features.ERR_ITEM_NOT_FOUND
+xmpp.filetransfer.ERR_ITEM_NOT_FOUND
+xmpp.protocol.ERR_ITEM_NOT_FOUND
+xmpp.roster.ERR_ITEM_NOT_FOUND
+xmpp.session.ERR_ITEM_NOT_FOUND
+xmpp.transports.ERR_ITEM_NOT_FOUND" class="py-name" href="#" onclick="return doclink('link-50', 'ERR_ITEM_NOT_FOUND', 'link-30');">ERR_ITEM_NOT_FOUND</a></tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+<a name="L214"></a><tt class="py-lineno">214</tt>  <tt class="py-line">                <tt class="py-keyword">raise</tt> <tt id="link-51" class="py-name"><a title="xmpp.protocol.NodeProcessed" class="py-name" href="#" onclick="return doclink('link-51', 'NodeProcessed', 'link-31');">NodeProcessed</a></tt> </tt>
+<a name="L215"></a><tt class="py-lineno">215</tt>  <tt class="py-line">            <tt class="py-comment"># handler must return dictionary:</tt> </tt>
+<a name="L216"></a><tt class="py-lineno">216</tt>  <tt class="py-line"><tt class="py-comment"></tt>            <tt class="py-comment"># {'ids':[{},{},{},{}], 'features':[fe,at,ur,es], 'xdata':DataForm}</tt> </tt>
+<a name="L217"></a><tt class="py-lineno">217</tt>  <tt class="py-line"><tt class="py-comment"></tt>            <tt class="py-keyword">for</tt> <tt class="py-name">id</tt> <tt class="py-keyword">in</tt> <tt class="py-name">dt</tt><tt class="py-op">[</tt><tt class="py-string">'ids'</tt><tt class="py-op">]</tt><tt class="py-op">:</tt> <tt class="py-name">q</tt><tt class="py-op">.</tt><tt id="link-52" class="py-name"><a title="xmpp.simplexml.Node.addChild" class="py-name" href="#" onclick="return doclink('link-52', 'addChild', 'link-45');">addChild</a></tt><tt class="py-op">(</tt><tt class="py-string">'identity'</tt><tt class="py-op">,</tt><tt class="py-name">id</tt><tt class="py-op">)</tt> </tt>
+<a name="L218"></a><tt class="py-lineno">218</tt>  <tt class="py-line">            <tt class="py-keyword">for</tt> <tt id="link-53" class="py-name" targets="Method xmpp.session.Session.feature()=xmpp.session.Session-class.html#feature"><a title="xmpp.session.Session.feature" class="py-name" href="#" onclick="return doclink('link-53', 'feature', 'link-53');">feature</a></tt> <tt class="py-keyword">in</tt> <tt class="py-name">dt</tt><tt class="py-op">[</tt><tt class="py-string">'features'</tt><tt class="py-op">]</tt><tt class="py-op">:</tt> <tt class="py-name">q</tt><tt class="py-op">.</tt><tt id="link-54" class="py-name"><a title="xmpp.simplexml.Node.addChild" class="py-name" href="#" onclick="return doclink('link-54', 'addChild', 'link-45');">addChild</a></tt><tt class="py-op">(</tt><tt class="py-string">'feature'</tt><tt class="py-op">,</tt><tt class="py-op">{</tt><tt class="py-string">'var'</tt><tt class="py-op">:</tt><tt id="link-55" class="py-name"><a title="xmpp.session.Session.feature" class="py-name" href="#" onclick="return doclink('link-55', 'feature', 'link-53');">feature</a></tt><tt class="py-op">}</tt><tt class="py-op">)</tt> </tt>
+<a name="L219"></a><tt class="py-lineno">219</tt>  <tt class="py-line">            <tt class="py-keyword">if</tt> <tt class="py-name">dt</tt><tt class="py-op">.</tt><tt class="py-name">has_key</tt><tt class="py-op">(</tt><tt class="py-string">'xdata'</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> <tt class="py-name">q</tt><tt class="py-op">.</tt><tt id="link-56" class="py-name"><a title="xmpp.simplexml.Node.addChild" class="py-name" href="#" onclick="return doclink('link-56', 'addChild', 'link-45');">addChild</a></tt><tt class="py-op">(</tt><tt class="py-name">node</tt><tt class="py-op">=</tt><tt class="py-name">dt</tt><tt class="py-op">[</tt><tt class="py-string">'xdata'</tt><tt class="py-op">]</tt><tt class="py-op">)</tt> </tt>
+<a name="L220"></a><tt class="py-lineno">220</tt>  <tt class="py-line">        <tt class="py-name">conn</tt><tt class="py-op">.</tt><tt id="link-57" class="py-name"><a title="xmpp.dispatcher.Dispatcher.send
+xmpp.transports.TCPsocket.send" class="py-name" href="#" onclick="return doclink('link-57', 'send', 'link-28');">send</a></tt><tt class="py-op">(</tt><tt class="py-name">rep</tt><tt class="py-op">)</tt> </tt>
+<a name="L221"></a><tt class="py-lineno">221</tt>  <tt class="py-line">        <tt class="py-keyword">raise</tt> <tt id="link-58" class="py-name"><a title="xmpp.protocol.NodeProcessed" class="py-name" href="#" onclick="return doclink('link-58', 'NodeProcessed', 'link-31');">NodeProcessed</a></tt> </tt>
+</div></div><a name="L222"></a><tt class="py-lineno">222</tt>  <tt class="py-line"> </tt><script type="text/javascript">
+<!--
+expandto(location.href);
+// -->
+</script>
+</pre>
+<br />
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="xmpp-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%%">
+  <tr>
+    <td align="left" class="footer">
+    Generated by Epydoc 3.0beta1 on Sat Dec 15 22:25:23 2007
+    </td>
+    <td align="right" class="footer">
+      <a href="http://epydoc.sourceforge.net">http://epydoc.sourceforge.net</a>
+    </td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+  <!--
+  // Private objects are initially displayed (because if
+  // javascript is turned off then we want them to be
+  // visible); but by default, we want to hide them.  So hide
+  // them unless we have a cookie that says to show them.
+  checkCookie()
+  // -->
+</script>
+  
+</body>
+</html>

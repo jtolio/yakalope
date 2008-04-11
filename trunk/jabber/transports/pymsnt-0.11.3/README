@@ -1,0 +1,16 @@
+For the install guide check out the setup guide on
+http://msn-transport.jabberstudio.org
+
+For quickstart, copy config-example.xml to config.xml, change the settings
+there, and run:
+# ./PyMSNt.py &
+
+
+For translations have a look at lang.py. If you need any help starting
+a translation feel free to ask.
+
+Coding:
+* To implement a new protocol look in the baseproto directory for what
+  functions must be reimplemented.
+* Look at the MSN files for examples
+

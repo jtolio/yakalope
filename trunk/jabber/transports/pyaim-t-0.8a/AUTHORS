@@ -1,0 +1,34 @@
+Primary Developers
+------------------
+Daniel Henninger
+Chris Carlin
+James Bunton (indirectly)
+
+
+Also, thanks to
+---------------
+Paul Clegg for helping me figure out how to make use of some of the oscar
+functionality, and for his initial discussions with the Twisted Matrix team.
+
+Magnus Henoch for discovering and fixing the issues with registration 
+under ejabberd.
+
+Daniel Chandran for adding Socks5 support.
+
+Martin von Loewis for supplying xmlify function.
+
+Robert B Quattlebaum, Jr. for his many patches to fix numerous problems and
+add various new functionality.
+
+Andreas van Cranenburgh for his patches for JEP-0085.
+
+Gonzalo Barrio for various iq/disco related fixes and improvements.
+
+Norman Rasmussen for figuring out Jabberd 2's component protocol.
+
+Scott Dial for stability improvements and OSCAR protocol patches.
+
+The Twisted Matrix development team who have put together this wonderful
+framework we are making use of.  =)  I'd like to especially thank
+Paul Swartz <z3p@twistedmatrix.com> for his work on the oscar.py piece and
+for working with me to get various pieces working correctly!
