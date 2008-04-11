@@ -18,44 +18,10 @@ yakalope.app = function () {
         },
         init: function() {
 
-    		var LoginWindow = new Ext.Window({
-                title: 'Welcome to Yakalope or BlabLab or something...',
-                width: 300,
-                modal:true,
-                items: new Ext.FormPanel({
-                    labelWidth:75,
-                    frame:true,
-                    defaultType:'textfield',
-                    items:[{
-                        fieldLabel:'Username',
-                        name:'username',
-                        allowBlank:false,
-                        maxLength: 128,
-                        maxLengthText: 'Username must be less than 128 characters',
-                    },{
-                        fieldLabel:'Password',
-                        name:'password',
-                        allowBlank:false,
-                        inputType:'password',
-                        maxLength:128,
-                        maxLengthText: 'Password must be less than 128 characters',
-                    }],
-                }),/*
-                buttons: [{
-                    id: 'login',
-                    text: 'login'
-                }]
-                */
-             });
-            /*var form = LoginWindow.items.first();
-             form.addButton({
-             }, function() {
-                var values = form.getForm().getValues();
-                values.username;
-                value.password;
-             );*/
-             LoginWindow.show();
-                
+            if (jabber.isConnected() == false){
+                Login.login();
+            }
+
             jabber.init();
                 
             /* Setup Layout of Main Window */
@@ -92,11 +58,7 @@ yakalope.app = function () {
             },{
                 region:'south',
                 buttons:[{
-                    text:'Connect',
-                    id:'connect',
-                    handler:jabber.doLogin,
-                },{
-                    text:'Disconnect',
+                    text:'Log Out',
                     id:'disconnect',
                     handler:jabber.quit,
                 }]
