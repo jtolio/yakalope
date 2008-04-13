@@ -4,8 +4,8 @@ import time
 #Configuration
 print 'Loading the logmodule module'
 logger = logmodule.LogModule();
-logger.setDataDirectory("O:\\yakalope\\logging\\data\\")
-logger.setIndexDirectory("O:\\yakalope\\logging\\index\\")
+logger.setDataDirectory("~/yakdata/data/")
+logger.setIndexDirectory("~/yakdata/index/")
 
 
 #Some constants to make things easier

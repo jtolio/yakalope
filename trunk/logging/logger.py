@@ -7,8 +7,8 @@ import sys
 
 #Perpare the logger module
 logmod = logmodule.LogModule();
-logmod.setDataDirectory("O:\\yakalope\\logging\\data\\")
-logmod.setIndexDirectory("O:\\yakalope\\logging\\index\\")
+logmod.setDataDirectory("~/yakdata/data/")
+logmod.setIndexDirectory("~/yakdata/index/")
 
 
 while True:

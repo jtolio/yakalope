@@ -3,6 +3,7 @@
 """
 import lucene
 import time
+import re
 import os.path
 lucene.initVM(lucene.CLASSPATH)
 
@@ -147,7 +148,8 @@ class LogModule:
         doc.add(self.__makeKeywordField('timestamp',clean_timestamp))
         doc.add(self.__makeKeywordField('who_sent',str(who_sent)))
         doc.add(self.__makeUnIndexedField('file_offset',str(filesize)))
-        doc.add(self.__makeUnStoredField('text',str(text)))
+        clean_text = re.sub("<[^>]*>"," ",str(text))
+        doc.add(self.__makeUnStoredField('text',clean_text))
 
         luc_writer.addDocument(doc)
         luc_writer.close()
@@ -430,49 +432,45 @@ class LogModule:
                 mfileoffset = int(qresults.doc(i).get("file_offset"))
                 mrank = qresults.score(i)
 
-                #First check if it exists in one of the previously matched
-                #conversations
-                found = False
-                for j in range(len(conversationlist)):
-                    for k in range(len(conversationlist[j].messages)):
-                        if conversationlist[j].messages[k].getID() == mid:
-                            #Match found, so just update the messages rank
-                            conversationlist[j].messages[k].setRank(mrank)
-                            found = True
-
-                #If no match was found, create a new conversation
-                if found == False:
-                    conversation = LogConversation(mprotocol,mfriend_chat)
-                    messagetext = self.__getMessageFromFile(username,
-                                                            mfriend_chat,
+                #Create a conversation for each result
+                conversation = LogConversation(mprotocol,mfriend_chat)
+                conversation.setID(mid)
+  
+                messagetext = self.__getMessageFromFile(username,
+                                                        mfriend_chat,
+                                                        mprotocol,
+                                                        mfileoffset)                
+                before_msgs = self.__getSurroundingMessages("before",
+                                                            searcher,
+                                                            username,
                                                             mprotocol,
-                                                            mfileoffset)
+                                                            mfriend_chat,
+                                                            mtimestamp,
+                                                            mid);
+                after_msgs = self.__getSurroundingMessages("after",
+                                                           searcher,
+                                                           username,
+                                                           mprotocol,
+                                                           mfriend_chat,
+                                                           mtimestamp,
+                                                           mid);
+                message = LogMessage(messagetext,mtimestamp,mwho_sent)
+                message.setRank(mrank)
+                message.setID(mid)
 
-                    before_msgs = self.__getSurroundingMessages("before",
-                                                                searcher,
-                                                                username,
-                                                                mprotocol,
-                                                                mfriend_chat,
-                                                                mtimestamp,
-                                                                mid);
-                    for j in range(len(before_msgs)):
-                        conversation.addMessage(before_msgs[j])
-                    message = LogMessage(messagetext,mtimestamp,mwho_sent)
-                    message.setRank(mrank)
-                    message.setID(mid)
-                    conversation.addMessage(message)
-                    after_msgs = self.__getSurroundingMessages("after",
-                                                                searcher,
-                                                                username,
-                                                                mprotocol,
-                                                                mfriend_chat,
-                                                                mtimestamp,
-                                                                mid);
-                    for j in range(len(after_msgs)):
-                        conversation.addMessage(after_msgs[j])
+                #Add all the messages to the conversation
+                for j in range(len(before_msgs)):
+                    conversation.addMessage(before_msgs[j])
+                conversation.addMessage(message)
+                for j in range(len(after_msgs)):
+                    conversation.addMessage(after_msgs[j])
 
-                    conversationlist.append(conversation)
-            #End of fetching each result
+                conversationlist.append(conversation)
+            #End fetching all the results
+
+            #Now search through and remove dupe messages
+            for i in range(len(conversationlist)):
+
 
             return conversationlist
         else:
@@ -591,6 +589,7 @@ class LogConversation:
         self.protocol = protocol
         self.friend_chat = friend_chat
         self.messages = []
+        self.idnum = 0
 
     def addMessage(self,msg):
         self.messages.append(msg)
@@ -601,6 +600,11 @@ class LogConversation:
     def getProtocol(self):
         return self.protocol
 
+    def setID(self,newid):
+        self.idnum = newid
+  
+    def getID(self):
+        return self.idnum
 
 """
     CLASS: LogMessage
