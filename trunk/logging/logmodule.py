@@ -41,12 +41,18 @@ class LogModule:
         False on failure
     """
     def setDataDirectory(self,location):
-        if os.path.isdir(location) == False:
+        #Append a PATH_SEP if it is not the last character
+        if location[-1] == PATH_SEP:
+            loc = location
+        else
+            loc = location + PATH_SEP
+
+        if os.path.isdir(loc) == False:
             try:
-                os.makedirs(location)
+                os.makedirs(loc)
             except OSError:
                 return False #Could not make the directory
-        self.datadir = location
+        self.datadir = loc
         return True
 
 
@@ -69,12 +75,18 @@ class LogModule:
         False on failure
     """
     def setIndexDirectory(self,location):
-        if os.path.isdir(location) == False:
+        #Append a PATH_SEP if it is not the last character
+        if location[-1] == PATH_SEP:
+            loc = location
+        else
+            loc = location + PATH_SEP
+
+        if os.path.isdir(loc) == False:
             try:
-                os.makedirs(location)
+                os.makedirs(loc)
             except OSError:
                 return False #Could not make the directory
-        self.indexdir = location
+        self.indexdir = loc
         return True
 
     """
@@ -435,11 +447,11 @@ class LogModule:
                 #Create a conversation for each result
                 conversation = LogConversation(mprotocol,mfriend_chat)
                 conversation.setID(mid)
-  
+
                 messagetext = self.__getMessageFromFile(username,
                                                         mfriend_chat,
                                                         mprotocol,
-                                                        mfileoffset)                
+                                                        mfileoffset)
                 before_msgs = self.__getSurroundingMessages("before",
                                                             searcher,
                                                             username,
@@ -469,8 +481,23 @@ class LogModule:
             #End fetching all the results
 
             #Now search through and remove dupe messages
-            for i in range(len(conversationlist)):
+            for con in conversationlist:
+                for m in con.messages:
+                    for innercon in conversationlist:
+                        if innercon.getID() != con.getID() and
+                           m.getID() == con.getID():
+                            #Found a dupe, get the ID
+                            dupe_index = conversationlist.index(innercon)
 
+                            #Copy the message rank -- this works only because
+                            #  there should only be 1 ranked message
+                            m.setRank(innercon.getRank())
+
+                            #Delete the offending conversation
+                            del conversationlist[dupe_index]
+            #end searching for dupe messages
+
+            #TODO: sort conversationlist by conversation rank
 
             return conversationlist
         else:
@@ -602,9 +629,15 @@ class LogConversation:
 
     def setID(self,newid):
         self.idnum = newid
-  
+
     def getID(self):
         return self.idnum
+
+    def getRank():
+        rank = 0
+        for m in self.messages:
+            rank += m.getRank()
+        return rank
 
 """
     CLASS: LogMessage
