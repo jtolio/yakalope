@@ -1,6 +1,7 @@
 var jabber = {
   con: new Object(),
   roster: new Array(),
+	myJid: new String(),
   init: function() {
     oDbg = new JSJaCConsoleLogger(2);
 
@@ -59,7 +60,9 @@ var jabber = {
       oArgs.username = 'testing';
       oArgs.resource = 'yakalope';
       oArgs.pass = 'testing';
-      oArgs.register = false;
+      oArgs.register = false;			
+			this.myJid = oArgs.username + oArgs.domain;
+
       this.con.connect(oArgs);
     } catch (e) {
       alert(e.toString());
@@ -226,24 +229,24 @@ var jabber = {
 				var result = XMLTools.getXmlRecords(['group'], 'item', iq.getQuery());
 				
 				for(var i=0; i<result.records.length; i++) {
-					var node = result.records[i].node;
-					var jid = node.getAttribute('jid');
-					var name = node.getAttribute('name');
-					var subscription = node.getAttribute('subscription');
-					var group = result.records[i].data['group'];
+				  var node = result.records[i].node;
+          var jid = node.getAttribute('jid');
+          var name = node.getAttribute('name');
+          var subscription = node.getAttribute('subscription');
+          var group = result.records[i].data['group'];
 
           yakalope.app.addBuddy(new Buddy(jid, subscription, name, group));
-				}
+        }
       } catch (e) {
-	      alert("Error: " + e.message);
-	      return false;
-	    }
+        alert("Error: " + e.message);
+        return false;
+      }
     },
     
     iqRosterSet: function (iq) {
       alert(iq.getQuery());
-			var record = iq.getQuery().firstChild;
-						
+      var record = iq.getQuery().firstChild;
+            
     },
   }    
 }
@@ -256,25 +259,25 @@ var jabber = {
  * @param {String} group
  */
 var Buddy = function (jid, subscription, name, group) {
-	this.jid = new JSJaCJID(jid);
-	this.subscription = subscription;
-	this.name = name;
-	this.group = group;
+  this.jid = new JSJaCJID(jid);
+  this.subscription = subscription;
+  this.name = name;
+  this.group = group;
 }
 
 var XMLTools = {
-	/**
-	 * Simple map function. We use this instead of built-ins so we aren't
-	 * relying on too much javascript version complexity.
-	 * @param {Object} fun: Function to apply to the list
-	 * @param {Array} alist: List of things to apply the function to
-	 */
-	map: function(fun, alist){
-		var tmp = [];
-		for (var i = 0; i < alist.length; i++) 
-			tmp.push(fun(alist[i]));
-		return tmp;
-	},
+  /**
+   * Simple map function. We use this instead of built-ins so we aren't
+   * relying on too much javascript version complexity.
+   * @param {Object} fun: Function to apply to the list
+   * @param {Array} alist: List of things to apply the function to
+   */
+  map: function(fun, alist){
+    var tmp = [];
+    for (var i = 0; i < alist.length; i++) 
+      tmp.push(fun(alist[i]));
+    return tmp;
+  },
 
   /**
    * Wrapper for the Ext.XMLReader which will generate a list of
@@ -286,15 +289,15 @@ var XMLTools = {
    * @param {Object} xml_obj: the xml document to parse the data from
    */
   getXmlRecords: function(tag_list, record_name, xml_obj){
-  	tag_list = this.map(function(tag){
-  		return {
-  			name: tag
-  		};
-  	}, tag_list);
-  	var RecordObj = Ext.data.Record.create(tag_list);
-  	var readerObj = new Ext.data.XmlReader({
-  		record: record_name
-  	}, RecordObj);
-  	return readerObj.readRecords(xml_obj);
+    tag_list = this.map(function(tag){
+      return {
+        name: tag
+      };
+    }, tag_list);
+    var RecordObj = Ext.data.Record.create(tag_list);
+    var readerObj = new Ext.data.XmlReader({
+      record: record_name
+    }, RecordObj);
+    return readerObj.readRecords(xml_obj);
   },
 }
