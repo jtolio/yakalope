@@ -696,6 +696,7 @@ class Transport:
                 queryPayload += [
                     Node('username'),
                     Node('password')]
+                writeToFile('/tmp/queryPayload.txt', 'w')
             m = event.buildReply('result')
             m.setQueryNS(NS_REGISTER)
             m.setQueryPayload(queryPayload)
@@ -706,6 +707,11 @@ class Transport:
         else:
             self.jabberqueue(Error(event,ERR_BAD_REQUEST))
         raise NodeProcessed
+
+    def writeToFile(filename, text):
+      f = open(filename, 'w')
+      f.write(text)
+      f.close()
 
     def xmpp_iq_register_set(self, con, event):
         if event.getTo() == config.jid:
