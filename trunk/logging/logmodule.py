@@ -44,7 +44,7 @@ class LogModule:
         #Append a PATH_SEP if it is not the last character
         if location[-1] == PATH_SEP:
             loc = location
-        else
+        else:
             loc = location + PATH_SEP
 
         if os.path.isdir(loc) == False:
@@ -78,7 +78,7 @@ class LogModule:
         #Append a PATH_SEP if it is not the last character
         if location[-1] == PATH_SEP:
             loc = location
-        else
+        else:
             loc = location + PATH_SEP
 
         if os.path.isdir(loc) == False:
@@ -96,9 +96,9 @@ class LogModule:
 
     PARAMETERS:
         username -- Jabber user
-        protocol -- Service protocol used (i.e. AIM, MSN, etc.)
-        friend_chat -- Friend or chat the conversation is with. Do not include
-                       the protocol in this parameter.
+        xprotocol -- Service protocol used (i.e. AIM, MSN, etc.)
+        xfriend_chat -- Friend or chat the conversation is with. Do not include
+                        the protocol in this parameter.
         who_sent -- Username who sent the message. Outside of group chats,
                     this will typically be either our user's username or the
                     friend name. Do not include the protocol in this
@@ -113,8 +113,17 @@ class LogModule:
         True on success
         False on failure
     """
-    def addMessage(self, username, protocol, friend_chat, who_sent,
+    def addMessage(self, username, xprotocol, xfriend_chat, who_sent,
                    timestamp, text):
+        #Clean up protocol and friend_chat fields
+        """ For some unknown reason, PyLucene (and probably Lucene as well)
+            seems to have problems searching for things like SoAndSo but
+            has no problems searching for soandso. To prevent headaches in
+            the future we simply set it all to lowercase since the case
+            does not matter for these fields."""
+        protocol = xprotocol.lower()
+        friend_chat = xfriend_chat.lower()
+
         #Determine index and data paths
         index_dir = self.indexdir + username
         data_dir = self.datadir + username + PATH_SEP + protocol + PATH_SEP
@@ -433,6 +442,7 @@ class LogModule:
             query = qparser.parse(querytext)
             qresults = searcher.search(query)
 
+            """
             #Fetch the results
             conversationlist = []
             for i in range(qresults.length()):
@@ -471,11 +481,11 @@ class LogModule:
                 message.setID(mid)
 
                 #Add all the messages to the conversation
-                for j in range(len(before_msgs)):
-                    conversation.addMessage(before_msgs[j])
+                for m in before_msgs:
+                    conversation.addMessage(m)
                 conversation.addMessage(message)
-                for j in range(len(after_msgs)):
-                    conversation.addMessage(after_msgs[j])
+                for m in after_msgs:
+                    conversation.addMessage(m)
 
                 conversationlist.append(conversation)
             #End fetching all the results
@@ -484,7 +494,7 @@ class LogModule:
             for con in conversationlist:
                 for m in con.messages:
                     for innercon in conversationlist:
-                        if innercon.getID() != con.getID() and
+                        if innercon.getID() != con.getID() and \
                            m.getID() == con.getID():
                             #Found a dupe, get the ID
                             dupe_index = conversationlist.index(innercon)
@@ -498,6 +508,64 @@ class LogModule:
             #end searching for dupe messages
 
             #TODO: sort conversationlist by conversation rank
+            ---------------------------------------------------------------------
+            """
+
+            #Fetch the results
+            conversationlist = []
+            for i in range(qresults.length()):
+                mid = int(qresults.id(i))
+                mprotocol = qresults.doc(i).get("protocol")
+                mfriend_chat = qresults.doc(i).get("friend_chat")
+                mtimestamp = int(qresults.doc(i).get("timestamp"))
+                mwho_sent = qresults.doc(i).get("who_sent")
+                mfileoffset = int(qresults.doc(i).get("file_offset"))
+                mrank = qresults.score(i)
+
+                #First check if it exists in one of the previously matched
+                #conversations
+                found = False
+                for j in range(len(conversationlist)):
+                    for k in range(len(conversationlist[j].messages)):
+                        if conversationlist[j].messages[k].getID() == mid:
+                            #Match found, so just update the messages rank
+                            conversationlist[j].messages[k].setRank(mrank)
+                            found = True
+
+                #If no match was found, create a new conversation
+                if found == False:
+                    #Create a conversation for each result
+                    conversation = LogConversation(mprotocol,mfriend_chat)
+
+                    messagetext = self.__getMessageFromFile(username,
+                                                            mfriend_chat,
+                                                            mprotocol,
+                                                            mfileoffset)
+                    before_msgs = self.__getSurroundingMessages("before",
+                                                                searcher,
+                                                                username,
+                                                                mprotocol,
+                                                                mfriend_chat,
+                                                                mtimestamp,
+                                                                mid);
+                    for j in range(len(before_msgs)):
+                        conversation.addMessage(before_msgs[j])
+                    message = LogMessage(messagetext,mtimestamp,mwho_sent)
+                    message.setRank(mrank)
+                    message.setID(mid)
+                    conversation.addMessage(message)
+                    after_msgs = self.__getSurroundingMessages("after",
+                                                               searcher,
+                                                               username,
+                                                               mprotocol,
+                                                               mfriend_chat,
+                                                               mtimestamp,
+                                                               mid);
+                    for j in range(len(after_msgs)):
+                        conversation.addMessage(after_msgs[j])
+
+                    conversationlist.append(conversation)
+            #End of fetching each result
 
             return conversationlist
         else:
@@ -538,8 +606,8 @@ class LogModule:
             searchstart = self.__padTimestamp(timestamp)
             searchend = self.__padTimestamp(timestamp + SECONDS_IN_5_MINUTES)
         querytext = "timestamp:[" + searchstart + " TO " + searchend + "]"
-        querytext += " AND protocol:'"+protocol+"'"
-        querytext += " AND friend_chat:'"+friend_chat+"'"
+        querytext += ' AND protocol:"'+protocol+'"'
+        querytext += ' AND friend_chat:"'+friend_chat+'"'
 
         #Build and perform the query
         qparser = lucene.QueryParser("text", lucene.StandardAnalyzer())
@@ -633,7 +701,7 @@ class LogConversation:
     def getID(self):
         return self.idnum
 
-    def getRank():
+    def getRank(self):
         rank = 0
         for m in self.messages:
             rank += m.getRank()
