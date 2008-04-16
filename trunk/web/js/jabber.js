@@ -131,6 +131,10 @@ var jabber = {
       return false;
     }
   },
+	
+	isConnected: function () {
+		return this.con.connected();
+	},
   
   handle: {
     iq: function(aIQ) {
