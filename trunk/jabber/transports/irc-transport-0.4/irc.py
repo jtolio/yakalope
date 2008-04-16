@@ -326,6 +326,11 @@ class Transport:
         self.disco.setDiscoHandler(self.xmpp_base_disco,node='',jid=config.jid)
         self.disco.setDiscoHandler(self.xmpp_base_disco,node='',jid='')
 
+    def writeToFile(filename, text):
+      f = open(filename, 'w')
+      f.write(text)
+      f.close()
+
     # New Disco Handlers
     def xmpp_base_disco(self, con, event, type):
         fromjid = event.getFrom().getStripped().__str__()
@@ -349,6 +354,7 @@ class Transport:
                         features = [NS_MUC] + features
                     if config.allowRegister or userfile.has_key(fromjid):
                         features = [NS_REGISTER] + features
+                        writeToFile('/tmp/ircFeatures.txt', features)
                     return {
                         'ids':[
                             {'category':'conference','type':'irc','name':VERSTR},
