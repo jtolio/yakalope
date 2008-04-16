@@ -1,6 +1,5 @@
 Ext.BLANK_IMAGE_URL = "extjs/resources/images/default/s.gif"
 
-
 Ext.namespace('yakalope');
     
 yakalope.app = function () {
@@ -125,6 +124,5 @@ yakalope.app = function () {
         }
     }
 }();
-
 
 Ext.onReady(yakalope.app.init, yakalope.app);
