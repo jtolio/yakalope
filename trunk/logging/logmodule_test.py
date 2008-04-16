@@ -4,8 +4,8 @@ import time
 #Configuration
 print 'Loading the logmodule module'
 logger = logmodule.LogModule();
-logger.setDataDirectory("~/yakdata/data/")
-logger.setIndexDirectory("~/yakdata/index/")
+logger.setDataDirectory("O:\\yakalope\\logging\\yakdata\\data")
+logger.setIndexDirectory("O:\\yakalope\\logging\\yakdata\\index")
 
 
 #Some constants to make things easier
@@ -20,62 +20,104 @@ T_DAY = 60*60
 now = int(time.time())
 print ' '
 print 'Entering some messages'
-logger.addMessage("fred",
+logger.addMessage("Skidmark@localhost",
                   "aim",
-                  "sassygirl85",
-                  "sassygirl85",
-                  (now - (20 * T_MIN)),
-                  "<span style='font-weight: bold;'>Hey! This is your first message.</span>")
-logger.addMessage("fred",
+                  "SoAndSo",
+                  "Skidmark@localhost",
+                  (now - (15 * T_MIN)),
+                  "<span style='font-weight: bold;'>1</span>")
+logger.addMessage("Skidmark@localhost",
                   "aim",
-                  "sassygirl85",
-                  "fred",
-                  (now - (19 * T_MIN)),
-                  "What's up Rhonda?")
-logger.addMessage("fred",
+                  "SoAndSo",
+                  "Skidmark@localhost",
+                  (now - (14 * T_MIN)),
+                  "<span style='font-weight: bold;'>2</span>")
+logger.addMessage("Skidmark@localhost",
                   "aim",
-                  "sassygirl85",
-                  "fred",
-                  (now - (19 * T_MIN) + 16),
-                  "Oh, and your font sucks. Just use plain text. It is the win.")
-logger.addMessage("fred",
+                  "SoAndSo",
+                  "Skidmark@localhost",
+                  (now - (13 * T_MIN)),
+                  "<span style='font-weight: bold;'>3</span>")
+logger.addMessage("Skidmark@localhost",
                   "aim",
-                  "sassygirl85",
-                  "sassygirl85",
-                  (now - (16 * T_MIN)),
-                  "<span style='font-weight: bold;'>Shut your face noob. Sudo make me a sandwich.</span>")
-logger.addMessage("fred",
+                  "SoAndSo",
+                  "Skidmark@localhost",
+                  (now - (12 * T_MIN)),
+                  "<span style='font-weight: bold;'>4</span>")
+logger.addMessage("Skidmark@localhost",
                   "aim",
-                  "scoobert71",
-                  "fred",
-                  (now - (17 * T_MIN)),
-                  "Time to go Scoob.")
-logger.addMessage("fred",
+                  "SoAndSo",
+                  "Skidmark@localhost",
+                  (now - (11 * T_MIN)),
+                  "<span style='font-weight: bold;'>5</span>")
+logger.addMessage("Skidmark@localhost",
                   "aim",
-                  "scoobert71",
-                  "scoobert71",
-                  (now - (17 * T_MIN) + 11),
-                  "<span>Roh-Kay</span>")
-logger.addMessage("shaggy",
+                  "SoAndSo",
+                  "Skidmark@localhost",
+                  (now - (10 * T_MIN)),
+                  "<span style='font-weight: bold;'>6</span>")
+logger.addMessage("Skidmark@localhost",
                   "aim",
-                  "scoobert71",
-                  "shaggy",
-                  (now - (17 * T_MIN)),
-                  "<span>Zoinks Scooby! Like, free Tato Skins!</span>")
-logger.addMessage("shaggy",
+                  "SoAndSo",
+                  "Skidmark@localhost",
+                  (now - (9 * T_MIN)),
+                  "<span style='font-weight: bold;'>7</span>")
+logger.addMessage("Skidmark@localhost",
                   "aim",
-                  "scoobert71",
-                  "scoobert71",
-                  (now - (17 * T_MIN) + 33),
-                  "<span>Ruh-Roh</span>")
+                  "SoAndSo",
+                  "Skidmark@localhost",
+                  (now - (8 * T_MIN)),
+                  "<span style='font-weight: bold;'>8 - wombat</span>")
+logger.addMessage("Skidmark@localhost",
+                  "aim",
+                  "SoAndSo",
+                  "Skidmark@localhost",
+                  (now - (7 * T_MIN)),
+                  "<span style='font-weight: bold;'>9</span>")
+logger.addMessage("Skidmark@localhost",
+                  "aim",
+                  "SoAndSo",
+                  "Skidmark@localhost",
+                  (now - (6 * T_MIN)),
+                  "<span style='font-weight: bold;'>10 - wombat</span>")
+logger.addMessage("Skidmark@localhost",
+                  "aim",
+                  "SoAndSo",
+                  "Skidmark@localhost",
+                  (now - (5 * T_MIN)),
+                  "<span style='font-weight: bold;'>11</span>")
+logger.addMessage("Skidmark@localhost",
+                  "aim",
+                  "SoAndSo",
+                  "Skidmark@localhost",
+                  (now - (4 * T_MIN)),
+                  "<span style='font-weight: bold;'>12</span>")
+logger.addMessage("Skidmark@localhost",
+                  "aim",
+                  "SoAndSo",
+                  "Skidmark@localhost",
+                  (now - (3 * T_MIN)),
+                  "<span style='font-weight: bold;'>13</span>")
+logger.addMessage("Skidmark@localhost",
+                  "aim",
+                  "SoAndSo",
+                  "Skidmark@localhost",
+                  (now - (2 * T_MIN)),
+                  "<span style='font-weight: bold;'>14 - wombat</span>")
+logger.addMessage("Skidmark@localhost",
+                  "aim",
+                  "Other",
+                  "Skidmark@localhost",
+                  (now - (10 * T_MIN)),
+                  "<span style='font-weight: bold;'>nooooo</span>")
 
-time.sleep(2)
+time.sleep(1)
 
 
 #Get a list of recent messages
 print ' '
-print 'Getting recent conversations for fred'
-results = logger.getRecentConversations("fred")
+print 'Getting recent conversations for skidmark@localhost'
+results = logger.getRecentConversations("skidmark@localhost")
 print len(results), ' results found'
 for i in range(len(results)):
     print "===New Conversation==="
@@ -87,29 +129,18 @@ for i in range(len(results)):
         print results[i].messages[j].getMessageText()
 
 print ' '
-print 'Getting recent conversations for shaggy'
-results = logger.getRecentConversations("shaggy")
+print 'Performing a search for "wombat"'
+results = logger.searchMessages("skidmark@localhost","wombat")
 print len(results), ' results found'
-for i in range(len(results)):
-    print "===New Conversation==="
-    print results[i].getFriendChat(),",",
-    print results[i].getProtocol()
-    for j in range(len(results[i].messages)):
-        print results[i].messages[j].getTimestamp(),",",
-        print results[i].messages[j].getWhoSent(),",",
-        print results[i].messages[j].getMessageText()
-
-print ' '
-print 'Performing a search for "Rhonda"'
-results = logger.searchMessages("fred","Rhonda")
-print len(results), ' results found'
-for i in range(len(results)):
-    print "===New Conversation==="
-    print results[i].getFriendChat(),",",
-    print results[i].getProtocol()
-    for j in range(len(results[i].messages)):
-        print results[i].messages[j].getID(),",",
-        print results[i].messages[j].getRank(),",",
-        print results[i].messages[j].getTimestamp(),",",
-        print results[i].messages[j].getWhoSent(),",",
-        print results[i].messages[j].getMessageText()
+for result in results:
+    print "===New Conversation================================"
+    print "Rank: ", result.getRank()
+    print "Friend: ", result.getFriendChat()
+    print "Protocol: ", result.getProtocol()
+    print "---------------------------------------------------"
+    for m in result.messages:
+        print m.getID(),",",
+        print m.getRank(),",",
+        print m.getTimestamp(),",",
+        print m.getWhoSent(),",",
+        print m.getMessageText()
