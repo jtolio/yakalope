@@ -37,7 +37,7 @@ else:
     #Prepare the logger module
     logmod = logmodule.LogModule();
     logmod.setDataDirectory(sys.argv[1])
-    logmod.setIndexDirectory(sys.argv[2)
+    logmod.setIndexDirectory(sys.argv[2])
 
 
     while True:
