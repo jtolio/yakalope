@@ -5,10 +5,10 @@ var jabber = {
     oDbg = new JSJaCConsoleLogger(2);
 
     try { // try to resume a session
-      con = new JSJaCHttpBindingConnection({'oDbg':oDbg});
+      this.con = new JSJaCHttpBindingConnection({'oDbg':oDbg});
       setupCon(con);
 
-      if (con.resume()) {
+      if (this.con.resume()) {
       }
     } catch (e) {} // reading cookie failed - never mind
   },
@@ -39,7 +39,7 @@ var jabber = {
     con.registerHandler('iq', 'query', NS_ROSTER, jabber.handle.iqRoster);
   },
   
-  doLogin: function(username, password) {
+  doLogin: function() {
     try {
       // setup args for contructor
       oArgs = new Object();
@@ -55,17 +55,15 @@ var jabber = {
 
       // setup args for connect method
       oArgs = new Object();
-      oArgs.domain = 'squall.cs.umn.edu';
-      //oArgs.username = 'testing';
-      //oArgs.pass = 'testing';
-      oArgs.username = username;
-      oArgs.pass = password;
+      oArgs.domain = 'jabberworld.org';
+      oArgs.username = 'testing';
       oArgs.resource = 'yakalope';
+      oArgs.pass = 'testing';
       oArgs.register = false;
-      con.connect(oArgs);
-//wait until valid or timeout
-      return true;
+      this.con.connect(oArgs);
     } catch (e) {
+      alert(e.toString());
+    } finally {
       return false;
     }
   },
@@ -79,21 +77,12 @@ var jabber = {
       var aMsg = new JSJaCMessage();
       aMsg.setTo(new JSJaCJID(user.toString()));
       aMsg.setBody(msg);
-      con.send(aMsg);
+      this.con.send(aMsg);
       alert(aMsg.xml());
       return false;
     } catch (e) {
       alert("Error: " + e.message);
       return false;
-    }
-  },
-
-  isConnected: function() {
-    if (con == null){
-        return false;
-    }
-    else{
-        return con.connected();
     }
   },
   
@@ -103,7 +92,7 @@ var jabber = {
       roster.setIQ(null, 'get', 'roster_1');
       roster.setQuery(NS_ROSTER);
       //roster.setFrom('');
-      con.send(roster);
+      this.con.send(roster);
     } catch (e) {
       alert("Error getting roster: " + e.message);
       return false;
@@ -136,7 +125,7 @@ var jabber = {
       var presence = new JSJaCPacket('presence');
       presence.setTo(new JSJaCJID(buddy));
       presence.setType(subType);
-      con.send(presence);
+      this.con.send(presence);
     } catch (e) {
       alert("Error sending '" + subType + "': " + e.message);
       return false;
@@ -146,7 +135,7 @@ var jabber = {
   handle: {
     iq: function(aIQ) {
       alert("IN (raw): " + aIQ.xml());
-      con.send(aIQ.errorReply(ERR_FEATURE_NOT_IMPLEMENTED));
+      jabber.con.send(aIQ.errorReply(ERR_FEATURE_NOT_IMPLEMENTED));
     },
     
     message: function(aJSJaCPacket) {
@@ -181,8 +170,8 @@ var jabber = {
     },
     
     error: function(aJSJaCPacket) {
-      if (con.connected())
-        con.disconnect();
+      if (jabber.con.connected())
+        jabber.con.disconnect();
     },
     
     statusChanged: function(status) {
@@ -195,8 +184,6 @@ var jabber = {
     },
     
     disconnected: function() {
-        yakalope.app.clearBuddyList();
-        Login.login();
     },
 
     failure: function(aJSJaCPacket) {
@@ -204,7 +191,7 @@ var jabber = {
     },
     
     iqVersion: function(iq) {
-      con.send(iq.reply(
+      jabber.con.send(iq.reply(
         [iq.buildNode('name', 'yakalope test'),
          iq.buildNode('version', JSJaC.Version),
          iq.buildNode('os', navigator.userAgent)]));
@@ -213,7 +200,7 @@ var jabber = {
 
     iqTime: function(iq) {
       var now = new Date();
-      con.send(iq.reply(
+      jabber.con.send(iq.reply(
         [iq.buildNode('display',
             now.toLocaleString()),
          iq.buildNode('utc',
@@ -230,7 +217,7 @@ var jabber = {
 	      var roster = new JSJaCIQ();
 	      roster.setIQ(null, 'result', iq.getID());
 	      roster.setQuery(NS_ROSTER);
-	      con.send(roster);
+	      jabber.con.send(roster);
 				
 				var result = XMLTools.getXmlRecords(['group'], 'item', iq.getQuery());
 				
