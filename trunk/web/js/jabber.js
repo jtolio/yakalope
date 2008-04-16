@@ -1,5 +1,5 @@
 var jabber = {
-  con: new Object(),
+  con: new JSJaCHttpBindingConnection(),
   roster: new Array(),
 	myJid: new String(),
   init: function() {
@@ -134,10 +134,9 @@ var jabber = {
       return false;
     }
   },
-	
-	isConnected: function () {
-		return this.con.connected();
-	},
+  isConnected: function () {
+    return this.con.connected();
+  },
   
   handle: {
     iq: function(aIQ) {

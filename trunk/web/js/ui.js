@@ -56,11 +56,7 @@ yakalope.app = function () {
             },{
                 region:'south',
                 buttons:[{
-                    text:'Connect',
-                    id:'connect',
-                    handler:jabber.doLogin,
-                },{
-                    text:'Disconnect',
+                    text:'Logout',
                     id:'disconnect',
                     handler:jabber.quit,
                 }]
