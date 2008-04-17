@@ -1,7 +1,7 @@
 # Copyright 2004-2006 James Bunton <james@delx.cjb.net>
 # Licensed for distribution under the GPL version 2, check COPYING for details
 
-from twisted.words.xish.domish import parseFile, Element
+#from twisted.words.xish.domish import parseFile, Element
 from debug import LogEvent, INFO, WARN
 import os
 import os.path
@@ -41,26 +41,45 @@ class XDB:
 		self.mangle = mangle
 	
 	def __getFile(self, file):
+		f = open('/tmp/whoRan', "a")
+		f.write('getFile')
+		f.close()
 		if(self.mangle):
 			file = mangle(file)
 		
 		hash = makeHash(file)
+		f = open('/tmp/whoRan', "a")
+		f.write('getFile2')
+		f.close()
 		document = parseFile(self.name + X + hash + X + file + ".xml")
 		
+		f = open('/tmp/whoRan', "a")
+		f.write('getFile3')
+		f.close()
+
+		f = open('/tmp/getFile', "w")
+		f.write(document)
+		f.close()
 		return document
 	
 	def __writeFile(self, file, text):
 		if(self.mangle):
 			file = mangle(file)
 		
+		f = open('/tmp/whoRan', "a")
+		f.write('writefile')
+		f.close()
+		f = open('/tmp/writeFile', "w")
+		f.write('file: ' + file)
+		f.close()
 		prev_umask = os.umask(SPOOL_UMASK)
 		hash = makeHash(file)
 		pre = self.name + X + hash + X
 		if not os.path.exists(pre):
 			os.makedirs(pre)
 		try:
-			f = open(pre + file + ".xml.new", "w")
-			f.write(text)
+			f = open('/tmp/writeFile', "w")
+			f.write('text: ' + text)
 			f.close()
 			shutil.move(pre + file + ".xml.new", pre + file + ".xml")
 		except IOError, e:
@@ -69,6 +88,9 @@ class XDB:
 		os.umask(prev_umask)
 	
 	def files(self):
+		f = open('/tmp/whoRan', "a")
+		f.write('files')
+		f.close()
 		""" Returns a list containing the files in the current XDB database """
 		files = []
 		for dir in os.listdir(self.name):
@@ -85,6 +107,9 @@ class XDB:
 		return files
 	
 	def request(self, file, xdbns):
+		f = open('/tmp/whoRan', "a")
+		f.write('request')
+		f.close()
 		""" Requests a specific xdb namespace from the XDB 'file' """
 		try:
 			document = self.__getFile(file)
@@ -96,13 +121,22 @@ class XDB:
 	
 	def set(self, file, xdbns, element):
 		""" Sets a specific xdb namespace in the XDB 'file' to element """
+		f = open('/tmp/whoRan', "a")
+		f.write('set')
+		f.close()
 		try:
+			f = open('/tmp/whoRan', "a")
+			f.write('set2')
+			f.close()
 			element.attributes["xdbns"] = xdbns
 			document = None
 			try:
 				document = self.__getFile(file)
 			except IOError:
 				pass
+			f = open('/tmp/whoRan', "a")
+			f.write('set3')
+			f.close()
 			if(not document):
 				document = Element((None, "xdb"))
 			
@@ -114,11 +148,20 @@ class XDB:
 			document.addChild(element)
 			
 			self.__writeFile(file, document.toXml())
+			f = open('/tmp/whoRan', "a")
+			f.write('set4')
+			f.close()
 		except IOError, e:
+			f = open('/tmp/whoRan', "a")
+			f.write('setERROR2')
+			f.close()
 			LogEvent(WARN, "", "IOError " + str(e))
 			raise
 	
 	def remove(self, file):
+		f = open('/tmp/whoRan', "a")
+		f.write('remove')
+		f.close()
 		""" Removes an XDB file """
 		if self.mangle:
 			file = mangle(file)
