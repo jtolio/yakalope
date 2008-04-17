@@ -1,7 +1,7 @@
 var jabber = {
   con: new JSJaCHttpBindingConnection(),
   roster: new Array(),
-	myJid: new String(),
+  myJid: new String(),
   init: function() {
     oDbg = new JSJaCConsoleLogger(2);
 
@@ -134,10 +134,22 @@ var jabber = {
       return false;
     }
   },
+  addRosterItem: function(jid, name, group) {
+    var iq = new JSJaCIQ();
+    iq.setFrom(jabber.myJid);
+    iq.setType('set');
+    iq.setID('roster_set');
+    var query = iq.setQuery(NS_ROSTER);
+    var group = iq.buildNode('group', {}, group); 
+    var item = iq.buildNode('item', {jid:jid, name:name});
+    item.appendChild(group);
+    query.appendChild(item);
+    alert(iq.xml());
+    //this.con.send(iq);
+  },
   isConnected: function () {
     return this.con.connected();
   },
-  
   handle: {
     iq: function(aIQ) {
       alert("IN (raw): " + aIQ.xml());
@@ -225,16 +237,15 @@ var jabber = {
 	      roster.setQuery(NS_ROSTER);
 	      jabber.con.send(roster);
 				
-				var result = XMLTools.getXmlRecords(['group'], 'item', iq.getQuery());
+		  var result = XMLTools.getXmlRecords(['group'], 'item', iq.getQuery());
 				
-				for(var i=0; i<result.records.length; i++) {
-				  var node = result.records[i].node;
-          var jid = node.getAttribute('jid');
-          var name = node.getAttribute('name');
-          var subscription = node.getAttribute('subscription');
-          var group = result.records[i].data['group'];
-
-          yakalope.app.addBuddy(new Buddy(jid, subscription, name, group));
+        for(var i=0; i<result.records.length; i++) {
+            var node = result.records[i].node;
+            var jid = node.getAttribute('jid');
+            var name = node.getAttribute('name');
+            var subscription = node.getAttribute('subscription');
+            var group = result.records[i].data['group'];
+            yakalope.app.addBuddy(new Buddy(jid, subscription, name, group));
         }
       } catch (e) {
         alert("Error: " + e.message);
@@ -244,8 +255,15 @@ var jabber = {
     
     iqRosterSet: function (iq) {
       alert(iq.getQuery());
-      var record = iq.getQuery().firstChild;
-            
+
+	  var node = iq.getQuery().firstChild;
+	  var jid = node.getAttribute('jid');
+	  var name = node.getAttribute('name');
+	  var subscription = node.getAttribute('subscription');
+	  var group = node.firstChild.nodeValue;
+	  var buddy = new Buddy(jid, subscription, name, group);
+	  yakalope.app.addBuddy(buddy);				
+
     },
   }    
 }

@@ -74,7 +74,8 @@
     },
     callAddBuddy: function(username) {
         var scope = yakalope.app.getBuddyList();
-        scope.addBuddy(username);
+        var buddy = jabber.addRosterItem(username, null, null);
+        scope.addBuddy(buddy);
     },
     callRemoveBuddy: function(username) {
       var scope = yakalope.app.getBuddyList();
