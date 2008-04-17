@@ -17,7 +17,7 @@ yakalope.app = function () {
         },
         init: function() {
 
-            if (jabber.isConnected() == false) {
+            if (jabber.isConnected == false) {
                 Login.login();
             }               
             jabber.init();
