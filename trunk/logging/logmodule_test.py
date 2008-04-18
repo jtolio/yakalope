@@ -4,8 +4,8 @@ import time
 #Configuration
 print 'Loading the logmodule module'
 logger = logmodule.LogModule();
-logger.setDataDirectory("O:\\yakalope\\logging\\yakdata\\data")
-logger.setIndexDirectory("O:\\yakalope\\logging\\yakdata\\index")
+logger.setDataDirectory("/home/janke/yakdata/data/")
+logger.setIndexDirectory("/home/janke/yakdata/index/")
 
 
 #Some constants to make things easier
@@ -116,8 +116,8 @@ time.sleep(1)
 
 #Get a list of recent messages
 print ' '
-print 'Getting recent conversations for skidmark@localhost'
-results = logger.getRecentConversations("skidmark@localhost")
+print 'Getting recent conversations for Skidmark@localhost'
+results = logger.getRecentConversations("Skidmark@localhost")
 print len(results), ' results found'
 for i in range(len(results)):
     print "===New Conversation==="
@@ -130,7 +130,7 @@ for i in range(len(results)):
 
 print ' '
 print 'Performing a search for "wombat"'
-results = logger.searchMessages("skidmark@localhost","wombat")
+results = logger.searchMessages("Skidmark@localhost","wombat")
 print len(results), ' results found'
 for result in results:
     print "===New Conversation================================"
