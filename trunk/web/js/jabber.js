@@ -183,12 +183,13 @@ var jabber = {
         yakalope.app.removeBuddy(from);
       }
       if (type == "subscribe") {
-        var approve = prompt("allow " + from +"?", "subscribe");
+        var approve = confirm("Approve subscription request from " + 
+from +"?");
         alert(approve);
         if (approve) {
-            jabber.allowSubscription(from);
+            jabber.allowSubscription(new Buddy(from));
         } else {
-            jabber.denySubscription(from);
+            jabber.denySubscription(new Buddy(from));
         }
       }  
       if (presence == "away" || presence == "chat" ||
