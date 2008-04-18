@@ -7,7 +7,7 @@ var jabber = {
 
     try { // try to resume a session
       this.con = new JSJaCHttpBindingConnection({'oDbg':oDbg});
-      setupCon(con);
+      setupCon(this.con);
 
       if (this.con.resume()) {
       }
@@ -15,8 +15,8 @@ var jabber = {
   },
   
   quit: function() {
-    if (con && con.connected())
-      con.disconnect();
+    if (this.con && this.con.connected())
+      this.con.disconnect();
   },
   
   /**
@@ -31,7 +31,7 @@ var jabber = {
     con.registerHandler('onerror', jabber.handle.error);
     con.registerHandler('status_changed', jabber.handle.statusChanged);
     con.registerHandler('ondisconnect', jabber.handle.disconnected);
-		con.registerHandler('failure', jabber.handle.failure);
+    con.registerHandler('failure', jabber.handle.failure);
 
     con.registerIQGet('query', NS_VERSION, jabber.handle.iqVersion);
     con.registerIQGet('query', NS_TIME, jabber.handle.iqTime);
@@ -40,7 +40,8 @@ var jabber = {
     con.registerHandler('iq', 'query', NS_ROSTER, jabber.handle.iqRoster);
   },
   
-  doLogin: function() {
+  doLogin: function(username, password) {
+    
     try {
       // setup args for contructor
       oArgs = new Object();
@@ -50,21 +51,22 @@ var jabber = {
       if (typeof(oDbg) != 'undefined')
         oArgs.oDbg = oDbg;
 
-      con = new JSJaCHttpBindingConnection(oArgs);
+      this.con = new JSJaCHttpBindingConnection(oArgs);
 
-      jabber.setupCon(con);
+      jabber.setupCon(this.con);
 
       // setup args for connect method
       oArgs = new Object();
-      oArgs.domain = 'jabberworld.org';
-      oArgs.username = 'testing';
+      oArgs.domain = 'squall.cs.umn.edu';
+      oArgs.username = username;
       oArgs.resource = 'yakalope';
-      oArgs.pass = 'testing';
+      oArgs.pass = password;
       oArgs.register = false;			
 			this.myJid = oArgs.username + oArgs.domain;
 
       this.con.connect(oArgs);
     } catch (e) {
+      alert("I am here")
       alert(e.toString());
     } finally {
       return false;
@@ -197,7 +199,7 @@ var jabber = {
     },
     
     connected: function() {
-      con.send(new JSJaCPresence());
+      jabber.con.send(new JSJaCPresence());
       jabber.getRoster();
     },
     
