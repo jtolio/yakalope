@@ -103,21 +103,39 @@ var jabber = {
       return false;
     }
   },
+	addRosterItem: function(buddy) {
+    var iq = new JSJaCIQ();
+    iq.setFrom(jabber.myJid);
+    iq.setType('set');
+    iq.setID('roster_set');
+    var query = iq.setQuery(NS_ROSTER);
+    var group = iq.buildNode('group', {}, buddy.group); 
+    var item = iq.buildNode('item', {jid:buddy.jid, name:buddy.name});
+    item.appendChild(group);
+    query.appendChild(item);
+    alert(iq.xml());
+    //this.con.send(iq);
+  },
+	addBuddy: function(buddy) {
+		this.addRosterItem(buddy);
+		this.subscribe(buddy);
+		return buddy.jid;
+	},
   
   subscribe: function(buddy) {
-    this.__subscription(buddy, 'subscribe');
+    this.__subscription(buddy.jid, 'subscribe');
   },
   
   unsubscribe: function(buddy) {
-    this.__subscription(buddy, 'unsubscribe');
+    this.__subscription(buddy.jid, 'unsubscribe');
   },
   
   allowSubscription: function(buddy) {
-    this.__subscription(buddy, 'subscribed');
+    this.__subscription(buddy.jid, 'subscribed');
   },
   
   denySubscription: function(buddy) {
-    this.__subscription(buddy, 'unsubscribed');
+    this.__subscription(buddy.jid, 'unsubscribed');
   },
   
   /**
@@ -136,19 +154,7 @@ var jabber = {
       return false;
     }
   },
-  addRosterItem: function(jid, name, group) {
-    var iq = new JSJaCIQ();
-    iq.setFrom(jabber.myJid);
-    iq.setType('set');
-    iq.setID('roster_set');
-    var query = iq.setQuery(NS_ROSTER);
-    var group = iq.buildNode('group', {}, group); 
-    var item = iq.buildNode('item', {jid:jid, name:name});
-    item.appendChild(group);
-    query.appendChild(item);
-    alert(iq.xml());
-    //this.con.send(iq);
-  },
+
   isConnected: function () {
     return this.con.connected();
   },
@@ -257,15 +263,13 @@ var jabber = {
     
     iqRosterSet: function (iq) {
       alert(iq.getQuery());
-
-	  var node = iq.getQuery().firstChild;
-	  var jid = node.getAttribute('jid');
-	  var name = node.getAttribute('name');
-	  var subscription = node.getAttribute('subscription');
-	  var group = node.firstChild.nodeValue;
-	  var buddy = new Buddy(jid, subscription, name, group);
-	  yakalope.app.addBuddy(buddy);				
-
+		  var node = iq.getQuery().firstChild;
+		  var jid = node.getAttribute('jid');
+		  var name = node.getAttribute('name');
+		  var subscription = node.getAttribute('subscription');
+		  var group = node.firstChild.nodeValue;
+		  var buddy = new Buddy(jid, subscription, name, group);
+		  yakalope.app.addBuddy(buddy);				
     },
   }    
 }
@@ -281,15 +285,20 @@ var Buddy = function (jid, subscription, name, group) {
   this.jid = new JSJaCJID(jid);
   this.subscription = subscription;
   this.name = name;
+	if (!this.name)
+	 this.name = new String();
   this.group = group;
+}
+Buddy.prototype.log = function () {
+	console.log(this.jid + ' ' + this.subscription + ' ' + this.name + ' ' + this.group);
 }
 
 var XMLTools = {
   /**
    * Simple map function. We use this instead of built-ins so we aren't
    * relying on too much javascript version complexity.
-   * @param {Object} fun: Function to apply to the list
-   * @param {Array} alist: List of things to apply the function to
+   * @param {Object} fun Function to apply to the list
+   * @param {Array} alist List of things to apply the function to
    */
   map: function(fun, alist){
     var tmp = [];
@@ -301,11 +310,11 @@ var XMLTools = {
   /**
    * Wrapper for the Ext.XMLReader which will generate a list of
    * record objects with key-value pairings.
-   * @param {Array} tag_list: list of strings, will be the XML tags
+   * @param {Array} tag_list list of strings, will be the XML tags
    * that are placed into a record object.
-   * @param {String} record_name: name of record that will appear in
+   * @param {String} record_name name of record that will appear in
    * a series.
-   * @param {Object} xml_obj: the xml document to parse the data from
+   * @param {Object} xml_obj the xml document to parse the data from
    */
   getXmlRecords: function(tag_list, record_name, xml_obj){
     tag_list = this.map(function(tag){

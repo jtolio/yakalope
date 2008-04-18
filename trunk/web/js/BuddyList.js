@@ -28,11 +28,11 @@
         var friendRoot = this.getTreeRoot().firstChild;
         if (!this.containsBuddy(buddy)) {
             var newBuddy = new Ext.tree.AsyncTreeNode({
-                id:buddy.jid,
-                text:jid.toString(),
-                object:buddy,
-                iconCls:'user',
-                leaf:true,
+                id: buddy.jid,
+                text: jid.toString(),
+                object: buddy,
+                iconCls: 'user',
+                leaf: true
             });
             newBuddy.on('click', this.onClick);
             return friendRoot.appendChild(newBuddy);
@@ -72,41 +72,47 @@
         }
         return false;
     },
-    callAddBuddy: function(username) {
-        var scope = yakalope.app.getBuddyList();
-        var buddy = jabber.addRosterItem(username, null, null);
-        scope.addBuddy(buddy);
-    },
     callRemoveBuddy: function(username) {
       var scope = yakalope.app.getBuddyList();
-    scope.removeBuddy(username);
+      scope.removeBuddy(username);
   },
   addBuddyDlg: function() {
-     /*var servicesStore = new Ext.data.SimpleStore({
-      fields:['Service'],
+     var servicesStore = new Ext.data.SimpleStore({
+      id: 'services-store',
+      fields:['service', 'serviceName'],
       data: [
-        ['MSN'],
-        ['AIM'],
-        ['ICQ'],
-        ['IRC']
+			  ['squall.cs.umn.edu', 'squall.cs.umn.edu']
+        /*['yakalope.com', 'Yakalope'],
+        ['msn.yakalope.com', 'MSN'],
+        ['aim.yakalope.com', 'AIM'],
+        ['icq.yakalope.com', 'ICQ'],
+        ['irc.yakalope.com', 'IRC']*/
       ],
-    });*/
+    });
     var window = new Ext.Window({
 			title: 'Add a Buddy',
       width: 300,
       items: new Ext.FormPanel({
-        labelWidth:75,
+        labelWidth:50,
         frame:true,
         defaultType:'textfield',
         items:[{
-          fieldLabel:'Buddy Name',
+          fieldLabel:'Name',
           name:'buddyname',
           allowBlank:false,
-        },{
-          fieldLabel:'Service',
-          name:'service',
-          allowBlank:false,
-        }],
+        }, new Ext.form.ComboBox({
+          id: 'serviceType',
+          name: 'serviceType',
+          fieldLabel: 'Service',
+					//hiddenName: 'serviceType_hidden',
+          value: servicesStore.getAt(0).data.service,
+          store: servicesStore,
+          valueField: 'service',
+          displayField: 'serviceName',
+          mode: 'local',
+          forceSelection: true,
+          triggerAction: 'all'
+        })],
       }),
     });
     var form = window.items.first();
@@ -116,8 +122,7 @@
     },
     function() {
       var values = form.getForm().getValues();
-      yakalope.app.getBuddyList().callAddBuddy(values.buddyname);
-      yakalope.app.subscribeBuddy(values.buddyname, values.service);
+			jabber.addBuddy(new Buddy(values.buddyname + '@' + values.serviceType, 'none'));
       window.close();
     },
     window);
