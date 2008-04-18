@@ -66,7 +66,6 @@ var jabber = {
 
       this.con.connect(oArgs);
     } catch (e) {
-      alert("I am here")
       alert(e.toString());
     } finally {
       return false;
