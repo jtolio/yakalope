@@ -1,13 +1,14 @@
 # Copyright 2004-2006 James Bunton <james@delx.cjb.net>
 # Licensed for distribution under the GPL version 2, check COPYING for details
 
-#from twisted.words.xish.domish import parseFile, Element
+from twisted.words.xish.domish import Element
 from debug import LogEvent, INFO, WARN
 import os
 import os.path
 import shutil
 import md5
 import config
+import MySQLdb
 
 X = os.path.sep
 SPOOL_UMASK = 0077
@@ -63,29 +64,14 @@ class XDB:
 		return document
 	
 	def __writeFile(self, file, text):
-		if(self.mangle):
-			file = mangle(file)
-		
-		f = open('/tmp/whoRan', "a")
-		f.write('writefile')
-		f.close()
-		f = open('/tmp/writeFile', "w")
-		f.write('file: ' + file)
-		f.close()
-		prev_umask = os.umask(SPOOL_UMASK)
-		hash = makeHash(file)
-		pre = self.name + X + hash + X
-		if not os.path.exists(pre):
-			os.makedirs(pre)
-		try:
-			f = open('/tmp/writeFile', "w")
-			f.write('text: ' + text)
-			f.close()
-			shutil.move(pre + file + ".xml.new", pre + file + ".xml")
-		except IOError, e:
-			LogEvent(WARN, "", "IOError " + str(e))
-			raise
-		os.umask(prev_umask)
+		user=getUser(text)
+		passwd=getPass(text)
+		my_Temp_db=MySQLdb.connect(host="localhost", user="root", passwd="", db="transports")
+		cursor = my_Temp_db.cursor()
+		# TO DO: SELECT FIRST TO SEE IF THIS RECORD ALREADY EXISTS!
+		cursor.execute ("InSeRt InTo msnusers (user, pass, jid) values ('" + user + "', '" + passwd + "', '" + file + "')")
+		cursor.close()
+
 	
 	def files(self):
 		f = open('/tmp/whoRan', "a")
@@ -130,10 +116,10 @@ class XDB:
 			f.close()
 			element.attributes["xdbns"] = xdbns
 			document = None
-			try:
-				document = self.__getFile(file)
-			except IOError:
-				pass
+		#	try:
+		#		document = self.__getFile(file)
+		#	except IOError:
+		#		pass
 			f = open('/tmp/whoRan', "a")
 			f.write('set3')
 			f.close()
@@ -173,5 +159,19 @@ class XDB:
 			LogEvent(WARN, "", "IOError " + str(e))
 			raise
 	
+
+	def getUser(text):
+		openTag = "<username>"
+		closeTag = "</username>"
+
+		content = text[text.index(openTag):text.index(closeTag)]
+		return content
+
+	def getPass(text):
+		openTag = "<password>"
+		closeTag = "</password>"
+
+		content = text[text.index(openTag):text.index(closeTag)]
+		return content
 
 
