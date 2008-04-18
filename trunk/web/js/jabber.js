@@ -114,28 +114,30 @@ var jabber = {
     item.appendChild(group);
     query.appendChild(item);
     alert(iq.xml());
-    //this.con.send(iq);
+    this.con.send(iq);
   },
-	addBuddy: function(buddy) {
-		this.addRosterItem(buddy);
-		this.subscribe(buddy);
-		return buddy.jid;
-	},
+  addBuddy: function(buddy) {
+    this.addRosterItem(buddy);
+    this.subscribe(buddy);
+    alert(buddy.jid);
+    return buddy.jid;
+  },
   
   subscribe: function(buddy) {
-    this.__subscription(buddy.jid, 'subscribe');
+    alert("test: " + buddy.jid);
+    this.__subscription(buddy, 'subscribe');
   },
   
   unsubscribe: function(buddy) {
-    this.__subscription(buddy.jid, 'unsubscribe');
+    this.__subscription(buddy, 'unsubscribe');
   },
   
   allowSubscription: function(buddy) {
-    this.__subscription(buddy.jid, 'subscribed');
+    this.__subscription(buddy, 'subscribed');
   },
   
   denySubscription: function(buddy) {
-    this.__subscription(buddy.jid, 'unsubscribed');
+    this.__subscription(buddy, 'unsubscribed');
   },
   
   /**
@@ -146,7 +148,7 @@ var jabber = {
   __subscription: function(buddy, subType) {
     try {
       var presence = new JSJaCPacket('presence');
-      presence.setTo(new JSJaCJID(buddy));
+      presence.setTo(buddy.jid);
       presence.setType(subType);
       this.con.send(presence);
     } catch (e) {
