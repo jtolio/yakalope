@@ -10,7 +10,7 @@ else:
     logmod.setIndexDirectory(sys.argv[2])
     
     #Get a list of messages    print ' '
-    results = logger.searchMessages(sys.argv[3],sys.argv[4])
+    results = logmod.searchMessages(sys.argv[3],sys.argv[4])
     print len(results), ' results found'
     for con in results:
         print ""
