@@ -661,7 +661,8 @@ class LegacyList:
 				jabContact.contactDerequestsAuth()
 
 			jabContact.syncRoster()
-			
+		
+			#bookmark add contacts	
 			item = newXDB.addElement("item")
 			item.attributes["jid"] = contact.userHandle
 			item.attributes["subscription"] = msnlist2jabsub(lists)
