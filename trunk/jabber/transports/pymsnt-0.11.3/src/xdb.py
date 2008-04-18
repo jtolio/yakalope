@@ -64,14 +64,8 @@ class XDB:
 		return document
 	
 	def __writeFile(self, file, text):
-		f = open('/tmp/whoRan', "a")
-		f.write('writeFile   '+ text + '   ')
-		f.close()
 		user=getUser(str(text))
 		passwd=getPass(str(text))
-		f = open('/tmp/FILEFILEFILE', "a")
-		f.write("user: " + user + "  Pass: " + passwd + "  jid: " + file)
-		f.close()
 		my_Temp_db=MySQLdb.connect(host="localhost", user="root", passwd="", db="transports")
 		cursor = my_Temp_db.cursor()
 		# TO DO: SELECT FIRST TO SEE IF THIS RECORD ALREADY EXISTS!
@@ -169,17 +163,13 @@ class XDB:
 def getUser(text):
 	openTag = "<username>"
 	closeTag = "</username>"
-	f = open('/tmp/whoRan', "a")
-	f.write('getUser1    ' + text.index(openTag) + '   ' + text.index(closeTag))
-	content = text[text.index(openTag):text.index(closeTag)]
-	f.write('getUser2')
-	f.close()	
+	content = text[len(openTag) + text.find(openTag):text.find(closeTag)]
 	return content
 
 def getPass(text):
 	openTag = "<password>"
 	closeTag = "</password>"
-	content = text[text.index(openTag):text.index(closeTag)]
+	content = text[len(openTag) + text.find(openTag):text.find(closeTag)]
 	return content
 
 
