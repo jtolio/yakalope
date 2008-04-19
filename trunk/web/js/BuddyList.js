@@ -4,14 +4,14 @@
  
  BuddyList = Ext.extend(Ext.Panel, {
     id: 'buddylist',
-    shim: true,
-    iconCls:'accordion',
-    width:200,
-    frame:true,
-    animCollapse: true,
-    layout: 'accordion',
-    border: false,
-    frame: true,
+		split: true,
+		width: 225,
+		minSize: 150,
+		maxSize: 400,
+		//collapsible: true,
+		rootVisible: false,
+		lines: false,
+		layout: 'accordion',
     layoutConfig: {
         animate: true
     },
