@@ -52,13 +52,6 @@ yakalope.app = function () {
 
         /* End Buddy Window */ 
 
-      },{
-        region:'south',
-        buttons:[{
-          text:'Logout',
-          id:'disconnect',
-          handler:jabber.quit,
-        }]
       }]
       
       /* End Main Layout */
