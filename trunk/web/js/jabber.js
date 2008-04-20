@@ -182,8 +182,7 @@ var jabber = {
         yakalope.app.removeBuddy(from);
       }
       if (type == "subscribe") {
-        var approve = confirm("Approve subscription request from " + 
-from +"?");
+        var approve = confirm("Approve subscription request from " + from +"?");
         alert(approve);
         if (approve) {
             jabber.allowSubscription(new Buddy(from));
@@ -212,6 +211,7 @@ from +"?");
     },
     
     disconnected: function() {
+      Login.login();
     },
 
     failure: function(aJSJaCPacket) {
