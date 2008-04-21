@@ -2,20 +2,20 @@ var jabber = {
   con: new JSJaCHttpBindingConnection(),
   roster: new Array(),
   myJid: new String(),
-  init: function() {
+  init: function(){
     oDbg = new JSJaCConsoleLogger(2);
-
-    try { // try to resume a session
-      this.con = new JSJaCHttpBindingConnection({'oDbg':oDbg});
-      setupCon(this.con);
-
+    // Try to resume a session
+    try {
+      this.con = new JSJaCHttpBindingConnection({'oDbg': oDbg});
+      setupCon(this.con);      
       if (this.con.resume()) {
       }
-    } catch (e) {} // reading cookie failed - never mind
+    } 
+    catch (e) {} // reading cookie failed - never mind
   },
   
-  quit: function() {
-    if (this.con && this.con.connected())
+  quit: function(){
+    if (this.con && this.con.connected()) 
       this.con.disconnect();
   },
   
@@ -23,7 +23,7 @@ var jabber = {
    * Registers handlers for XMPP stanzas
    * @param {JSJaCHttpBindingConnection} con
    */
-  setupCon: function(con) {
+  setupCon: function(con){
     con.registerHandler('message', jabber.handle.message);
     con.registerHandler('presence', jabber.handle.presence);
     //con.registerHandler('iq', jabber.handle.iq);
@@ -32,7 +32,7 @@ var jabber = {
     con.registerHandler('status_changed', jabber.handle.statusChanged);
     con.registerHandler('ondisconnect', jabber.handle.disconnected);
     con.registerHandler('failure', jabber.handle.failure);
-
+    
     con.registerIQGet('query', NS_VERSION, jabber.handle.iqVersion);
     con.registerIQGet('query', NS_TIME, jabber.handle.iqTime);
     //con.registerIQGet('query', NS_ROSTER, jabber.handle.iqRosterGet);
@@ -40,34 +40,36 @@ var jabber = {
     con.registerHandler('iq', 'query', NS_ROSTER, jabber.handle.iqRoster);
   },
   
-  doLogin: function(username, password) {
-    
+  doLogin: function(username, password){
+  
     try {
       // setup args for contructor
       oArgs = new Object();
       oArgs.httpbase = '/http-bind/';
       oArgs.timerval = 2000;
-
-      if (typeof(oDbg) != 'undefined')
+      
+      if (typeof(oDbg) != 'undefined') 
         oArgs.oDbg = oDbg;
-
+      
       this.con = new JSJaCHttpBindingConnection(oArgs);
-
+      
       jabber.setupCon(this.con);
-
+      
       // setup args for connect method
       oArgs = new Object();
       oArgs.domain = 'squall.cs.umn.edu';
       oArgs.username = username;
       oArgs.resource = 'yakalope';
       oArgs.pass = password;
-      oArgs.register = false;			
-			this.myJid = oArgs.username + oArgs.domain;
-
+      oArgs.register = false;
+      this.myJid = oArgs.username + oArgs.domain;
+      
       this.con.connect(oArgs);
-    } catch (e) {
+    } 
+    catch (e) {
       alert(e.toString());
-    } finally {
+    }
+    finally {
       return false;
     }
   },
@@ -76,7 +78,7 @@ var jabber = {
    * @param {JSJaCJID} user
    * @param {String} msg
    */
-  sendMsg: function(user, msg) {
+  sendMsg: function(user, msg){
     try {
       var aMsg = new JSJaCMessage();
       aMsg.setTo(new JSJaCJID(user.toString()));
@@ -84,58 +86,63 @@ var jabber = {
       this.con.send(aMsg);
       alert(aMsg.xml());
       return false;
-    } catch (e) {
+    } 
+    catch (e) {
       alert("Error: " + e.message);
       return false;
     }
   },
   
-  getRoster: function() {
+  getRoster: function(){
     try {
       var roster = new JSJaCIQ();
       roster.setIQ(null, 'get', 'roster_1');
       roster.setQuery(NS_ROSTER);
       //roster.setFrom('');
       this.con.send(roster);
-    } catch (e) {
+    } 
+    catch (e) {
       alert("Error getting roster: " + e.message);
       return false;
     }
   },
-	addRosterItem: function(buddy) {
+  addRosterItem: function(buddy){
     var iq = new JSJaCIQ();
     iq.setFrom(jabber.myJid);
     iq.setType('set');
     iq.setID('roster_set');
     var query = iq.setQuery(NS_ROSTER);
-    var group = iq.buildNode('group', {}, buddy.group); 
-    var item = iq.buildNode('item', {jid:buddy.jid, name:buddy.name});
+    var group = iq.buildNode('group', {}, buddy.group);
+    var item = iq.buildNode('item', {
+      jid: buddy.jid,
+      name: buddy.name
+    });
     item.appendChild(group);
     query.appendChild(item);
     alert(iq.xml());
     this.con.send(iq);
   },
-  addBuddy: function(buddy) {
+  addBuddy: function(buddy){
     this.addRosterItem(buddy);
     this.subscribe(buddy);
     alert(buddy.jid);
     return buddy.jid;
   },
   
-  subscribe: function(buddy) {
+  subscribe: function(buddy){
     alert("test: " + buddy.jid);
     this.__subscription(buddy, 'subscribe');
   },
   
-  unsubscribe: function(buddy) {
+  unsubscribe: function(buddy){
     this.__subscription(buddy, 'unsubscribe');
   },
   
-  allowSubscription: function(buddy) {
+  allowSubscription: function(buddy){
     this.__subscription(buddy, 'subscribed');
   },
   
-  denySubscription: function(buddy) {
+  denySubscription: function(buddy){
     this.__subscription(buddy, 'unsubscribed');
   },
   
@@ -144,32 +151,47 @@ var jabber = {
    * @param {JSJaCJID} buddy
    * @param {String} subType
    */
-  __subscription: function(buddy, subType) {
+  __subscription: function(buddy, subType){
     try {
       var presence = new JSJaCPacket('presence');
       presence.setTo(buddy.jid);
       presence.setType(subType);
       this.con.send(presence);
-    } catch (e) {
+    } 
+    catch (e) {
       alert("Error sending '" + subType + "': " + e.message);
       return false;
     }
   },
-
-  isConnected: function () {
+  
+  isConnected: function(){
     return this.con.connected();
   },
   handle: {
-    iq: function(aIQ) {
-      alert("IN (raw): " + aIQ.xml());
-      jabber.con.send(aIQ.errorReply(ERR_FEATURE_NOT_IMPLEMENTED));
+    iq: function(iq){
+      //alert("IN (raw): " + iq.xml());
+      //jabber.con.send(iq.errorReply(ERR_FEATURE_NOT_IMPLEMENTED));
+      if (iq.getType() != 'result') {
+        // Respond with 'result' packet
+        try {
+          var roster = new JSJaCIQ();
+          roster.setIQ(null, 'result', iq.getID());
+          roster.setQuery(NS_ROSTER);
+          jabber.con.send(roster);
+          console.log("Reply test: " + iq.reply().xml());
+        }
+        catch (e) {
+          console.log("Error in handle.iq: " + e.message);
+          return false;
+        }
+      }
     },
     
-    message: function(aJSJaCPacket) {
+    message: function(aJSJaCPacket){
       yakalope.app.addMsg(aJSJaCPacket.getFromJID(), aJSJaCPacket.getBody().htmlEnc());
     },
     
-    presence: function(aJSJaCPacket) {
+    presence: function(aJSJaCPacket){
       var from = aJSJaCPacket.getFrom();
       var presence = aJSJaCPacket.getShow();
       if (aJSJaCPacket.getType()) {
@@ -182,98 +204,86 @@ var jabber = {
         yakalope.app.removeBuddy(from);
       }
       if (type == "subscribe") {
-        var approve = confirm("Approve subscription request from " + from +"?");
+        var approve = confirm("Approve subscription request from " + from + "?");
         alert(approve);
         if (approve) {
-            jabber.allowSubscription(new Buddy(from));
-        } else {
-            jabber.denySubscription(new Buddy(from));
+          jabber.allowSubscription(new Buddy(from));
         }
-      }  
+        else {
+          jabber.denySubscription(new Buddy(from));
+        }
+      }
       if (presence == "away" || presence == "chat" ||
-          presence == "dnd"  || presence == "xa") {
+      presence == "dnd" ||
+      presence == "xa") {
         yakalope.app.addBuddy(from);
       }
     },
     
-    error: function(aJSJaCPacket) {
-      if (jabber.con.connected())
+    error: function(aJSJaCPacket){
+      if (jabber.con.connected()) 
         jabber.con.disconnect();
     },
     
-    statusChanged: function(status) {
+    statusChanged: function(status){
       oDbg.log("status changed: " + status);
     },
     
-    connected: function() {
+    connected: function(){
       jabber.con.send(new JSJaCPresence());
       jabber.getRoster();
     },
     
-    disconnected: function() {
+    disconnected: function(){
       Login.login();
     },
-
-    failure: function(aJSJaCPacket) {
+    
+    failure: function(aJSJaCPacket){
       alert("Failure: " + aJSJaCPacket.xml());
     },
     
-    iqVersion: function(iq) {
+    iqVersion: function(iq){
       jabber.con.send(iq.reply(
         [iq.buildNode('name', 'yakalope test'),
          iq.buildNode('version', JSJaC.Version),
          iq.buildNode('os', navigator.userAgent)]));
       return true;
     },
-
-    iqTime: function(iq) {
+    
+    iqTime: function(iq){
       var now = new Date();
       jabber.con.send(iq.reply(
-        [iq.buildNode('display',
-            now.toLocaleString()),
-         iq.buildNode('utc',
-            now.jabberDate()),
+        [iq.buildNode('display', now.toLocaleString()),
+         iq.buildNode('utc', now.jabberDate()),
          iq.buildNode('tz',
-            now.toLocaleString().substring(now.toLocaleString().lastIndexOf(' ')+1))
-        ]));
+           now.toLocaleString().substring(now.toLocaleString().lastIndexOf(' ') + 1))]));
       return true;
     },
-    
-    iqRoster: function(iq) {
-	    try {
-				// Respond with 'result' packet
-	      var roster = new JSJaCIQ();
-	      roster.setIQ(null, 'result', iq.getID());
-	      roster.setQuery(NS_ROSTER);
-	      jabber.con.send(roster);
-				
-		  var result = XMLTools.getXmlRecords(['group'], 'item', iq.getQuery());
-				
-        for(var i=0; i<result.records.length; i++) {
-            var node = result.records[i].node;
-            var jid = node.getAttribute('jid');
-            var name = node.getAttribute('name');
-            var subscription = node.getAttribute('subscription');
-            var group = result.records[i].data['group'];
-            yakalope.app.addBuddy(new Buddy(jid, subscription, name, group));
-        }
-      } catch (e) {
-        alert("Error: " + e.message);
-        return false;
+
+    iqRoster: function(iq){
+      var RosterItem = Ext.data.Record.create([
+        { name: 'jid', mapping: '@jid' },
+        { name: 'name', mapping: '@name' },
+        { name: 'subscription', mapping: '@subscription' },
+        { name: 'group' }          
+      ]);
+      var reader =  new Ext.data.XmlReader({
+    	    record: 'item',
+      }, RosterItem);      
+      var result = reader.readRecords(iq.getQuery);
+            
+      roster = new Array();
+      var items = result.records;
+      for (var i=0, il=items.length; il; i++) {
+        roster.push([items[i].data.jid, items[i].data.subscription,
+          items[i].data.name, items[i].data.group, '', '']);
       }
+      rosterStore.loadData(roster);
     },
-    
-    iqRosterSet: function (iq) {
-      alert(iq.getQuery());
-		  var node = iq.getQuery().firstChild;
-		  var jid = node.getAttribute('jid');
-		  var name = node.getAttribute('name');
-		  var subscription = node.getAttribute('subscription');
-		  var group = node.firstChild.nodeValue;
-		  var buddy = new Buddy(jid, subscription, name, group);
-		  yakalope.app.addBuddy(buddy);				
+    iqRosterSet: function(iq){
+      jabber.handle.iqRoster(iq);
     },
-  }    
+  }
 }
 
 /**
@@ -282,52 +292,21 @@ var jabber = {
  * @param {String} subscription Must be "none", "to", "from", "both"
  * @param {String} name Nickname
  * @param {String} group
+ * @param {String} presence
+ * @param {String} status
  */
-var Buddy = function (jid, subscription, name, group) {
+var Buddy = function(jid, subscription, name, group, presence, status){
   this.jid = new JSJaCJID(jid);
   this.subscription = subscription;
   this.name = name;
-	if (!this.name)
-	 this.name = new String();
   this.group = group;
+  this.presence = presence;
+  this.status = status;
+  
+  for (var el in this) 
+    if (typeof(this[el]) == 'undefined')
+      this[el] = new String();
 }
-Buddy.prototype.log = function () {
-	console.log(this.jid + ' ' + this.subscription + ' ' + this.name + ' ' + this.group);
-}
-
-var XMLTools = {
-  /**
-   * Simple map function. We use this instead of built-ins so we aren't
-   * relying on too much javascript version complexity.
-   * @param {Object} fun Function to apply to the list
-   * @param {Array} alist List of things to apply the function to
-   */
-  map: function(fun, alist){
-    var tmp = [];
-    for (var i = 0; i < alist.length; i++) 
-      tmp.push(fun(alist[i]));
-    return tmp;
-  },
-
-  /**
-   * Wrapper for the Ext.XMLReader which will generate a list of
-   * record objects with key-value pairings.
-   * @param {Array} tag_list list of strings, will be the XML tags
-   * that are placed into a record object.
-   * @param {String} record_name name of record that will appear in
-   * a series.
-   * @param {Object} xml_obj the xml document to parse the data from
-   */
-  getXmlRecords: function(tag_list, record_name, xml_obj){
-    tag_list = this.map(function(tag){
-      return {
-        name: tag
-      };
-    }, tag_list);
-    var RecordObj = Ext.data.Record.create(tag_list);
-    var readerObj = new Ext.data.XmlReader({
-      record: record_name
-    }, RecordObj);
-    return readerObj.readRecords(xml_obj);
-  },
+Buddy.prototype.log = function(){
+  console.log(this.jid + ' ' + this.subscription + ' ' + this.name + ' ' + this.group);
 }
