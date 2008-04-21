@@ -270,11 +270,11 @@ var jabber = {
       var reader =  new Ext.data.XmlReader({
     	    record: 'item',
       }, RosterItem);      
-      var result = reader.readRecords(iq.getQuery);
+      var result = reader.readRecords(iq.getQuery());
             
       roster = new Array();
       var items = result.records;
-      for (var i=0, il=items.length; il; i++) {
+      for (var i=0, il=items.length; i<il; i++) {
         roster.push([items[i].data.jid, items[i].data.subscription,
           items[i].data.name, items[i].data.group, '', '']);
       }

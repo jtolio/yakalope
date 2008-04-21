@@ -223,8 +223,8 @@ BuddyList = Ext.extend(Ext.Panel, {
               frame: false,
               listeners: {
                 rowdblclick: function() {
-                    var jid = this.getSelectionModel().getSelected();
-                    yakalope.app.createNewChatWindow(jid);
+                    var buddy = this.getSelectionModel().getSelected().data;
+                    yakalope.app.createNewChatWindow(buddy.jid);
                 }
               }
             })]
