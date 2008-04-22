@@ -8,8 +8,7 @@ var jabber = {
     try {
       this.con = new JSJaCHttpBindingConnection({'oDbg': oDbg});
       setupCon(this.con);      
-      if (this.con.resume()) {
-      }
+      if (this.con.resume()) {}
     } 
     catch (e) {} // reading cookie failed - never mind
   },
@@ -269,16 +268,15 @@ var jabber = {
       ]);
       var reader =  new Ext.data.XmlReader({
     	    record: 'item',
-      }, RosterItem);      
+      }, RosterItem);
+
       var result = reader.readRecords(iq.getQuery());
-            
-      roster = new Array();
       var items = result.records;
+
       for (var i=0, il=items.length; i<il; i++) {
-        roster.push([items[i].data.jid, items[i].data.subscription,
-          items[i].data.name, items[i].data.group, '', '']);
+        roster.update(new Buddy(items[i].data.jid, items[i].data.subscription,
+          items[i].data.name, items[i].data.group, '', ''));
       }
-      rosterStore.loadData(roster);
     },
     iqRosterSet: function(iq){
       jabber.handle.iqRoster(iq);
@@ -306,6 +304,13 @@ var Buddy = function(jid, subscription, name, group, presence, status){
   for (var el in this) 
     if (typeof(this[el]) == 'undefined')
       this[el] = new String();
+}
+/**
+ * Compares self to another Buddy object
+ * @param {Buddy} buddy
+ */
+Buddy.prototype.compareTo = function (buddy) {
+  return this.jid.toString() == buddy.jid.toString();
 }
 Buddy.prototype.log = function(){
   console.log(this.jid + ' ' + this.subscription + ' ' + this.name + ' ' + this.group);
