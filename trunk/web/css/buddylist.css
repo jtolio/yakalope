@@ -34,3 +34,7 @@
 	color: black;
 }
 
+/* Hide the grid header row for the buddy list */
+.blist-grid .x-grid3-header {
+  display: none;
+}

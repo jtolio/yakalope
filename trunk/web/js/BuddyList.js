@@ -1,21 +1,40 @@
 /*
  * Buddy List
  */
-var roster = [
-  ["test@example","b","c","Test Group","e","f"],
-  ["test@example","b","c","","e","f"]
-];
+
+var roster = {
+  buddies: [],
+  update: function (buddy) {
+    for (var i=0, il=this.buddies.length; i<il; i++) {
+      if (this.buddies[i].compareTo(buddy)) {
+        this.buddies[i] = buddy;
+        rosterStore.load();
+        return;
+      }
+    }
+    this.buddies.push(buddy);    
+    rosterStore.load();
+  }
+}
+
 var rosterStore = new Ext.data.GroupingStore({
-  reader: new Ext.data.ArrayReader({}, [
-    {name: 'jid'},
-    {name: 'subscription'},
-    {name: 'name'},
-    {name: 'group'},
-    {name: 'presence'},
-    {name: 'status'}
+  id: 'rosterStore',
+  proxy: new Ext.data.MemoryProxy(roster),
+  reader: new Ext.data.JsonReader({
+    root: 'buddies',
+    },[
+      {name: 'jid'},
+      {name: 'subscription'},
+      {name: 'name'},
+      {name: 'group'},
+      {name: 'presence'},
+      {name: 'status'}    
   ]),
   sortInfo: {field: 'jid', direction: "ASC"},
   groupField: 'group'
+});
+rosterStore.on('loadexception', function(proxy, store, response, e) {
+	console.log('loadexception: ' + e.message);
 });
 
 BuddyList = Ext.extend(Ext.Panel, {
@@ -211,9 +230,10 @@ BuddyList = Ext.extend(Ext.Panel, {
           defaults: {border: false},
           items: [ new Ext.grid.GridPanel({
               store: rosterStore,
+              autoHeight: true,
               columns: [
-                {id: 'jid', dataIndex: 'jid'},
-                {dataIndex: 'group', hidden: true}
+                {id: 'jid', header: 'User', dataIndex: 'jid'},
+                {header: 'Group', dataIndex: 'group', hidden: true}
               ],
               view: new Ext.grid.GroupingView({
                 forceFit: true,
@@ -221,6 +241,7 @@ BuddyList = Ext.extend(Ext.Panel, {
                 groupTextTpl: '{text} ({[values.rs.length]} {[values.rs.length > 1 ? "Buddies" : "Buddy"]})'
               }),
               frame: false,
+              cls: 'blist-grid',
               listeners: {
                 rowdblclick: function() {
                     var buddy = this.getSelectionModel().getSelected().data;

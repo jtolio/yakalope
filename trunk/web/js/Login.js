@@ -4,9 +4,8 @@ var Login = {
         title: 'Welcome to Yakalope or BlabLab or something...',
         width: 300,
         modal:true,
-        closeAction: 'show',
+        closable: false,
         resizable:false,
-        draggable:false,
         items: new Ext.FormPanel({
             labelWidth:75,
             frame:true,
