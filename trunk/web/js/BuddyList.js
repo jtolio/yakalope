@@ -14,7 +14,7 @@ var roster = {
     }
     this.buddies.push(buddy);    
     rosterStore.load();
-  }
+  },
 }
 
 var rosterStore = new Ext.data.GroupingStore({
@@ -61,59 +61,6 @@ BuddyList = Ext.extend(Ext.Panel, {
   },
   getTreePane: function(){
     return this.items.first();
-  },
-  addBuddy: function(buddy){
-    var friendRoot = this.getTreeRoot().firstChild;
-    if (!this.containsBuddy(buddy)) {
-      var newBuddy = new Ext.tree.AsyncTreeNode({
-        id: buddy.jid,
-        text: jid.toString(),
-        object: buddy,
-        iconCls: 'user',
-        leaf: true
-      });
-      newBuddy.on('click', this.onClick);
-      return friendRoot.appendChild(newBuddy);
-  }
-  return null;
-  },
-  removeBuddy: function(buddy){
-    var tree = this.getTreeRoot();
-    var node = tree.firstChild.firstChild;
-    while (node != null) {
-      if (node.id.toString() == buddy.jid.toString()) {
-        node.remove();
-        break;
-      }
-      node = node.nextSibling;
-    }
-  },
-  clearBuddyList: function(){
-    var tree = this.getTreeRoot();
-    var node = tree.firstChild.firstChild;
-    while (node != null) {
-      nextnode = node.nextSibling;
-      node.remove();
-      node = nextnode;
-    }
-  },
-  containsBuddy: function(buddy){
-    var tree = this.getTreeRoot();
-    var node = tree.firstChild;
-    node = node.firstChild;
-    while (node != null) {
-      if (node.id.toString() == buddy.jid.toString()) {
-        return true;
-      }
-      else {
-        node = node.nextSibling;
-      }
-    }
-    return false;
-  },
-  callRemoveBuddy: function(username){
-    var scope = yakalope.app.getBuddyList();
-    scope.removeBuddy(username);
   },
   addBuddyDlg: function(){
     var servicesStore = new Ext.data.SimpleStore({

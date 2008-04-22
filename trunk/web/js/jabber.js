@@ -269,7 +269,7 @@ var jabber = {
       var reader =  new Ext.data.XmlReader({
     	    record: 'item',
       }, RosterItem);
-
+      // TODO: Load the result of the XmlReader directly into the roster store
       var result = reader.readRecords(iq.getQuery());
       var items = result.records;
 
