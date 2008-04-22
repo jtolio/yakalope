@@ -97,20 +97,7 @@ yakalope.app = function () {
     unsubscribeBuddy: function(username, domain){
       var user = username + '@' + domain;
       jabber.unsubscribe(user);
-    },
-    addBuddy: function(buddy) {
-					 
-      var buddyList = yakalope.app.getBuddyList();
-    return buddyList.addBuddy(buddy);
-  },
-  removeBuddy: function(buddy){
-    var buddyList = yakalope.app.getBuddyList();
-    buddyList.removeBuddy(buddy);
-  },
-  clearBuddyList: function() {
-    var buddyList = yakalope.app.getBuddyList();
-    buddyList.clearBuddyList();
-  }
+    }
   }
 }();
 
