@@ -18,9 +18,12 @@
   |       |                    | [HTML FORMATTED MESSAGE]          |
   +-------+--------------------+-----------------------------------+
 
-  The script accepts 2 arguments, the first being the location of
-  the log data directory and the second the location of the log index
-  directory.
+  The script accepts 3 arguments, the first being the location of
+  the log data directory, the second the location of the log index
+  directory, and the third being the hostname identifier of our
+  users. One example of a hostname identifier would be
+  "squall.cs.umn.edu" where our service users would be something
+  like testuser@squall.cs.umn.edu
 """
 
 import logmodule
@@ -31,13 +34,15 @@ import sys
 
 
 #Deal with command line arguments
-if len(sys.argv) != 3:
-    print "Usage:",sys.argv[0],"[data directory] [index directory]"
+if len(sys.argv) != 4:
+    print "Usage:",sys.argv[0],"[data directory]","[index directory]",
+    print "[hostname]"
 else:
     #Prepare the logger module
     logmod = logmodule.LogModule();
     logmod.setDataDirectory(sys.argv[1])
     logmod.setIndexDirectory(sys.argv[2])
+    hostname = sys.argv[3]
 
 
     while True:
@@ -59,23 +64,35 @@ else:
         #Process the fields
         to_parts = raw_to.rsplit("@",1)
         to_username = to_parts[0]
-        to_host_parts = to_parts[1].split(".",1)
-        if len(to_host_parts) == 2:
-            to_host = to_host_parts[1]
-            to_protocol = to_host_parts[0]
-        else:
-            to_host = to_parts[1]
+        if to_parts[1] == hostname:
+            #username@hostname
             to_protocol = ""
+        else:
+            to_host_parts = to_parts[1].split(".",1)
+            if len(to_host_parts) == 2:
+                #username@protocol.hostname
+                to_host = to_host_parts[1]
+                to_protocol = to_host_parts[0]
+            else:
+                #unknown, treat it as one of our users
+                to_host = to_parts[1]
+                to_protocol = ""
 
         from_parts = raw_from.rsplit("@",1)
         from_username = from_parts[0]
-        from_host_parts = from_parts[1].split(".",1)
-        if len(from_host_parts) == 2:
-            from_host = from_host_parts[1]
-            from_protocol = from_host_parts[0]
-        else:
-            from_host = from_parts[1]
+        if from_parts[1] == hostname:
+            #username@hostname
             from_protocol = ""
+        else:
+            from_host_parts = from_parts[1].split(".",1)
+            if len(from_host_parts) == 2:
+                #username@protocol.hostname
+                from_host = from_host_parts[1]
+                from_protocol = from_host_parts[0]
+            else:
+                #unknown, treat it as one of our users
+                from_host = from_parts[1]
+                from_protocol = ""
 
         #Determine the protocol to use for the conversation
         if to_protocol == "" and from_protocol == "":
