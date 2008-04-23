@@ -42,24 +42,33 @@ class XDB:
 		self.mangle = mangle
 	
 	def __getFile(self, file):
-		f = open('/tmp/whoRan', "a")
-		f.write('getFile')
+		my_Temp_db=MySQLdb.connect(host="localhost", user="root", passwd="", db="transports")
+		cursor = my_Temp_db.cursor()
+		cursor.execute ("select jid, user, pass from msnusers m where m.jid='" + file + "';")
+			
+		row = cursor.fetchone()
+		row = str(row)
+		cursor.close()
+
+		row = row.split("'")
+		myJid = row[1]
+		myUname = row[3]
+		myPass = row[5]
+
+		f = open('/tmp/DBFILE', "a")
+		f.write("jid " + myJid + " uname " + myUname + "myPass" + myPass)
 		f.close()
-		if(self.mangle):
-			file = mangle(file)
-		
-		hash = makeHash(file)
-		f = open('/tmp/whoRan', "a")
-		f.write('getFile2')
-		f.close()
-		document = parseFile(self.name + X + hash + X + file + ".xml")
-		
-		f = open('/tmp/whoRan', "a")
-		f.write('getFile3')
-		f.close()
+	
+		#rebuild xml
+		document = Element((None, "xdb"))
+		document.addElement("query", None, None)
+		queryElem = document.children[0]
+		queryElem['xdbns'] = 'jabber:iq:register'
+		queryElem.addElement("username", None, myUname)
+		queryElem.addElement("password", None, myPass)
 
 		f = open('/tmp/getFile', "w")
-		f.write(document)
+		f.write(document.toXml())
 		f.close()
 		return document
 	
