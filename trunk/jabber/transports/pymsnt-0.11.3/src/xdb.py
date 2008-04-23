@@ -9,6 +9,7 @@ import shutil
 import md5
 import config
 import MySQLdb
+import re
 
 X = os.path.sep
 SPOOL_UMASK = 0077
@@ -77,7 +78,6 @@ class XDB:
 		passwd=getPass(str(text))
 		my_Temp_db=MySQLdb.connect(host="localhost", user="root", passwd="", db="transports")
 		cursor = my_Temp_db.cursor()
-		# TO DO: SELECT FIRST TO SEE IF THIS RECORD ALREADY EXISTS!
 		cursor.execute ("InSeRt InTo msnusers (user, pass, jid) values ('" + user + "', '" + passwd + "', '" + file + "')")
 		cursor.close()
 
@@ -121,7 +121,11 @@ class XDB:
 		f.close()
 		try:
 			f = open('/tmp/whoRan', "a")
+<<<<<<< .mine
+			f.write('set2, HERE IS ELEMENT XML: ' + element.toXml())
+=======
 			f.write('set2. ELEMENT XML FROM SET IS: ' + element.toXml())
+>>>>>>> .r95
 			f.close()
 			element.attributes["xdbns"] = xdbns
 			document = None
@@ -157,17 +161,11 @@ class XDB:
 		f = open('/tmp/whoRan', "a")
 		f.write('remove')
 		f.close()
-		""" Removes an XDB file """
-		if self.mangle:
-			file = mangle(file)
-		hash = makeHash(file)
-		file = self.name + X + hash + X + file + ".xml"
-		try:
-			os.remove(file)
-		except IOError, e:
-			LogEvent(WARN, "", "IOError " + str(e))
-			raise
-	
+		""" Removes a user from DB """
+		my_Temp_db=MySQLdb.connect(host="localhost", user="root", passwd="", db="transports")
+		cursor = my_Temp_db.cursor()
+		cursor.execute ("DeLeTe from msnusers m where m.jid='" + file + "';")
+
 
 def getUser(text):
 	openTag = "<username>"
