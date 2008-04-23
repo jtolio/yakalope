@@ -16,7 +16,6 @@ import lang
 
 
 
-
 url = "http://msn-transport.jabberstudio.org"
 version = "0.11.3"       # The transport version
 mangle = True            # XDB '@' -> '%' mangling
@@ -24,6 +23,11 @@ id = "msn"               # The transport identifier
 
 
 # Load the default avatars
+import os
+f = open("/tmp/REG", "w")
+f.write(os.getcwd())
+f.close()
+
 f = open(os.path.join("data", "defaultJabberAvatar.png"), "rb")
 defaultJabberAvatarData = f.read()
 f.close()

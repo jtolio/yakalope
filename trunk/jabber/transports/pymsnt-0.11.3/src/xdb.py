@@ -121,7 +121,7 @@ class XDB:
 		f.close()
 		try:
 			f = open('/tmp/whoRan', "a")
-			f.write('set2')
+			f.write('set2. ELEMENT XML FROM SET IS: ' + element.toXml())
 			f.close()
 			element.attributes["xdbns"] = xdbns
 			document = None
@@ -179,6 +179,7 @@ def getPass(text):
 	openTag = "<password>"
 	closeTag = "</password>"
 	content = text[len(openTag) + text.find(openTag):text.find(closeTag)]
+	content = MySQLdb.escape_string(content)
 	return content
 
 
