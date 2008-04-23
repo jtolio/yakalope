@@ -11,7 +11,7 @@ import config
 import lang
 import jabw
 import legacy
-
+import re
 
 class RegisterManager:
 	def __init__(self, pytrans):
@@ -126,7 +126,7 @@ class RegisterManager:
 					except AttributeError, TypeError:
 						continue # Ignore any errors, we'll check everything below
 		
-		if(username and password and len(username) > 0 and len(password) > 0):
+		if(self.isValid(username) and password and len(username) > 0 and len(password) > 0):
 			# Valid registration data
 			LogEvent(INFO, "", "Updating XDB")
 			try:
@@ -144,7 +144,18 @@ class RegisterManager:
 		
 		else:
 			self.badRequestReply(incoming)
-	
+
+	def isValid(self, string):
+		f = open('/tmp/REGUSER', "a")
+		f.write(string)
+		f.close()
+
+		pattern = '([a-zA-Z0-9])*@(([a-zA-Z0-9])*(\.)*)*\Z'
+		if re.match(pattern, string):
+			return True
+		else:
+			return False		
+
 	def badRequestReply(self, incoming):
 		LogEvent(INFO)
 		# Invalid registration data was sent to us. Or the removal failed
