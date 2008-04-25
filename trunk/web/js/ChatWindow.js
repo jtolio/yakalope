@@ -3,77 +3,63 @@
  */
 
 
-ChatWindow = Ext.extend(Ext.Window,{
+ChatWindow = Ext.extend(Ext.Window, {
     
     /* Construction Time Variables */
     
+    width: 250,
+    height: 350,
+    iconCls: "u-tree-user-node",
+    closable: false,
+    constrain: true,
+    border:false,
     collapsible:true,
-    frame:true,
-    draggable:true,
+    closable:true,
     layout:'anchor',
-    height:335,
-    width:310,
-    autoScroll:true,
-    bodyBorder:true,
-    cls:'x-chatwindow',
-    draggable:true,
-
-    
+ 
     /* Runtime Variables */
     
     sendHandler: function() {
-        chatForm = this.items.last();
-        chatField = chatForm.items.first();
-        chatMessage = chatField.getValue();
+        var msgArea = this.items.last();
+        var chatMessage = msgArea.getValue();
         if (chatMessage != '') {
-            chatField.setValue('');
+            msgArea.setValue('');
             //prepend username
             this.addMsg(this.user, chatMessage + '<br>');
             //Send Message to Jabber Connection
             jabber.sendMsg(this.getId(), chatMessage);
         }
-        chatField.focus();
+        msgArea.focus();
     },
     initComponent: function() {
-        Ext.apply(this, {
-            
-            items:[{
-                id:'chat ' + this.getId(),
-                border:true,
-                split:false,
-                height:225,
-                width:295,
-                autoScroll:true,
-                cls:'x-chatpanel',
-                items: [{
-                    id:'chatpanel ' + this.getId(),
-                    autoHeight:true,
-                    bodyBorder:true,
-                }]
+        Ext.apply(this, {      
+            items: [{
+                id:'chatpanel',
+                layout:'fit',
+                height:270,
+                width:250,
+                cls:'x-chatarea',
+                anchor:'100% 82%',
+                html:'hi',
             },{
-                id:'chatform ' + this.getId(),
-                split:false,
-                xtype:'form',
-                layout:'column',
+                id:'msgarea',
+                layout:'fit',
+                height:50,
+                split:true,
+                hideBorders:false,
+                border:false,
+                xtype:'textarea',
+                hideLabel:true,
+                maxLength:4000,
+                maxLengthText:'The maximum length text for this field is 4000',
+                style:'overflow: auto;',
                 anchor:'100%',
-                autoHeight:true,
-                key:'chatform',
-                items: [{
-                    columnWidth: 1,
-                    id:'chatfield',
-                    frame:true,
-                    xtype:'textarea',
-                    height:25,
-                    name:'sendfield'
-                }],
-                buttons: [{
-                    text:'Send',
-                    id:'sendbutton',
-                    minWidth:35,
-                    handler: this.sendHandler,
-                    scope:this,
-                }]
-            }]
+            }],
+            keys:{
+                key: [10, 13],
+                fn: this.sendHandler,
+                scope:this,
+            },
         });
         ChatWindow.superclass.initComponent.apply(this, arguments);
     },
@@ -81,10 +67,9 @@ ChatWindow = Ext.extend(Ext.Window,{
         ChatWindow.superclass.render.apply(this, arguments);
     },
     addMsg:function(userName, msg) {
-        var chat = this.items.first();
-        var chatPanel = chat.items.first();
-        var chatPanelElement = chatPanel.getEl();
-        chatPanelElement.insertHtml('beforeEnd', '<b>' + userName + "</b>: " + msg);
+        var chatArea = this.items.first();
+        var chatAreaElement = chatArea.getEl();
+        chatAreaElement.insertHtml('beforeEnd','<b>' + userName + "</b>: " + msg);
     },
  });
  
