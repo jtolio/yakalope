@@ -16,11 +16,11 @@ yakalope.app = function () {
       return viewport.items.get('buddylist');
     },
     init: function() {
-      /*if (jabber.isConnected() == false) {
+      if (jabber.isConnected() == false) {
         Login.login();
       }         
       jabber.init();
-        */
+        
       /* Setup Layout of Main Window */
   
       viewport = new Ext.Viewport({
