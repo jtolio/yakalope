@@ -42,8 +42,11 @@
 }
 
 .x-chatwindow {    
-	background-color:#7ed0ff;
 	margin-bottom:10px;
+}
+
+.x-chatarea {
+    margin-bottom:5px;
 }
 
 .x-chatpanel {

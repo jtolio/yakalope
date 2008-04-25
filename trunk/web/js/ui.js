@@ -16,11 +16,11 @@ yakalope.app = function () {
       return viewport.items.get('buddylist');
     },
     init: function() {
-      if (jabber.isConnected() == false) {
+      /*if (jabber.isConnected() == false) {
         Login.login();
       }         
       jabber.init();
-        
+        */
       /* Setup Layout of Main Window */
   
       viewport = new Ext.Viewport({
@@ -76,6 +76,17 @@ yakalope.app = function () {
         return newChat;
       }
       return null;
+    },
+    createChatWindow: function(chatId) {
+        var newChat = new NewChatWindow({
+            id:chatId,
+            title:chatId,
+            hidden:false,
+            key:chatId,
+            user:this.getUser(),
+        });
+        newChat.show(this);
+        return newChat;
     },
     removeChatWindow: function(chatId) {
       var chatArea = yakalope.app.getChatArea();

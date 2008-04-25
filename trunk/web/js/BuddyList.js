@@ -43,7 +43,7 @@ BuddyList = Ext.extend(Ext.Panel, {
   width: 225,
   minSize: 150,
   maxSize: 400,
-  //collapsible: true,
+  collapsible: true,
   rootVisible: false,
   lines: false,
   layout: 'accordion',
@@ -196,10 +196,10 @@ BuddyList = Ext.extend(Ext.Panel, {
                 }
               }
             })]
-        }, {
+        }, /*{
         title: 'Settings',
         html: '<p>Something userful would be in here.</p>',
-      }]
+      }*/]
     });
     BuddyList.superclass.initComponent.apply(this, arguments);
   }  
