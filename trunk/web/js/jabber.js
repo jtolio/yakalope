@@ -191,7 +191,8 @@ var jabber = {
     },
     
     presence: function(aJSJaCPacket){
-      var from = aJSJaCPacket.getFrom();
+      var from = new JSJaCJID(aJSJaCPacket.getFrom());
+      from.setResource(new String());
       var presence = aJSJaCPacket.getShow();
       if (aJSJaCPacket.getType()) {
         var type = aJSJaCPacket.getType();
@@ -199,12 +200,14 @@ var jabber = {
       if (aJSJaCPacket.getStatus()) {
         var status = aJSJaCPacket.getStatus();
       }
-      if (type == "unavailable") {
+      /*if (type == "unavailable") {
         yakalope.app.removeBuddy(from);
-      }
+      }*/      
+      console.log(from + presence + status + type);
+      roster.setPresence(from, presence, status);
+      
       if (type == "subscribe") {
         var approve = confirm("Approve subscription request from " + from + "?");
-        alert(approve);
         if (approve) {
           jabber.allowSubscription(new Buddy(from));
         }
@@ -212,11 +215,12 @@ var jabber = {
           jabber.denySubscription(new Buddy(from));
         }
       }
-      if (presence == "away" || presence == "chat" ||
-      presence == "dnd" ||
-      presence == "xa") {
+
+      /*if (presence == "away" || presence == "chat" ||
+        presence == "dnd" ||
+        presence == "xa") {
         yakalope.app.addBuddy(from);
-      }
+      }*/
     },
     
     error: function(aJSJaCPacket){
@@ -229,11 +233,12 @@ var jabber = {
     },
     
     connected: function(){
-      jabber.con.send(new JSJaCPresence());
       jabber.getRoster();
+      jabber.con.send(new JSJaCPresence());
     },
     
     disconnected: function(){
+      roster.clear();
       Login.login();
     },
     
@@ -271,6 +276,7 @@ var jabber = {
       }, RosterItem);
       // TODO: Load the result of the XmlReader directly into the roster store
       var result = reader.readRecords(iq.getQuery());
+
       var items = result.records;
 
       for (var i=0, il=items.length; i<il; i++) {

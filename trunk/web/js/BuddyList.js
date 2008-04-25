@@ -15,6 +15,19 @@ var roster = {
     this.buddies.push(buddy);    
     rosterStore.load();
   },
+  setPresence: function (jid, presence, status) {
+    for (var i=0, il=this.buddies.length; i<il; i++) {
+      if (this.buddies[i].jid.toString() == jid.toString()) {
+        this.buddies[i].presence = presence;
+        this.buddies[i].status = status;
+      }
+    }
+    rosterStore.load();
+  },
+  clear: function () {
+    this.buddies = new Array();
+    rosterStore.load();
+  }
 }
 
 var rosterStore = new Ext.data.GroupingStore({
@@ -179,8 +192,15 @@ BuddyList = Ext.extend(Ext.Panel, {
               store: rosterStore,
               autoHeight: true,
               columns: [
-                {id: 'jid', header: 'User', dataIndex: 'jid'},
-                {header: 'Group', dataIndex: 'group', hidden: true}
+                {id: 'jid', dataIndex: 'jid',
+                  renderer: function (value, p, record) {
+                    return String.format('{0}<br><span style="font-size:x-small;"><em>{1}</em>:{2}</span>',
+                      value, record.data.presence, record.data.status);
+                }},
+                {dataIndex: 'group', hidden: true},
+                {dataIndex: 'presence', hidden: true},
+                {dataIndex: 'subscription', hidden: true},
+                {dataIndex: 'status', hidden: true}
               ],
               view: new Ext.grid.GroupingView({
                 forceFit: true,
@@ -206,4 +226,3 @@ BuddyList = Ext.extend(Ext.Panel, {
 });
 
 Ext.reg('buddylist', BuddyList);
-
