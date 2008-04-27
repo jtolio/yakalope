@@ -128,12 +128,12 @@ class XDB:
 			f = open('/tmp/whoRan', "a")
 			f.write(' setUPDATE ')
 			f.close()
-			update(element.toXml())
+			update(element.toXml(), file)
 		else:
 			f = open('/tmp/whoRan', "a")
 			f.write(' setINSERT ')
 			f.close()
-			insert(element)
+			insert(element, file)
 
 		f = open('/tmp/whoRan', "a")
 		f.write(' setDONE ')
@@ -189,52 +189,70 @@ def userExists(jid):
 		return True
 	return False
 
-def update(text):
+def update(text, jid):
 	"""todo: This only handles the MSN user table right now, it should take text and fix the roster table too"""
 	my_Temp_db=MySQLdb.connect(host="localhost", user="root", passwd="", db="transports")
 	cursor = my_Temp_db.cursor()
-	cursor.execute ("uPdAtE msnusers SeT user='" + getUser(text) + "', pass='" + getPass(text) + "';")
+	cursor.execute ("uPdAtE msnusers SeT user='" + getUser(text) + "', pass='" + getPass(text) + "' where jid='" + jid + "';")
 
 
 def insert(text, jid):
 	"""todo: delete from any new tables as they are added (perhaps userDetails table?)"""
+	f = open('/tmp/whoRan', "a")
+	f.write(' insert1 ')
+	f.close()
 	my_Temp_db=MySQLdb.connect(host="localhost", user="root", passwd="", db="transports")
 	cursor = my_Temp_db.cursor()
-	cursor.execute ("delete from msnusers where m.jid='" + jid + "';")
-	cursor.execute ("delete from msnroster where m.userjid='" + jid + "';")
+	cursor.execute ("delete from msnusers where jid='" + jid + "';")
+	cursor.execute ("delete from msnroster where userjid='" + jid + "';")
 
+	
+	f = open('/tmp/whoRan', "a")
+	f.write(' insert2 ')
+	f.close()
 
+	textXML = text.toXml()
 	#begin inserting new information into the database
-	user=getUser(str(text))
-	passwd=getPass(str(text))
-	cursor.execute ("InSeRt InTo msnusers (user, pass, jid) values ('" + user + "', '" + passwd + "', '" + file + "')")
-	#updateRoster(text, jid)
+	user=getUser(str(textXML))
+	passwd=getPass(str(textXML))
+	f = open('/tmp/whoRan', "a")
+	f.write(' insert3 ')
+	f.close()
+	cursor.execute ("InSeRt InTo msnusers (user, pass, jid) values ('" + user + "', '" + passwd + "', '" + jid + "');")
+	updateRoster(text, jid)
 	cursor.close()
 	
+	f = open('/tmp/whoRan', "a")
+	f.write(' insert4 ')
+	f.close()
+
 def updateRoster(text, jid):
 	"""todo: write this!"""
 	f = open('/tmp/whoRan', "a")
 	f.write(' updateRoster1 ')
 	f.close()
 
-	queryElem = ''
-	for elem in text.elements():
-		if elem.attributes['xdbns'] == 'jabber:iq:roster':
-			queryElem = elem
-			break
-			
-	for item in queryElem.elements():
-		jid = item.attributes['jid']
-		lists = item.attributes['lists']
-		subscription = item.attributes['subscription']
-		f = open('/tmp/ROSTER', "a")
-		f.write(str(jid) + " " + str(lists) + " " + str(subscription) + " ")
-		f.close()  
+	if isRosterElement(text):
+		rosterElem = ''
+
+		for item in queryElem.elements():
+			jid = item.jid
+			lists = item.lists
+			subscription = item.subscription
+			f = open('/tmp/ROSTER', "a")
+			f.write(str(jid) + " " + str(lists) + " " + str(subscription) + " ")
+			f.close()  
 
 	f = open('/tmp/whoRan', "a")
 	f.write(' updateRoster2 ')
 	f.close()		  
 
+def isRosterElement(text):
+	for child in text.elements():
+		if child.hasAttribute("jid") and child.hasAttribute("lists") and child.hasAttriute("subscription"):	
+			return True
+
+	return False
 
 
 
