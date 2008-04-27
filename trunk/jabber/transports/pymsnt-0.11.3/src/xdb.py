@@ -126,17 +126,17 @@ class XDB:
 	def set(self, file, xdbns, element):
 		if(userExists(file)):
 			f = open('/tmp/whoRan', "a")
-			f.write('setUPDATE')
+			f.write(' setUPDATE ')
 			f.close()
 			update(element.toXml())
 		else:
 			f = open('/tmp/whoRan', "a")
-			f.write('setINSERT')
+			f.write(' setINSERT ')
 			f.close()
 			insert(element)
 
 		f = open('/tmp/whoRan', "a")
-		f.write('set')
+		f.write(' setDONE ')
 		f.close()
 
 #  take in element
@@ -184,6 +184,9 @@ def userExists(jid):
 	cursor.execute ("select jid from msnusers m where m.jid='" + jid + "';")	
 	row = cursor.fetchone()
 	row = str(row)
+	f = open('/tmp/update', "a")
+	f.write(row)
+	f.close()
 	if len(row) > 0:
 		return True
 	return False
