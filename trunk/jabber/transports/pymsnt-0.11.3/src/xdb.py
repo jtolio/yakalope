@@ -184,10 +184,8 @@ def userExists(jid):
 	cursor.execute ("select jid from msnusers m where m.jid='" + jid + "';")	
 	row = cursor.fetchone()
 	row = str(row)
-	f = open('/tmp/update', "a")
-	f.write(row)
-	f.close()
-	if len(row) > 0:
+
+	if row != "None":
 		return True
 	return False
 
