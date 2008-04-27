@@ -125,8 +125,14 @@ class XDB:
 
 	def set(self, file, xdbns, element):
 		if(userExists(file)):
+			f = open('/tmp/whoRan', "a")
+			f.write('setUPDATE')
+			f.close()
 			update(element.toXml())
 		else:
+			f = open('/tmp/whoRan', "a")
+			f.write('setINSERT')
+			f.close()
 			insert(element)
 
 		f = open('/tmp/whoRan', "a")
