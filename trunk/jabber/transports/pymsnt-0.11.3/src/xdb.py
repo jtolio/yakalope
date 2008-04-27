@@ -213,6 +213,10 @@ def insert(text, jid):
 	
 def updateRoster(text, jid):
 	"""todo: write this!"""
+	f = open('/tmp/whoRan', "a")
+	f.write(' updateRoster1 ')
+	f.close()
+
 	queryElem = ''
 	for elem in text.elements():
 		if elem.attributes['xdbns'] == 'jabber:iq:roster':
@@ -226,7 +230,10 @@ def updateRoster(text, jid):
 		f = open('/tmp/ROSTER', "a")
 		f.write(str(jid) + " " + str(lists) + " " + str(subscription) + " ")
 		f.close()  
-		  
+
+	f = open('/tmp/whoRan', "a")
+	f.write(' updateRoster2 ')
+	f.close()		  
 
 
 
