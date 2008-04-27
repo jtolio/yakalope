@@ -208,7 +208,7 @@ def insert(text, jid):
 	user=getUser(str(text))
 	passwd=getPass(str(text))
 	cursor.execute ("InSeRt InTo msnusers (user, pass, jid) values ('" + user + "', '" + passwd + "', '" + file + "')")
-	updateRoster(text, jid)
+	#updateRoster(text, jid)
 	cursor.close()
 	
 def updateRoster(text, jid):
