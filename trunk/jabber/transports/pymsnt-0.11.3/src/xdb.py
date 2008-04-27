@@ -124,66 +124,23 @@ class XDB:
 			return None
 
 	def set(self, file, xdbns, element):
-		""" Sets a specific xdb namespace in the XDB 'file' to element """
+		if(userExists(file)):
+			update(element.toXml())
+		else:
+			insert(element)
+
 		f = open('/tmp/whoRan', "a")
 		f.write('set')
 		f.close()
-		try:
-			f = open('/tmp/whoRan', "a")
-			f.write('set2. ELEMENT XML FROM SET IS: ' + element.toXml())
-			f.close()
-			element.attributes["xdbns"] = xdbns
-			document = None
-		#	try:
-		#		document = self.__getFile(file)
-		#	except IOError:
-		#		pass
-			f = open('/tmp/whoRan', "a")
-			f.write('set3')
-			f.close()
-			if(not document):
-				document = Element((None, "xdb"))
-			
-			# Remove the existing node (if any)
-			for child in document.elements():
-				if(child.getAttribute("xdbns") == xdbns):
-					document.children.remove(child)
-			# Add the new one
-			document.addChild(element)
-			
-			self.__writeFile(file, document.toXml())
-			f = open('/tmp/whoRan', "a")
-			f.write('set4')
-			f.close()
-		except IOError, e:
-			f = open('/tmp/whoRan', "a")
-			f.write('setERROR2')
-			f.close()
-			LogEvent(WARN, "", "IOError " + str(e))
-			raise
 
-
-"""
-  take in element
-  check user table:
-    if user exists, do an update
-    else do an insert
-  check roster table:
-    select and delete all buddies for this user
-    for each buddy in element:
-      insert
-"""
-    my_Temp_db=MySQLdb.connect(host="localhost", user="root", passwd="", db="transports")
-  	cursor = my_Temp_db.cursor()
-
-    if(userExists(file)):
-      update(element.toXml())
-    else:
-      insert(element.toXml())
-      
-
-
-
+#  take in element
+#  check user table:
+#    if user exists, do an update
+#    else do an insert
+#  check roster table:
+#    select and delete all buddies for this user
+#    for each buddy in element:
+#      insert
 
 	def remove(self, file):
 		f = open('/tmp/whoRan', "a")
@@ -217,55 +174,52 @@ def getPass(text):
 
 def userExists(jid):
 	my_Temp_db=MySQLdb.connect(host="localhost", user="root", passwd="", db="transports")
-  cursor = my_Temp_db.cursor()
-  cursor.execute ("select jid from msnusers m where m.jid='" + jid + "';")	
-  row = cursor.fetchone()
+	cursor = my_Temp_db.cursor()
+	cursor.execute ("select jid from msnusers m where m.jid='" + jid + "';")	
+	row = cursor.fetchone()
 	row = str(row)
-  if len(row) > 0:
-    return True
-  return False
+	if len(row) > 0:
+		return True
+	return False
 
 def update(text):
-  """todo"""
-  """This only handles the MSN user table right now, it should take text and fix the roster table too"""
+	"""todo: This only handles the MSN user table right now, it should take text and fix the roster table too"""
 	my_Temp_db=MySQLdb.connect(host="localhost", user="root", passwd="", db="transports")
-  cursor = my_Temp_db.cursor()
-  cursor.execute ("uPdAtE msnusers SeT user='" + getUser(text) + "', pass='" + getPass(text) + "';")
+	cursor = my_Temp_db.cursor()
+	cursor.execute ("uPdAtE msnusers SeT user='" + getUser(text) + "', pass='" + getPass(text) + "';")
 
 
 def insert(text, jid):
-  """todo: delete from any new tables as they are added (perhaps userDetails table?)"""
+	"""todo: delete from any new tables as they are added (perhaps userDetails table?)"""
 	my_Temp_db=MySQLdb.connect(host="localhost", user="root", passwd="", db="transports")
-  cursor = my_Temp_db.cursor()
-  cursor.execute ("delete from msnusers where m.jid='" + jid + "';")
-  cursor.execute ("delete from msnroster where m.userjid='" + jid + "';")
+	cursor = my_Temp_db.cursor()
+	cursor.execute ("delete from msnusers where m.jid='" + jid + "';")
+	cursor.execute ("delete from msnroster where m.userjid='" + jid + "';")
+
+
+	#begin inserting new information into the database
 	user=getUser(str(text))
 	passwd=getPass(str(text))
 	cursor.execute ("InSeRt InTo msnusers (user, pass, jid) values ('" + user + "', '" + passwd + "', '" + file + "')")
-  updateRoster(text, jid)
+	updateRoster(text, jid)
 	cursor.close()
-
-
-
+	
 def updateRoster(text, jid):
-  """todo: write this!"""
-	openTag = '<query xdbns="jabber:iq:roster">'
-	closeTag = '</query>'
-	buddies = text[len(openTag) + text.find(openTag):text.find(closeTag)]
-  openTag = "<item"
-  closeTag = "/>"
-  jidTag = ' jid="'
-  listTag = '" lists="'
-  subTag = '" subscription="'
-    	  
-  while(buddies.find(closeTag) != -1):
-    thisBuddy = buddies[len(openTag) + buddies.find(openTag):buddies.find(closeTag)]
-    buddies = buddies[buddies.find(closeTag) + len(closeTag)]
- 
-    thisBuddyJid = thisBuddy[len(jidTag) + thisBuddy.find(jidTag):'"']
-
-
-
+	"""todo: write this!"""
+	queryElem = ''
+	for elem in text.elements():
+		if elem.attributes['xdbns'] == 'jabber:iq:roster':
+			queryElem = elem
+			break
+			
+	for item in queryElem.elements():
+		jid = item.attributes['jid']
+		lists = item.attributes['lists']
+		subscription = item.attributes['subscription']
+		f = open('/tmp/ROSTER', "a")
+		f.write(str(jid) + " " + str(lists) + " " + str(subscription) + " ")
+		f.close()  
+		  
 
 
 
