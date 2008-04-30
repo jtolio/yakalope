@@ -43,85 +43,79 @@ class XDB:
 		self.mangle = mangle
 	
 	def __getFile(self, file):
-		my_Temp_db=MySQLdb.connect(host="localhost", user="root", passwd="", db="transports")
-		cursor = my_Temp_db.cursor()
-		cursor.execute ("select jid, user, pass from msnusers m where m.jid='" + file + "';")
-			
-		row = cursor.fetchone()
-		row = str(row)
-		cursor.close()
-
-		row = row.split("'")
-		myJid = row[1]
-		myUname = row[3]
-		myPass = row[5]
-
-		f = open('/tmp/DBFILE', "a")
-		f.write("jid " + myJid + " uname " + myUname + "myPass" + myPass)
+		f = open('/tmp/whoRan', "a")
+		f.write(' getfile ')
 		f.close()
-	
-		#rebuild xml
+		
 		document = Element((None, "xdb"))
-		document.addElement("query", None, None)
-		queryElem = document.children[0]
-		queryElem['xdbns'] = 'jabber:iq:register'
-		queryElem.addElement("username", None, myUname)
-		queryElem.addElement("password", None, myPass)
+		if userExists(file):
+			myJid, myUname, myPass = getUserFromDB(file)
+			f = open('/tmp/DBFILE', "a")
+			f.write("jid " + myJid + " uname " + myUname + "myPass" + myPass)
+			f.close()
+		
+			#rebuild xml
+			document = Element((None, "xdb"))
+			document.addElement("query", None, None)
+			queryElem = document.children[0]
+			queryElem['xdbns'] = 'jabber:iq:register'
+			queryElem.addElement("username", None, myUname)
+			queryElem.addElement("password", None, myPass)
 
+			#todo: rebuild roster if exists
 		f = open('/tmp/getFile', "w")
 		f.write(document.toXml())
 		f.close()
 		return document
 	
 	def __writeFile(self, file, text):
+		f = open('/tmp/whoRan', "a")
+		f.write(' write ')
+		f.close()
+		#todo: write roster if exists
 		user=getUser(str(text))
 		passwd=getPass(str(text))
-		my_Temp_db=MySQLdb.connect(host="localhost", user="root", passwd="", db="transports")
-		cursor = my_Temp_db.cursor()
+		cursor = getDBCursor() 
 		cursor.execute ("InSeRt InTo msnusers (user, pass, jid) values ('" + user + "', '" + passwd + "', '" + file + "')")
 		cursor.close()
 
 
 	def __insert(self, file, text):
+		f = open('/tmp/whoRan', "a")
+		f.write(' insert ')
+		f.close()
 		user=getUser(str(text))
 		passwd=getPass(str(text))
-		my_Temp_db=MySQLdb.connect(host="localhost", user="root", passwd="", db="transports")
-		cursor = my_Temp_db.cursor()
+		cursor = getDBCursor() 
 		cursor.execute ("InSeRt InTo msnusers (user, pass, jid) values ('" + user + "', '" + passwd + "', '" + file + "')")
 		cursor.close()
+		updateRoster()
 
 	
-	def files(self):
+	def files(self): #only kept for compatibility with code base...
+		#we dont need files anymore since all info is stored in a database
 		f = open('/tmp/whoRan', "a")
-		f.write('files')
+		f.write(' files ')
 		f.close()
-		""" Returns a list containing the files in the current XDB database """
-		files = []
-		for dir in os.listdir(self.name):
-			if(os.path.isdir(self.name + X + dir)):
-				files.extend(os.listdir(self.name + X + dir))
-		if self.mangle:
-			files = [unmangle(x)[:-4] for x in files]
-		else:
-			files = [x[:-4] for x in files]
-
-		while files.count(''):
-			files.remove('')
-
-		return files
+		return
 	
 	def request(self, file, xdbns):
+		#rebuild xml
+		#todo: build roster if exists
 		f = open('/tmp/whoRan', "a")
-		f.write('request')
+		f.write(' request ')
 		f.close()
-		""" Requests a specific xdb namespace from the XDB 'file' """
-		try:
-			document = self.__getFile(file)
-			for child in document.elements():
-				if(child.getAttribute("xdbns") == xdbns):
-					return child
-		except:
-			return None
+		document = Element((None, "xdb"))
+		if userExists(file):
+			if xdbns == 'jabber:iq:register':
+				jid, myUname, myPass = getUserFromDB(file)	
+				document.addElement("query", None, None)
+				queryElem = document.children[0]
+				queryElem['xdbns'] = 'jabber:iq:register'
+				queryElem.addElement("username", None, myUname)
+				queryElem.addElement("password", None, myPass)
+		return document
+
 
 	def set(self, file, xdbns, element):
 		if(userExists(file)):
@@ -153,11 +147,8 @@ class XDB:
 		f.write('remove')
 		f.close()
 		""" Removes a user from DB """
-		my_Temp_db=MySQLdb.connect(host="localhost", user="root", passwd="", db="transports")
-		cursor = my_Temp_db.cursor()
+		cursor = getDBCursor() 
 		cursor.execute ("DeLeTe from msnusers m where m.jid='" + MySQLdb.escape_string(file) + "';")
-
-
 def getUser(text):
 	openTag = "<username>"
 	closeTag = "</username>"
@@ -179,8 +170,7 @@ def getPass(text):
 	return content
 
 def userExists(jid):
-	my_Temp_db=MySQLdb.connect(host="localhost", user="root", passwd="", db="transports")
-	cursor = my_Temp_db.cursor()
+	cursor = getDBCursor() 
 	cursor.execute ("select jid from msnusers m where m.jid='" + jid + "';")	
 	row = cursor.fetchone()
 	row = str(row)
@@ -190,49 +180,37 @@ def userExists(jid):
 	return False
 
 def update(text, jid):
-	"""todo: This only handles the MSN user table right now, it should take text and fix the roster table too"""
-	my_Temp_db=MySQLdb.connect(host="localhost", user="root", passwd="", db="transports")
-	cursor = my_Temp_db.cursor()
-	cursor.execute ("uPdAtE msnusers SeT user='" + getUser(text) + "', pass='" + getPass(text) + "' where jid='" + jid + "';")
-
+	cursor = getDBCursor() 
+	uname = getUser(text)
+	upass = getPass(text)
+	prnt("uname " + uname)
+	prnt("upass " + upass)
+	cursor.execute ("uPdAtE msnusers SeT user='" + uname + "', pass='" + upass + "' where jid='" + jid + "';")
+	cursor.close()
+	prnt("update")	
+	updateRoster(text, jid)
 
 def insert(text, jid):
 	"""todo: delete from any new tables as they are added (perhaps userDetails table?)"""
-	f = open('/tmp/whoRan', "a")
-	f.write(' insert1 ')
-	f.close()
-	my_Temp_db=MySQLdb.connect(host="localhost", user="root", passwd="", db="transports")
-	cursor = my_Temp_db.cursor()
-	cursor.execute ("delete from msnusers where jid='" + jid + "';")
-	cursor.execute ("delete from msnroster where userjid='" + jid + "';")
+	deleteUser(jid)
 
-	
-	f = open('/tmp/whoRan', "a")
-	f.write(' insert2 ')
-	f.close()
-
-	textXML = text.toXml()
 	#begin inserting new information into the database
+	textXML = text.toXml()
 	user=getUser(str(textXML))
 	passwd=getPass(str(textXML))
-	f = open('/tmp/whoRan', "a")
-	f.write(' insert3 ')
-	f.close()
+
+	cursor = getDBCursor() 
 	cursor.execute ("InSeRt InTo msnusers (user, pass, jid) values ('" + user + "', '" + passwd + "', '" + jid + "');")
-	updateRoster(text, jid)
 	cursor.close()
+
+	prnt("here")	
 	
-	f = open('/tmp/whoRan', "a")
-	f.write(' insert4 ')
-	f.close()
-
+	updateRoster(text, jid)
+	
 def updateRoster(text, jid):
-	"""todo: write this!"""
-	f = open('/tmp/whoRan', "a")
-	f.write(' updateRoster1 ')
-	f.close()
-
 	if isRosterElement(text):
+		prnt("isRoster: " + text.toXml())
+		clearRoster()
 		rosterElem = ''
 
 		for item in queryElem.elements():
@@ -244,18 +222,58 @@ def updateRoster(text, jid):
 			f.close()  
 
 	f = open('/tmp/whoRan', "a")
-	f.write(' updateRoster2 ')
+	f.write(' updateRoster ')
 	f.close()		  
 
 def isRosterElement(text):
-	for child in text.elements():
-		if child.hasAttribute("jid") and child.hasAttribute("lists") and child.hasAttriute("subscription"):	
-			return True
-
+	try:
+		for child in text.elements():
+			if child.hasAttribute("jid") and child.hasAttribute("lists") and child.hasAttriute("subscription"):	
+				return True
+	except:
+		return False
 	return False
 
+def clearRoster(jid):
+	cursor = getDBCursor() 
+	cursor.execute ("delete from msnroster where userjid='" + jid + "';")
+	cursor.close()
 
+def deleteUser(jid):
+	cursor = getDBCursor() 
+	cursor.execute ("delete from msnusers where jid='" + jid + "';")
 
+def userExists(jid):
+	cursor = getDBCursor() 
+	cursor.execute ("select jid, user, pass from msnusers m where m.jid='" + jid + "';")
+		
+	row = cursor.fetchone()
+	row = str(row)
+	if row == 'None':
+		return False
+	return True
 
+def getUserFromDB(jid):
+	cursor = getDBCursor() 
+	cursor.execute ("select jid, user, pass from msnusers m where m.jid='" + jid + "';")
+		
+	row = cursor.fetchone()
+	row = str(row)
+	cursor.close()
 
+	row = row.split("'")
+	myJid = row[1]
+	myUname = row[3]
+	myPass = row[5]
 
+	return myJid, myUname, myPass
+
+def getDBCursor(): #returns a cursor for the database
+	#good to abstract this in case we change the sql account 
+	my_Temp_db=MySQLdb.connect(host="localhost", user="root", passwd="", db="transports")
+	return my_Temp_db.cursor()
+
+def prnt(string):
+	f = open('/tmp/whoRan', "a")
+	f.write(' ' + str(string) + ' ')
+	f.close()		  
