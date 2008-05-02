@@ -123,26 +123,24 @@ var jabber = {
   },
   addBuddy: function(buddy){
     this.addRosterItem(buddy);
-    this.subscribe(buddy);
-    alert(buddy.jid);
+    this.subscribe(buddy.jid);
     return buddy.jid;
   },
   
-  subscribe: function(buddy){
-    alert("test: " + buddy.jid);
-    this.__subscription(buddy, 'subscribe');
+  subscribe: function(jid){
+    this.__subscription(jid, 'subscribe');
   },
   
-  unsubscribe: function(buddy){
-    this.__subscription(buddy, 'unsubscribe');
+  unsubscribe: function(jid){
+    this.__subscription(jid, 'unsubscribe');
   },
   
-  allowSubscription: function(buddy){
-    this.__subscription(buddy, 'subscribed');
+  allowSubscription: function(jid){
+    this.__subscription(jid, 'subscribed');
   },
   
   denySubscription: function(buddy){
-    this.__subscription(buddy, 'unsubscribed');
+    this.__subscription(jid, 'unsubscribed');
   },
   
   /**
@@ -150,10 +148,10 @@ var jabber = {
    * @param {JSJaCJID} buddy
    * @param {String} subType
    */
-  __subscription: function(buddy, subType){
+  __subscription: function(jid, subType){
     try {
       var presence = new JSJaCPacket('presence');
-      presence.setTo(buddy.jid);
+      presence.setTo(jid);
       presence.setType(subType);
       this.con.send(presence);
     } 
@@ -205,24 +203,20 @@ var jabber = {
       }*/      
       console.log(from + presence + status + type);
       roster.setPresence(from, presence, status);
-      
-      if (type == "subscribe") {
-        var approve = confirm("Approve subscription request from " + from + "?");
-        if (approve) {
-          jabber.allowSubscription(new Buddy(from));
-        }
-        else {
-          jabber.denySubscription(new Buddy(from));
-        }
-      }
 
-      /*if (presence == "away" || presence == "chat" ||
-        presence == "dnd" ||
-        presence == "xa") {
-        yakalope.app.addBuddy(from);
-      }*/
+      if (type == "subscribe") {
+        Ext.MessageBox.confirm("Subscription request",
+          "Approve subscription request from " + from.toString() + "?",
+          function (approve) {
+            console.log(approve);
+            if (approve == 'yes')
+              jabber.allowSubscription(from.toString());
+            else
+              jabber.denySubscription(from.toString());
+        });
+      }
     },
-    
+
     error: function(aJSJaCPacket){
       if (jabber.con.connected()) 
         jabber.con.disconnect();
