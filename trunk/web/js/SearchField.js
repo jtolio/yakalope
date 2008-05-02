@@ -1,4 +1,3 @@
-
 /*
  * Ext JS Library 2.0.2
  * Copyright(c) 2006-2008, Ext JS, LLC.
@@ -30,6 +29,7 @@ Ext.app.SearchField = Ext.extend(Ext.form.TwinTriggerField, {
         if(this.hasSearch){
             this.el.dom.value = '';
             var o = {start: 0};
+							
             this.store.baseParams = this.store.baseParams || {};
             this.store.baseParams[this.paramName] = '';
             this.store.reload({params:o});
@@ -45,7 +45,8 @@ Ext.app.SearchField = Ext.extend(Ext.form.TwinTriggerField, {
             return;
         }
         var o = {start: 0};
-        this.store.baseParams = this.store.baseParams || {};
+							
+        this.store.baseParams = this.store.baseParams ||{};
         this.store.baseParams[this.paramName] = v;
         this.store.reload({params:o});
         this.hasSearch = true;
