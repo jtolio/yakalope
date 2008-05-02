@@ -194,8 +194,19 @@ BuddyList = Ext.extend(Ext.Panel, {
               columns: [
                 {id: 'jid', dataIndex: 'jid',
                   renderer: function (value, p, record) {
-                    return String.format('{0}<br><span style="font-size:x-small;"><em>{1}</em>:{2}</span>',
-                      value, record.data.presence, record.data.status);
+                    var tpl = new Ext.XTemplate(
+                      '{jid}',
+                      '<tpl if="presence || status">',
+                        '<br/><span style="font-size:x-small;">',
+                        '{presence}',
+                        '<tpl if="presence &amp;&amp; status">',
+                          ':',
+                        '</tpl>',
+                        '{status}',
+                        '</span>',
+                      '</tpl>'
+                    );
+                    return tpl.applyTemplate(record.data);
                 }},
                 {dataIndex: 'group', hidden: true},
                 {dataIndex: 'presence', hidden: true},
