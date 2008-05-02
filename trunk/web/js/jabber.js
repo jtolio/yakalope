@@ -1,7 +1,7 @@
 var jabber = {
   con: new JSJaCHttpBindingConnection(),
-  roster: new Array(),
-  myJid: new String(),
+  roster: [],
+  myJid: '',
   init: function(){
     oDbg = new JSJaCConsoleLogger(2);
     // Try to resume a session
@@ -202,7 +202,7 @@ var jabber = {
         yakalope.app.removeBuddy(from);
       }*/      
       console.log(from + presence + status + type);
-      roster.setPresence(from, presence, status);
+      roster.setPresence(from, presence, status, type);
 
       if (type == "subscribe") {
         Ext.MessageBox.confirm("Subscription request",
@@ -275,7 +275,7 @@ var jabber = {
 
       for (var i=0, il=items.length; i<il; i++) {
         roster.update(new Buddy(items[i].data.jid, items[i].data.subscription,
-          items[i].data.name, items[i].data.group, '', ''));
+          items[i].data.name, items[i].data.group));
       }
     },
     iqRosterSet: function(iq){
@@ -292,18 +292,20 @@ var jabber = {
  * @param {String} group
  * @param {String} presence
  * @param {String} status
+ * @param {String} type
  */
-var Buddy = function(jid, subscription, name, group, presence, status){
+var Buddy = function(jid, subscription, name, group, presence, status, type){
   this.jid = new JSJaCJID(jid);
   this.subscription = subscription;
   this.name = name;
   this.group = group;
   this.presence = presence;
   this.status = status;
-  
+  this.type = type;
+
   for (var el in this) 
     if (typeof(this[el]) == 'undefined')
-      this[el] = new String();
+      this[el] = '';
 }
 /**
  * Compares self to another Buddy object
@@ -312,6 +314,14 @@ var Buddy = function(jid, subscription, name, group, presence, status){
 Buddy.prototype.compareTo = function (buddy) {
   return this.jid.toString() == buddy.jid.toString();
 }
-Buddy.prototype.log = function(){
-  console.log(this.jid + ' ' + this.subscription + ' ' + this.name + ' ' + this.group);
+/**
+ * Updates buddy attributes without overwriting presence data
+ * @param {Buddy} buddy
+ */
+Buddy.prototype.update = function (buddy) {
+  this.jid = buddy.jid;
+  this.subscription = buddy.subscription;
+  this.name = buddy.name;
+  this.group = buddy.group;
 }
+

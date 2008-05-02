@@ -7,7 +7,7 @@ var roster = {
   update: function (buddy) {
     for (var i=0, il=this.buddies.length; i<il; i++) {
       if (this.buddies[i].compareTo(buddy)) {
-        this.buddies[i] = buddy;
+        this.buddies[i].update(buddy);
         rosterStore.load();
         return;
       }
@@ -15,11 +15,12 @@ var roster = {
     this.buddies.push(buddy);    
     rosterStore.load();
   },
-  setPresence: function (jid, presence, status) {
+  setPresence: function (jid, presence, status, type) {
     for (var i=0, il=this.buddies.length; i<il; i++) {
       if (this.buddies[i].jid.toString() == jid.toString()) {
         this.buddies[i].presence = presence;
         this.buddies[i].status = status;
+        this.buddies[i].type = type;
       }
     }
     rosterStore.load();
