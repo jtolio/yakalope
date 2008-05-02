@@ -15,6 +15,9 @@ yakalope.app = function () {
     getBuddyList: function() {
       return viewport.items.get('buddylist');
     },
+	getLogWin: function() {
+      return viewport.items.get('logwin');
+    },
     init: function() {
       if (jabber.isConnected() == false) {
         Login.login();
@@ -51,6 +54,19 @@ yakalope.app = function () {
         xtype:'buddylist'
 
         /* End Buddy Window */ 
+
+      },{
+           
+        /* Search */
+      
+        region:'west',
+        id:'logwin',
+        title:'Search',
+        margins:'10 0 0 0',
+        cmargins: '10 0 0 0',
+        xtype:'logwin'
+
+        /* Search */ 
 
       }]
       
