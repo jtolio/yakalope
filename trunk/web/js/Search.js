@@ -13,7 +13,7 @@ LogWin = Ext.extend(Ext.Panel, {
   lines: false,
   layout: 'accordion',
   defaults: {
-    border: false
+  border: false
   },
   layoutConfig: {
     animate: true
@@ -30,21 +30,20 @@ LogWin = Ext.extend(Ext.Panel, {
   initComponent: function(){
     Ext.apply(this, {
       tbar: [
-  	     'Search: ', ' ',
-		 combo, ' ',
 		 new Ext.app.SearchField({
-	       id: 'search-field',
-		   store: store,
-		   paramName: 'search'
+		 	id: 'search_field',
+			width: 100,
+            //store: store,
+            paramName: 'search'
 	  })],
       items: [{
           title: 'Search Results',
           defaults: {border: false},
-          items: [ new Ext.grid.GridPanel({
+          /*items: [ new Ext.grid.GridPanel({
               store: rosterStore,
               autoHeight: true,
               columns: [
-                {id: 'jid', dataIndex: 'jid',
+               {id: 'jid', dataIndex: 'jid',
                   renderer: function (value, p, record) {
                     return String.format('{0}<br><span style="font-size:x-small;"><em>{1}</em>:{2}</span>',
                       value, record.data.presence, record.data.status);
@@ -63,11 +62,11 @@ LogWin = Ext.extend(Ext.Panel, {
               cls: 'blist-grid',
               listeners: {
                 rowdblclick: function() {
-                    //var buddy = this.getSelectionModel().getSelected().data;
-                    //yakalope.app.createNewChatWindow(buddy.jid);
+                    var buddy = this.getSelectionModel().getSelected().data;
+                    yakalope.app.createNewChatWindow(buddy.jid);
                 }
               }
-            })]
+            })]*/
         }]
     });
     LogWin.superclass.initComponent.apply(this, arguments);
