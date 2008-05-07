@@ -1,4 +1,6 @@
 var jabber = {
+  u_n: '',
+  p_w: '',
   con: new JSJaCHttpBindingConnection(),
   roster: [],
   myJid: '',
@@ -61,6 +63,8 @@ var jabber = {
       oArgs.resource = 'yakalope';
       oArgs.pass = password;
       oArgs.register = false;
+	  this.u_n = username;
+	  this.p_w = password;
       this.myJid = oArgs.username + oArgs.domain;
       
       this.con.connect(oArgs);
