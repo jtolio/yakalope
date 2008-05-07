@@ -18,14 +18,20 @@ def login(request):
 
     valid_login = False
     if c_user and c_pass:
-        if c_user == "test" and c_pass == "123456":
+        qset = Users.objects.filter(username=c_user,password=c_pass)
+        if len(qset) == 1:
             valid_login = True
-        #TODO: REPLACE WITH REAL LOGIN CHECKING CODE
 
     if valid_login:
+        request.session['username'] = c_user
         response = ServerStatus("success","",None);
     else:
-        response = ServerStatus("failure","",None);
+        try:
+            del request.session['username']
+        except KeyError:
+            pass
+        message = "Invalid username or password"
+        response = ServerStatus("failure",message,None);
 
     return HttpResponse(convertToJSON(response), mimetype="text/plain")
 
@@ -39,12 +45,19 @@ returns Status object on success, type=success, message="",
 returns Status object on failure, type=failure, message=description, data=null
 """
 def search(request):
-    c_query = request.GET.get('searchterm','')
+    try:
+        username = request.session['username']
+        c_query = request.GET.get('searchterm','')
+        if c_query:
+            pass #TODO: call search
+            datum = [LogConversation(),LogConversation()]
 
-    if c_query:
-        pass #Nothing right now
+        response = ServerStatus("success","",None);
+        return HttpResponse(convertToJSON(response), mimetype="text/plain")
+    except KeyError:
+        message = "Not logged in"
+        response = ServerStatus("failure",message,None);
 
-    response = ServerStatus("failure","not yet written",None);
     return HttpResponse(convertToJSON(response), mimetype="text/plain")
 
 
@@ -56,7 +69,17 @@ returns Status object on success, type=success, message="",
 returns Status object on failure, type=failure, message=description, data=null
 """
 def recent(request):
-    response = ServerStatus("success","",[LogConversation(),LogConversation()]);
+    try:
+        username = request.session['username']
+
+        #TODO: call recent
+        datum = [LogConversation(),LogConversation()]
+
+        response = ServerStatus("success","",datum);
+    except KeyError:
+        message = "Not logged in"
+        response = ServerStatus("failure",message,None);
+
     return HttpResponse(convertToJSON(response), mimetype="text/plain")
 
 
@@ -66,7 +89,11 @@ def recent(request):
 returns Status object ALWAYS, type=success, message="", data=null
 """
 def logout(request):
-    response = ServerStatus("failure","",None);
+    try:
+        del request.session['username']
+    except KeyError:
+        pass
+    response = ServerStatus("success","",None);
     return HttpResponse(convertToJSON(response), mimetype="text/plain")
 
 
