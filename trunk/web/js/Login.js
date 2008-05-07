@@ -33,13 +33,8 @@ var Login = {
          },
          function() {
            var values = LoginWindowForm.getForm().getValues();
-           //if(jabber.doLogin(values.username, values.password)){
            jabber.doLogin(values.username, values.password);
            LoginWindow.close();
-           //}
-           //else{
-           //   alert("Could not connect to server.")
-           //}
          },
          LoginWindow);
                            
