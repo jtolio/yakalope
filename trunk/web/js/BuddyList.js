@@ -3,30 +3,49 @@
  */
 
 var roster = {
-  buddies: [],
+  // Online buddies
+  online: [],
+  // Full roster
+  roster: [],
   update: function (buddy) {
-    for (var i=0, il=this.buddies.length; i<il; i++) {
-      if (this.buddies[i].compareTo(buddy)) {
-        this.buddies[i].update(buddy);
+    for (var i=0, il=this.roster.length; i<il; i++) {
+      if (this.roster[i].compareTo(buddy)) {
+        this.roster[i].update(buddy);
         rosterStore.load();
         return;
       }
     }
-    this.buddies.push(buddy);    
+    this.roster.push(buddy);    
     rosterStore.load();
   },
   setPresence: function (jid, presence, status, type) {
-    for (var i=0, il=this.buddies.length; i<il; i++) {
-      if (this.buddies[i].jid.toString() == jid.toString()) {
-        this.buddies[i].presence = presence;
-        this.buddies[i].status = status;
-        this.buddies[i].type = type;
+    // If the buddy comes online, move them to 'online'
+    if (type != 'unavailable') {
+      for (var i=0, il=this.roster.length; i<il; i++) {
+        if (this.roster[i].jid.toString() == jid.toString()) {
+          this.online.push(this.roster[i]);
+          this.roster.remove(this.roster[i]);
+        }
+      }
+    }
+    for (var i=0, il=this.online.length; i<il; i++) {
+      if (this.online[i].jid.toString() == jid.toString()) {
+        this.online[i].presence = presence;
+        this.online[i].status = status;
+        this.online[i].type = type;
+        // If the buddy goes offline, remove from online list
+        if (type == 'unavailable') {
+         var buddy = this.online[i];
+         this.online.remove(this.online[i]);
+         this.roster.push(buddy);
+        }
       }
     }
     rosterStore.load();
   },
   clear: function () {
-    this.buddies = new Array();
+    this.online = [];
+    this.roster = [];
     rosterStore.load();
   }
 }
@@ -35,7 +54,7 @@ var rosterStore = new Ext.data.GroupingStore({
   id: 'rosterStore',
   proxy: new Ext.data.MemoryProxy(roster),
   reader: new Ext.data.JsonReader({
-    root: 'buddies',
+    root: 'online',
     },[
       {name: 'jid'},
       {name: 'subscription'},
@@ -60,7 +79,6 @@ BuddyList = Ext.extend(Ext.Panel, {
   collapsible: true,
   rootVisible: false,
   lines: false,
-  layout: 'accordion',
   defaults: {
     border: false
   },
@@ -186,10 +204,8 @@ BuddyList = Ext.extend(Ext.Panel, {
       },
       scope: this
       }],
-      items: [{
-          title: 'Buddies',
-          defaults: {border: false},
-          items: [ new Ext.grid.GridPanel({
+      items: [
+          new Ext.grid.GridPanel({
               store: rosterStore,
               autoHeight: true,
               columns: [
@@ -226,14 +242,60 @@ BuddyList = Ext.extend(Ext.Panel, {
                     var buddy = this.getSelectionModel().getSelected().data;
                     yakalope.app.createNewChatWindow(buddy.jid);
                 }
-              }
+              },
+              tbar: [new Ext.form.ComboBox({
+                  id: 'presence',
+                  //name: 'presence',                  
+                  width: 70,
+                  store: new Ext.data.SimpleStore({
+                    fields: ['presence', 'readablePresence'],
+                    data: [
+                      ['', 'Available'],
+                      ['away', 'Away'],
+                      ['chat', 'Chatty'],
+                      ['dnd', 'Do Not Disturb']/*,
+                      ['unavailable', 'Offline']*/
+                    ],
+                  }),
+                  displayField: 'readablePresence',
+                  valueField: 'presence',
+                  mode: 'local',
+                  forceSelection: true,
+                  triggerAction: 'all',
+                  listeners: {
+                    render: function (combo) {
+                      combo.setValue(combo.store.collect('presence', true)[0]);
+                    },
+                    select: function (combo) {
+                      var status = Ext.getCmp('status').getValue();
+                      jabber.setPresence(combo.getValue(), status);
+                    }
+                  }
+                }), ' ',
+                new Ext.form.ComboBox({
+                  id: 'status',
+                  emptyText: 'Set status...',
+                  hideTrigger: true, // Temporary until we save previous status messages
+                  store: new Ext.data.SimpleStore({
+                    fields: ['status'],
+                    data: [] // TODO: This will store previous status messages
+                  }),
+                  displayField: 'status',
+                  mode: 'local',
+                  width: 145,
+                  queryDelay: 500,
+                  hideLabel: true,
+                  listeners: {
+                    beforequery: function (q) {
+                      var presence = Ext.getCmp('presence').getValue();
+                      jabber.setPresence(presence, q.query);
+                    }
+                  }
+                })]
             })]
-        }, /*{
-        title: 'Settings',
-        html: '<p>Something userful would be in here.</p>',
-      }*/]
     });
     BuddyList.superclass.initComponent.apply(this, arguments);
+    //Ext.getCmp('presence').selectFirst();
   }  
 });
 

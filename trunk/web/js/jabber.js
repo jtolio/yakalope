@@ -126,7 +126,20 @@ var jabber = {
     this.subscribe(buddy.jid);
     return buddy.jid;
   },
-  
+
+  setPresence: function(show, status) {
+    try {
+      var presence = new JSJaCPresence();
+      presence.setShow(show);
+      presence.setStatus(status);
+      this.con.send(presence);
+    }
+    catch (e) {
+      Ext.MessageBox.alert('Error setting presence', e.message);
+      return false;
+    }
+  },
+
   subscribe: function(jid){
     this.__subscription(jid, 'subscribe');
   },
@@ -156,7 +169,7 @@ var jabber = {
       this.con.send(presence);
     } 
     catch (e) {
-      alert("Error sending '" + subType + "': " + e.message);
+      Ext.MessageBox.alert('Error sending ' + subType, e.message);
       return false;
     }
   },
