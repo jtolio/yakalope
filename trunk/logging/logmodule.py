@@ -707,6 +707,17 @@ class LogConversation:
             rank += m.getRank()
         return rank
 
+    def toDict(self):
+        con_dict = {}
+        con_dict['protocol'] = self.protocol
+        con_dict['friend_chat'] = self.friend_chat
+        con_dict['idnum'] = self.idnum
+        con_dict['rank'] = self.getRank()
+        con_dict['messages'] = []
+        for msg in self.messages:
+            con_dict['messages'].append(msg.toDict())
+        return con_dict
+
 """
     CLASS: LogMessage
 
@@ -746,3 +757,12 @@ class LogMessage:
 
     def getID(self):
         return self.idnum
+
+    def toDict(self):
+        msg_dict = {}
+        msg_dict['message_text'] = self.message_text
+        msg_dict['timestamp'] = self.timestamp
+        msg_dict['whosent'] = self.whosent
+        msg_dict['rank'] = self.rank
+        msg_dict['idnum'] = self.idnum
+        return msg_dict
