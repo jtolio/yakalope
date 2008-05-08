@@ -207,7 +207,7 @@ BuddyList = Ext.extend(Ext.Panel, {
         username:values.username,
         password:values.password
       };
-      //jabber.register(service, registration);
+      jabber.register(service, registration);
       window.close();
     }, window);
 
