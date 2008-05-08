@@ -1,10 +1,11 @@
-# Create your views here.
+import sys
+from django.conf import settings
+sys.path.append(settings.LOGMODULE_PATH)
 from django.shortcuts import HttpResponse
 from models import ServerStatus
 from models import Users
 from django.utils import simplejson
-from models import LogMessage        #TODO: CHANGE TO IMPORT LOGMODULE
-from models import LogConversation   #TODO: REMOVE
+import logmodule
 
 #Logs in the user
 """
@@ -46,14 +47,27 @@ returns Status object on failure, type=failure, message=description, data=null
 """
 def search(request):
     try:
-        username = request.session['username']
+        username = request.session['username'] \
+                 + "@" + settings.LOGMODULE_HOSTNAME
         c_query = request.GET.get('searchterm','')
         if c_query:
-            pass #TODO: call search
-            datum = [LogConversation(),LogConversation()]
+            logmod = logmodule.LogModule()
+            dp_ok = logmod.setDataDirectory(settings.LOGMODULE_DATA_PATH)
+            ip_ok = logmod.setIndexDirectory(settings.LOGMODULE_INDEX_PATH)
 
-        response = ServerStatus("success","",None);
-        return HttpResponse(convertToJSON(response), mimetype="text/plain")
+            if dp_ok and ip_ok:
+                search_cons = logmod.searchMessages(username,c_query)
+                if search_cons == False:
+                    message = "No logged conversations"
+                    response = ServerStatus("success",message,[]);
+                else:
+                    response = ServerStatus("success","",search_cons)
+            else:
+                message = "Log path settings are invalid"
+                response = ServerStatus("failure",message,None);
+        else:
+            message = "Empty query"
+            response = ServerStatus("failure",message,None);
     except KeyError:
         message = "Not logged in"
         response = ServerStatus("failure",message,None);
@@ -70,12 +84,23 @@ returns Status object on failure, type=failure, message=description, data=null
 """
 def recent(request):
     try:
-        username = request.session['username']
+        username = request.session['username'] \
+                 + "@" + settings.LOGMODULE_HOSTNAME
 
-        #TODO: call recent
-        datum = [LogConversation(),LogConversation()]
+        logmod = logmodule.LogModule()
+        dp_ok = logmod.setDataDirectory(settings.LOGMODULE_DATA_PATH)
+        ip_ok = logmod.setIndexDirectory(settings.LOGMODULE_INDEX_PATH)
 
-        response = ServerStatus("success","",datum);
+        if dp_ok and ip_ok:
+            recent_cons = logmod.getRecentConversations(username)
+            if recent_cons == False:
+                message = "No logged conversations"
+                response = ServerStatus("success",message,[]);
+            else:
+                response = ServerStatus("success","",recent_cons)
+        else:
+            message = "Log path settings are invalid"
+            response = ServerStatus("failure",message,None);
     except KeyError:
         message = "Not logged in"
         response = ServerStatus("failure",message,None);
