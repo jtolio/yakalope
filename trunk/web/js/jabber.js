@@ -193,6 +193,7 @@ var jabber = {
     },
     
     message: function(aJSJaCPacket){
+	  alert(aJSJaCPacket.getFromJID())
       yakalope.app.addMsg(aJSJaCPacket.getFromJID(), aJSJaCPacket.getBody().htmlEnc());
     },
     
