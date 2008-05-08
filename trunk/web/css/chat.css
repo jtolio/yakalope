@@ -5,15 +5,15 @@
  * 
  * http://extjs.com/license
  */
- 
+
 .chatview {
     background-color:white;
     margin-bottom:5px;
+    overflow:auto;
 }
 
 .msg {
     background-color:white;
     margin-bottom:5px;
 }
-
 

@@ -22,7 +22,7 @@ ChatWindow = Ext.extend(Ext.Window, {
     sendHandler: function() {
         var msgArea = this.items.last();
         var chatMessage = msgArea.getValue();
-        if (chatMessage != '') {
+        if (chatMessage != '' && chatMessage != '\n') {
             msgArea.setValue('');
             this.addMsg(this.user, chatMessage + '<br>');
             //Send Message to Jabber Connection
@@ -91,15 +91,15 @@ ChatWindow = Ext.extend(Ext.Window, {
         var dataview = new Ext.DataView({
             id:'chatview' + this.getId(),
             layout:'fit',
-            height:270,
-            width:250,
             store:chatStore,
             cls:'chatview',
             tpl: new Ext.XTemplate(
             '<tpl for=".">',
             '<div class="msg"><b>{username}</b>: {msg}</div>',
             '</tpl>'),
-            itemSelector:'div.msg'
+            itemSelector:'div.msg',
+	    scrollable:true,
+	    anchor:'100% -50'
         });
         
         this.chat = chat;
@@ -114,6 +114,8 @@ ChatWindow = Ext.extend(Ext.Window, {
             msg: msg
         };
         chat.update(msg, this);
+	var dataview = this.items.first().getEl();
+	dataview.scroll('down', 25, true);
     }
  });
  
