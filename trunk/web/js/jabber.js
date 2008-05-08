@@ -36,6 +36,8 @@ var jabber = {
     con.registerIQGet('query', NS_TIME, jabber.handle.iqTime);
     con.registerIQSet('query', NS_ROSTER, jabber.handle.iqRosterSet);
     con.registerHandler('iq', 'query', NS_ROSTER, jabber.handle.iqRoster);
+    con.registerHandler('iq', 'query', NS_DISCO_ITEMS, jabber.handle.iqDiscoItems);
+    con.registerHandler('iq', 'query', NS_REGISTER, jabber.handle.iqRegister);
   },
   
   doLogin: function(username, password){
@@ -118,6 +120,38 @@ var jabber = {
     this.addRosterItem(buddy);
     this.subscribe(buddy.jid);
     return buddy.jid;
+  },
+
+  discoverItems: function(){
+    var iq = new JSJaCIQ();
+    iq.setTo('squall.cs.umn.edu');
+    iq.setType('get');
+    iq.setID('get_items');
+    iq.setQuery(NS_DISCO_ITEMS);
+    this.send(iq);
+  },
+
+  getRegFields: function(to){
+    var iq = new JSJaCIQ();
+    iq.setTo(to);
+    iq.setType('get');
+    iq.setID('reg_get');
+    iq.setQuery(NS_REGISTER);
+    this.send(iq);
+  },
+
+  register: function(to, fields) {
+    var iq = new JSJaCIQ();
+    iq.setTo(to);
+    iq.setType('set');
+    iq.setID('reg');
+    var query = iq.setQuery(NS_REGISTER);
+    for (field in fields) {
+      query.appendChild(
+        iq.buildNode(field, {}, fields[field])
+      );
+    }
+    this.send(iq);
   },
 
   setPresence: function(show, status) {
@@ -265,6 +299,14 @@ var jabber = {
     iqRosterSet: function(iq){
       jabber.handle.iqRoster(iq);
     },
+
+    iqDiscoItems: function(iq){
+      alert(iq.xml());
+    },
+
+    iqRegister: function(iq){
+      alert(iq.xml());
+    }
   }
 }
 
