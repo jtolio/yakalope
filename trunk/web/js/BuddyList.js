@@ -152,6 +152,73 @@ BuddyList = Ext.extend(Ext.Panel, {
     }, window);
     window.show(this);
   },
+  addServiceDlg: function() {
+     var servicesStore = new Ext.data.SimpleStore({
+      id: 'services-store',
+      fields: ['service', 'serviceName'],
+      data: [
+       ['msn.squall.cs.umn.edu', 'MSN'],
+       ['aim.squall.cs.umn.edu', 'AIM'],
+       ['icq.squall.cs.umn.edu', 'ICQ'],
+       ['yahoo.squall.cs.umn.edu', 'Yahoo']
+      ],
+    });
+    var window = new Ext.Window({
+      title:'Add an IM Service',
+      width:300,
+      items: 
+        new Ext.FormPanel({
+          labelWidth:75,
+          frame:true,
+          defaultType:'textfield',
+          items:[
+            new Ext.form.ComboBox({
+              id: 'addServiceCombo',
+              name: 'serviceType',
+              fieldLabel: 'Service',
+              value: servicesStore.getAt(0).data.service,
+              store: servicesStore,
+              valueField: 'service',
+              displayField: 'serviceName',
+              mode: 'local',
+              forceSelection: true,
+              triggerAction: 'all'
+          }),{
+            fieldLabel:'User Name',
+            name:'username',
+            allowBlank:false
+          },{
+            fieldLabel:'Password',
+            name:'password',
+            inputType:'password',
+            allowBlank:false
+          }]            
+        })
+    });
+    var form = window.items.first();
+
+    form.addButton({
+      text:'Add',
+      name:'add'
+    }, function() {
+      var values = form.getForm().getValues();
+      var service = form.items.first().getValue();
+      var registration = {
+        username:values.username,
+        password:values.password
+      };
+      //jabber.register(service, registration);
+      window.close();
+    }, window);
+
+    form.addButton({
+      text:'Cancel',
+      name:'cancel',
+    }, function() {
+      window.close();
+    }, window);
+    window.show(this);
+  },
   removeBuddyDlg: function(){
     var window = new Ext.Window({
       title: 'Remove a Buddy',
@@ -196,9 +263,9 @@ BuddyList = Ext.extend(Ext.Panel, {
         handler: this.addBuddyDlg,
         scope: this
       }, {
-        text: 'Remove Buddy',
-        id: 'removebuddy',
-        handler: this.removeBuddyDlg,
+        text: 'Add Service',
+        id: 'addservice',
+        handler: this.addServiceDlg,
         scope: this
       }, {
         text: 'Logout',
