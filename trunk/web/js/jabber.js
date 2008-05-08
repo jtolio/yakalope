@@ -73,36 +73,31 @@ var jabber = {
       return false;
     }
   },
+  send:function(packet) {
+    try {
+      this.con.send(packet);
+    } catch(e) {
+      Ext.MessageBox.alert('Error sending packet', e.message);
+    }
+  },
   /**
    * Sends a message
    * @param {JSJaCJID} user
    * @param {String} msg
    */
   sendMsg: function(user, msg){
-    try {
-      var aMsg = new JSJaCMessage();
-      aMsg.setTo(new JSJaCJID(user.toString()));
-      aMsg.setBody(msg);
-      this.con.send(aMsg);
-      return false;
-    } 
-    catch (e) {
-      alert("Error: " + e.message);
-      return false;
-    }
+    var aMsg = new JSJaCMessage();
+    aMsg.setTo(new JSJaCJID(user.toString()));
+    aMsg.setBody(msg);
+    this.send(aMsg);
+    return true;
   },
   
   getRoster: function(){
-    try {
-      var roster = new JSJaCIQ();
-      roster.setIQ(null, 'get', 'roster_1');
-      roster.setQuery(NS_ROSTER);
-      this.con.send(roster);
-    } 
-    catch (e) {
-      alert("Error getting roster: " + e.message);
-      return false;
-    }
+    var roster = new JSJaCIQ();
+    roster.setIQ(null, 'get', 'roster_1');
+    roster.setQuery(NS_ROSTER);
+    this.send(roster);
   },
   addRosterItem: function(buddy){
     var iq = new JSJaCIQ();
@@ -126,16 +121,10 @@ var jabber = {
   },
 
   setPresence: function(show, status) {
-    try {
-      var presence = new JSJaCPresence();
-      presence.setShow(show);
-      presence.setStatus(status);
-      this.con.send(presence);
-    }
-    catch (e) {
-      Ext.MessageBox.alert('Error setting presence', e.message);
-      return false;
-    }
+    var presence = new JSJaCPresence();
+    presence.setShow(show);
+    presence.setStatus(status);
+    this.send(presence);
   },
 
   subscribe: function(jid){
@@ -160,16 +149,12 @@ var jabber = {
    * @param {String} subType
    */
   __subscription: function(jid, subType){
-    try {
-      var presence = new JSJaCPacket('presence');
-      presence.setTo(jid);
-      presence.setType(subType);
-      this.con.send(presence);
-    } 
-    catch (e) {
-      Ext.MessageBox.alert('Error sending ' + subType, e.message);
-      return false;
-    }
+    var presence = new JSJaCPacket('presence');
+    presence.setTo(jid);
+    presence.setType(subType);
+    this.send(presence);
+    Ext.MessageBox.alert('Error sending ' + subType, e.message);
+    return false;
   },
   
   isConnected: function(){
@@ -178,17 +163,11 @@ var jabber = {
   handle: {
     iq: function(iq){
       if (iq.getType() != 'result') {
-        try {
-          var roster = new JSJaCIQ();
-          roster.setIQ(null, 'result', iq.getID());
-          roster.setQuery(NS_ROSTER);
-          jabber.con.send(roster);
-          console.log("Reply test: " + iq.reply().xml());
-        }
-        catch (e) {
-          console.log("Error in handle.iq: " + e.message);
-          return false;
-        }
+        var roster = new JSJaCIQ();
+        roster.setIQ(null, 'result', iq.getID());
+        roster.setQuery(NS_ROSTER);
+        this.send(roster);
+        console.log("Reply test: " + iq.reply().xml());
       }
     },
     
@@ -246,7 +225,7 @@ var jabber = {
     },
     
     iqVersion: function(iq){
-      jabber.con.send(iq.reply(
+      this.send(iq.reply(
         [iq.buildNode('name', 'yakalope test'),
          iq.buildNode('version', JSJaC.Version),
          iq.buildNode('os', navigator.userAgent)]));
@@ -255,7 +234,7 @@ var jabber = {
     
     iqTime: function(iq){
       var now = new Date();
-      jabber.con.send(iq.reply(
+      this.send(iq.reply(
         [iq.buildNode('display', now.toLocaleString()),
          iq.buildNode('utc', now.jabberDate()),
          iq.buildNode('tz',
