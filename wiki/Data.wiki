@@ -1,0 +1,380 @@
+#summary Data Component Proposal Doc
+
+= DATA STORAGE PROPOSAL =
+
+=== Status: Complete ===
+----
+= Non-Conversational Data =
+  This section goes over the details of how non-conversational 
+  data will be stored, accessed, and maintained.
+
+== Technologies Used ==
+ * Django (#.##)
+ * MySQL (5.x)
+ * Python (2.3.5 or greater)
+ * Erlang (5.5.5) -Tutorials on Erlang: [http://www.erlang.org/doc/pdf/getting_started.pdf Intro], [http://www.erlang.org/doc/pdf/tutorial.pdf Interprocess communication].
+ * Ejabberd (2.X.X)
+
+=== Django ===
+  Django is a python web framework that will be used for the web UI backend. 
+  It has special methods for creating objects and generating the XML to 
+  store them automatically. 
+
+=== MySQL ===
+  MySQL will be the database software used.
+
+=== Python ===
+  Python is the language used by the back end of the web UI.
+
+== Interface With Web UI ==
+  The web UI will use Django objects to interface with the database.
+
+== Interface With Jabber Server (Transports?) ==
+  The jabber server will use the native MySQL connectors to interface 
+  with the database.
+
+== Database Mapping ==
+  _See Ejabberd SQL script._
+
+  Additional tables could be added to deal with user preferences
+  and other Yakalope-specific data.
+
+----
+
+= Conversational Data =
+  This section goes over the details of how non-conversational 
+  data will be stored, accessed, and maintained.
+
+== What exactly is a conversation? ==
+  There are proposed (status: experimental) XMPP practices for what should 
+  be considered one conversation between two or more parties:
+  [http://www.xmpp.org/extensions/xep-0201.html]
+
+  These are however, as the document explains, experimental. Besides, we 
+  (most likely) cannot rely on the "threadID" attribute of a message being 
+  present in a conversation due to the fact that we have no influence on the 
+  client being used by a party not using Yakalope. This make it hard to do 
+  anything other than defining our own scheme based on what we think should 
+  be considered one conversation - ie. timeout based and so on. 
+
+== Technologies Used ==
+ * Lucene (embedded in PyLucene)
+ * Django (#.##)
+ * !PyLucene (JCC) (2.2.x)
+ * Java (#.##)
+ * Python (2.3.5 or greater)
+ * Erlang (5.5.5) -Tutorials on Erlang: [http://www.erlang.org/doc/pdf/getting_started.pdf Intro], [http://www.erlang.org/doc/pdf/tutorial.pdf Interprocess communication].
+ * Ejabberd (2.X.X)
+
+=== Lucene ===
+  Lucene is the full text search application used to store message index
+  data. It operates very similar to traditional database software. Lucene
+  was chosen due to its maturity and its ability to add updates to the
+  index without having to regenerate the whole index. 
+
+=== !PyLucene ===
+  !PyLucene is a Python module that will allow us to use the 
+  Lucene API inside of python scripts.
+
+=== Java ===
+  !PyLucene uses Lucene via the Java Virtual Machine and thus requires
+  Java to be installed.
+
+=== Why don't we use a standard relational database system like MySQL? ===
+  1. Using a server with 3 GB of RAM dedicated to mysql data storage, it is 
+     not feasible. Setting aside space for other tables and indexes, we 
+     would have around 2 GB of data storage space. If we had 2000 users, 
+     each would only get 1 MB of storage space for all the messages. 
+     Allowing the database to grow too far out of RAM would make full text 
+     search unbearable. This simply does not scale.
+  1. File systems can scale. At this time, a cheap 500 GB drive is only 
+     $100.
+  1. A full text search engine could maximize efficiency by storing the 
+     indexes on a RAM folder and the raw conversation data on a compressed 
+     file system.
+  1. Full text search engines (Lucene, Sphinx, etc.) are developed enough 
+     to perform faster than many databases. 
+  1. Database software like MySQL will still be used to store 
+     non-conversational data.
+
+== Interface With Web UI ==
+  The web interface will interact with the data using a Python module.
+  The module will contain basic functions to search for messages and
+  return the search results in an easy to use form (objects). The web
+  interface will have a read only relationship with the conversational
+  data.
+
+== Interface With Jabber Server (Logging Module) ==
+  The jabber server logging module will interact with the data using
+  the same Python module. It will have one function for adding new
+  messages. Due to the complicated nature of the jabber server and
+  the desire to have a consistent interface to the data, an
+  intermediate python application that utilizes pipes for
+  inter-process communication will need to be written. The interface
+  with the jabber server will have a write only relationship with
+  the conversational data.
+
+  The interface will be implemented by modifying the existing mod_log_chat
+  module written for Ejabberd to just forward messages to an external process
+  instead of writing messages to disk. This is implemented using Erlang's built-in
+  Ports. You can read more about this [http://www.erlang.org/doc/pdf/tutorial.pdf here].
+  For proof of concept code, please have a look at the mod_log_chat.erl and externalprocesslogger.py
+  attachment of this document. (Note: mod_log_chat when downloaded from process-one is originally prepared 
+  for Ejabberd v2.X, which leads to problems when compiling it for v1.X. 
+  Workaround: remove all DEBUG-statements)
+
+
+=== Repeater ===
+  The repeater is the intermediate application between the python
+  data module and the jabber server logging module. Using a 
+  connection to the jabber module via a pipe, this application 
+  will constantly process new messages and add them using the 
+  library function.
+
+  Information for each incoming message gets piped to the repeater
+  from the jabber server. The repeater reads stdin and reads in message
+  packets one at a time in this format:
+  {{{
+    2 bytes - packet length
+    x bytes - message data
+  }}}
+
+  The message packet contains the following:
+  {{{
+    From JID
+    To JID
+    UTC timestamp
+    message
+    message (cont)
+    ...
+  }}}
+  From the "From JID" and "To JID" we get: username, protocol, friend_chat, who_sent
+
+  Attached you will find a modified version of the mod_chat_log ejabberd module which
+  acts as a message passer between ejabberd and an external process. A receiving process
+  written in python is also attached. This proof of concept code will forward the
+  mentioned fields of messages passing through the server to the receiving python process, 
+  which will then write them to a file.
+
+  For the ejabberd module it is highly recommended to view it in a code editor which has
+  support for the Erlang mode!
+
+== Internals ==
+  This describes the internal data structure of data. This will be 
+  masked by the python module that abstracts it all.
+
+=== File Storage ===
+  Files will be split into two categories: data files and index files. 
+  Data files will be responsible for holding raw messages and a minimal 
+  subset of data to go along with it. Index files will be the files
+  inside the index directory that Lucene creates.
+
+  Two separate directories will be used to store the types of files.
+  Index files will be accessed on a more frequent basis and may
+  eventually need to be moved to some kind of RAM directory to
+  increase searching and message adding performance. Data files
+  will likely be accessed on a less frequent basis.
+
+==== Index Files ====
+  Index file format will be dealt with in Lucene. 
+
+  Folder Structure:
+    * Username
+      * (index files)
+    * Username
+      * (index files)
+    * Username
+      * (index files)
+  
+==== Data Files ====
+  Data files will be organized according to the structure below. Each friend
+  and chat room will have its own file. To deal with multiple people in a
+  single conversation, who sent each message will be recorded as well. *Status
+  messages should not be stored by this system at this time. In the future
+  they could be added as a separate index and separate data directory.*
+
+  Each file will have the information below associated with each record.
+  Although XML would be preferred, this format will allow simple appending
+  to the end of the file whenever a new message is stored. It also allows
+  the file offset to be determined by just checking the file size before
+  appending.
+
+  Each record field shall be separated by a new line:
+    * Who sent the message (protocol username of that person)
+    * When it was sent (unix timestamp format)
+    * Length of the formatted text
+    * Formatted text of the message
+
+  Example of two messages in a row:
+   {{{
+     corndogserver
+     1153190844
+     33
+     <span>roflcopter
+     lmao dood</span>
+     corndogserver
+     1153295111
+     16
+     <span>lol</span>
+   }}}
+
+  Folder Structure:
+    * Username
+      * Protocol
+        * (friend or chat file)
+        * (friend or chat file)
+        * (friend or chat file) 
+
+=== Index Fields ===
+  || Field Name        || Type       || Data Type (*)        ||
+  || protocol          || Keyword    || string               ||
+  || friend_chat       || Keyword    || string               ||
+  || timestamp         || Keyword    || unix timestamp       ||
+  || who_sent          || Keyword    || string               ||
+  || file_offset       || !UnIndexed || integer              ||
+  || text              || !UnStored  || text (HTML stripped) ||
+
+  (*) All types are technically strings, but the actual data inside the
+  string will be of these types
+
+=== Python Module Methods ===
+  The module must contain methods for:
+    * Getting messages from a specific friend/chatroom within the last
+      x minutes
+    * Searching by time, friend/chat, message text
+    * Getting messages "close to" another message
+
+= Possible Future Enhancements =
+  * More searching functions
+  * Variable "recent" times (i.e. 5 minutes surrounding to x minutes surrounding)
+  * Sorting of searchMessages returned value by conversation rank
+
+= Potential Issues =
+  These are some issues that may come up as the project 
+  progresses and some possible solutions.
+
+== !PyLucene slowing down CGI ==
+  Since !PyLucene will have to fire up the VJM every time it runs,
+  we may have slow web response times. One solution would be to
+  write another program like the repeater or incorporate the code
+  into the existing repeater. 
+
+== Timezone offsets ==
+  If possible, all times should be stored as UTC. Time conversions
+  should be done as close to the client end as possible, if not 
+  on the client itself.
+
+== Non-Optimized Lucene Index Files ==
+  As the number of messages stored in the system grows, searches
+  will become slower. One solution may be to run a script
+  periodically that goes through each user's index and optimizes
+  it. This would only require that no new messages were added
+  while it was optimizing.
+
+= Setting Up =
+  Setup procedures for the data storage system.
+
+== Installing Software ==
+  1. Install Python
+  1. Install Java Runtime
+  1. Install !PyLucene
+    1. Be sure word size is set to include 2+ character words
+       in searches (default is 4+, which is not good enough)
+  1. Install Django
+  1. Install MySQL
+  1. Install EJabberd
+  1. Install EJabberd modules
+
+== Configuration ==
+  1. Configure PyLucene to use JVM
+
+= Definitions =
+ ===Non-Conversational Data::===
+      Data stored for the purposes of account management. (e.g. 
+      Logon info, Preferences) This does not include any messages 
+      stored by the system.
+ ===Conversational Data::===
+      The minimal set of data required to store user messages on 
+      the system. (e.g. Timestamps, Message text)
+ ===Status Message::===
+      Messages announcing the status of a chatroom or friend. 
+      Examples include irc mode changes, signing on/off, and 
+      changing status to away.
+
+= Relevant Links =
+  * [http://64.233.167.104/search?q=cache:RNEKr7AQG9sJ:www.mysqlperformanceblog.com/files/presentations/EuroOSCON2006-High-Performance-FullText-Search.pdf+database+full+text+search+comparison&hl=en&ct=clnk&cd=3&gl=us PDF on Full Text Searching]
+
+----
+= Timeline =
+  * *Python Library Module:* 3 weeks
+  * *Jabber Logging Module:* 2 weeks
+  * *Repeater:* 1 week
+  * *Installation of Required Software:* 2 days
+  * *Implementation:* 1 day
+  * *Initial Testing:* 1 weeks 
+  * ETA: x/x/2008
+----
+= Prepared By =
+  Derek, Tor-Helge
+
+= Sign-offs =
+  || Name     || Role       || Date      ||
+  ||  Uriah   ||  UI Team   ||  2/29/8   ||
+  ||  Ryan    ||  UI Team   ||  3/2/8    ||
+  ||  JT      ||  JT        ||  2/27/8   ||
+  ||  Zak     ||  Systems   ||  3/4/08   ||
+
+----
+= Commentary =
+  * Evan
+    * If we do use django we will get have a user model already 
+      defined. If we don't use the django user model then I would
+      like to see the user model at least have: email (text), 
+      last_login (date), and registration (date).
+  * JT
+    * Looks well thought through. I am concerned when you say that
+      optimization of indices require no new messages. We can't
+      really say a user won't get any new messages if they're
+      always online. Perhaps we have a queue of incoming messages?
+      * Derek: Right, there are many possible ways to get around
+        the issue, so I am not worried about it. Also, a benchmark
+        on a machine with 1.5ghz single CPU and 512MB of RAM  
+        shows that it takes on average 49 seconds to optimize 1000
+        "rows" of 1K data. Since we have so many fields but our
+        data rows should be smaller, I would say a conservative 
+        estimate would be twice that time. That would mean two
+        minutes per 1000 messages we have stored.
+    * It would be nice if we make sure user data is never
+      duplicated anywhere, otherwise we have to worry about 
+      consistency. I told Tor-Helge this, but I think the best way
+      to get two different db schemas to reference the same actual
+      data is to use database views.
+    * Of course, will all the stuff we're doing, I'm very worried
+      about scalability, but I think I'll have that worry 
+      regardless of what we do.
+      * Derek: Right, so the conversational data should be able to
+        be spread out across many computers so long as the disk is
+        shared. The MySQL database is less scalable, but that is
+        a limitation that goes with the jabber server.
+  * Uriah
+    * We should avoid storing the same data in more than one place.
+      I've had to work on a couple projects that started out with
+      a lot of data duplicated and it caused a lot of headaches. We
+      should use the user management provided by the jabber server
+      except for Yakalope specific data.
+    * I'm not sure we need to store the chat logs as
+      /Username/Protocol/(friend or chat file). I believe that with
+      the transports, buddies you add that are using another
+      protocol are something like MyAimScreenname@aim.yakalope.com.
+      * Derek: This is true and may give us some benefits in the
+        short term, but this folder structure provides a more
+        logical and independent method of storage should we
+        eventually decide to use something like a libpurple 
+        back-end instead of jabber transports.
+ * Ryan
+  * This seems well thought out.  I'm a little concerned about scalability of the system into the future but I think that this is a good starting point
+
+ * Zak
+  * timeout based conversation definition: how many timers can we have simultaniously?
+  * Lucene sounds pretty cool.
+  * I am wondering how well the file-storage mechanism will scale over multiple machines? The overall structure sounds well thought out, but I still wonder if there could be an issue of scalability here.
