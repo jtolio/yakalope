@@ -1,0 +1,7 @@
+#summary Components
+
+= Components=
+ * [Data]
+ * [JabberServer]
+ * [JabberTransports]
+ * [WebInterface]
