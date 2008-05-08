@@ -98,11 +98,11 @@ BuddyList = Ext.extend(Ext.Panel, {
     var servicesStore = new Ext.data.SimpleStore({
       id: 'services-store',
       fields: ['service', 'serviceName'],
-      data: [['squall.cs.umn.edu', 'squall.cs.umn.edu']    /*['yakalope.com', 'Yakalope'],
-       ['msn.yakalope.com', 'MSN'],
-       ['aim.yakalope.com', 'AIM'],
-       ['icq.yakalope.com', 'ICQ'],
-       ['irc.yakalope.com', 'IRC']*/
+      data: [['', 'Jabber'],
+       ['msn.squall.cs.umn.edu', 'MSN'],
+       ['aim.squall.cs.umn.edu', 'AIM'],
+       ['icq.squall.cs.umn.edu', 'ICQ'],
+       ['yahoo.squall.cs.umn.edu', 'Yahoo']
       ],
     });
     var window = new Ext.Window({
@@ -137,7 +137,11 @@ BuddyList = Ext.extend(Ext.Panel, {
       name: 'add',
     }, function(){
       var values = form.getForm().getValues();
-      jabber.addBuddy(new Buddy(values.buddyname + '@' + values.serviceType, 'none'));
+      var service = Ext.getCmp('serviceType').getValue();
+      if (service)
+        service = '@' + service;
+      // values.serviceType is the displayField for some reason
+      jabber.addBuddy(new Buddy(values.buddyname + service, 'none'));
       window.close();
     }, window);
     form.addButton({
@@ -295,7 +299,6 @@ BuddyList = Ext.extend(Ext.Panel, {
             })]
     });
     BuddyList.superclass.initComponent.apply(this, arguments);
-    //Ext.getCmp('presence').selectFirst();
   }  
 });
 
