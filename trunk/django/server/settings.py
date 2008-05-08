@@ -9,8 +9,8 @@ ADMINS = (
 
 MANAGERS = ADMINS
 
-DATABASE_ENGINE = ''           # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'ado_mssql'.
-DATABASE_NAME = ''             # Or path to database file if using sqlite3.
+DATABASE_ENGINE = 'sqlite3'           # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'ado_mssql'.
+DATABASE_NAME = 'O:\\yakalope\\yak.db'             # Or path to database file if using sqlite3.
 DATABASE_USER = ''             # Not used with sqlite3.
 DATABASE_PASSWORD = ''         # Not used with sqlite3.
 DATABASE_HOST = ''             # Set to empty string for localhost. Not used with sqlite3.
@@ -50,7 +50,6 @@ ADMIN_MEDIA_PREFIX = '/media/'
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = '2+(uyx@gu9*gyg84t4mo1dr%a8r99vq21&v(&5fy3dp47s7h3f'
 
-
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
     'django.template.loaders.filesystem.load_template_source',
@@ -59,7 +58,7 @@ TEMPLATE_LOADERS = (
 )
 
 MIDDLEWARE_CLASSES = (
-    'django.middleware.common.CommonMiddleware',
+    #'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     #'django.contrib.auth.middleware.AuthenticationMiddleware',
     #'django.middleware.doc.XViewMiddleware',
@@ -80,3 +79,16 @@ INSTALLED_APPS = (
     #'django.contrib.sites',
     'server.yakalope',
 )
+
+#
+#Log Module Configuration
+#
+
+#Python Logmodule location
+LOGMODULE_PATH = '' # /local/yakalope/svn_checkout/logging/
+
+#Log locations
+LOGMODULE_DATA_PATH = ''  # /local/yakalope/datastore/data/
+LOGMODULE_INDEX_PATH = '' # /local/yakalope/datastore/index/
+
+LOGMODULE_HOSTNAME = '' # squall.cs.umn.edu
