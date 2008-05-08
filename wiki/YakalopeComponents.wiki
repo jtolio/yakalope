@@ -1,4 +1,5 @@
 #summary Components
+#labels Featured
 
 = Components=
  * [Data]
