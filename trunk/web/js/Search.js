@@ -4,7 +4,8 @@
 
 
 var store1 = new Ext.data.JsonStore({
-	url: 'https://squall.cs.umn.edu/yakalope/search',
+	//url: 'https://squall.cs.umn.edu',
+	url: '../../../../yakalope/search',
 	root: 'data',
 	fields: ['idnum']
 });
@@ -53,19 +54,28 @@ LogWin = Ext.extend(Ext.Panel, {
         text: 'Search',
         id: 'search_button',
         handler: function(){
-			//store2.load({params: {username: jabber.u_n + "@squall.cs.umn.edu", password: jabber.p_w}})
+			//store2.load({params: {username: jabber.u_n + '@squall.cs.umn.edu', password: jabber.p_w}})
 			//alert(Ext.getCmp('search_field').getValue());
-			alert(jabber.u_n + "squall.cs.umn.edu" + " " + jabber.p_w);
+			//store2.load();
+			store1.load();
+			alert(jabber.u_n + "@squall.cs.umn.edu" + " " + jabber.p_w);
+			//alert(store1.root);
 		},
         scope: this
       }],
 	  /*items:[
 	  	new Ext.grid.GridPanel({
 		    store: store1,
-			height: 350,
+			autoHeight: true,
 			loadMask: {msg: 'Loading...'},
-		    columns: [{id:'chat_msg', header: "Title", width: 300, dataIndex: 'idnum', sortable: false}]
-    })]*/
+		    columns: [{id:'search_results', header: "Results:", width: 100, dataIndex: 'idnum1', sortable: false},
+					  {header: "dfgdf", width: 0, sortable: true, dataIndex: 'price'}],
+			viewConfig: {
+        		forceFit: true
+    		},
+			frame: false,
+            cls: 'blist-grid',
+    	})]*/
     });
     LogWin.superclass.initComponent.apply(this, arguments);
   }  
