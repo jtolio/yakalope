@@ -66,7 +66,7 @@ yakalope.app = function () {
         cmargins: '10 0 0 0',
         xtype:'logwin'
 
-        /* Search */ 
+        /* End Search */ 
 
       }]
       
@@ -74,8 +74,11 @@ yakalope.app = function () {
 
       });
     },
-    getUser: function() {
-      return "test_user";
+    getUserName: function() {
+      return this.username;
+    },
+    setUserName: function(userName) {
+        this.username = userName;
     },
     createNewChatWindow: function(chatId) {
       if (!Ext.get(chatId)) {
@@ -85,24 +88,12 @@ yakalope.app = function () {
           title:chatId,
           hidden:false,
           key:chatId,
-          user:this.getUser(),
-        });
-        newChat.show(this);// = chatArea.add(newChat);
-        //viewport.doLayout();
-        return newChat;
-      }
-      return null;
-    },
-    createChatWindow: function(chatId) {
-        var newChat = new NewChatWindow({
-            id:chatId,
-            title:chatId,
-            hidden:false,
-            key:chatId,
-            user:this.getUser(),
+          user:this.getUserName(),
         });
         newChat.show(this);
         return newChat;
+      }
+      return null;
     },
     removeChatWindow: function(chatId) {
       var chatArea = yakalope.app.getChatArea();

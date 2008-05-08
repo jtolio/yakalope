@@ -27,16 +27,13 @@ var jabber = {
   setupCon: function(con){
     con.registerHandler('message', jabber.handle.message);
     con.registerHandler('presence', jabber.handle.presence);
-    //con.registerHandler('iq', jabber.handle.iq);
     con.registerHandler('onconnect', jabber.handle.connected);
     con.registerHandler('onerror', jabber.handle.error);
     con.registerHandler('status_changed', jabber.handle.statusChanged);
     con.registerHandler('ondisconnect', jabber.handle.disconnected);
     con.registerHandler('failure', jabber.handle.failure);
-    
     con.registerIQGet('query', NS_VERSION, jabber.handle.iqVersion);
     con.registerIQGet('query', NS_TIME, jabber.handle.iqTime);
-    //con.registerIQGet('query', NS_ROSTER, jabber.handle.iqRosterGet);
     con.registerIQSet('query', NS_ROSTER, jabber.handle.iqRosterSet);
     con.registerHandler('iq', 'query', NS_ROSTER, jabber.handle.iqRoster);
   },
@@ -87,7 +84,6 @@ var jabber = {
       aMsg.setTo(new JSJaCJID(user.toString()));
       aMsg.setBody(msg);
       this.con.send(aMsg);
-      alert(aMsg.xml());
       return false;
     } 
     catch (e) {
@@ -101,7 +97,6 @@ var jabber = {
       var roster = new JSJaCIQ();
       roster.setIQ(null, 'get', 'roster_1');
       roster.setQuery(NS_ROSTER);
-      //roster.setFrom('');
       this.con.send(roster);
     } 
     catch (e) {
@@ -122,7 +117,6 @@ var jabber = {
     });
     item.appendChild(group);
     query.appendChild(item);
-    alert(iq.xml());
     this.con.send(iq);
   },
   addBuddy: function(buddy){
@@ -183,10 +177,7 @@ var jabber = {
   },
   handle: {
     iq: function(iq){
-      //alert("IN (raw): " + iq.xml());
-      //jabber.con.send(iq.errorReply(ERR_FEATURE_NOT_IMPLEMENTED));
       if (iq.getType() != 'result') {
-        // Respond with 'result' packet
         try {
           var roster = new JSJaCIQ();
           roster.setIQ(null, 'result', iq.getID());
@@ -214,10 +205,7 @@ var jabber = {
       }
       if (aJSJaCPacket.getStatus()) {
         var status = aJSJaCPacket.getStatus();
-      }
-      /*if (type == "unavailable") {
-        yakalope.app.removeBuddy(from);
-      }*/      
+      }      
       console.log(from + presence + status + type);
       roster.setPresence(from, presence, status, type);
 
