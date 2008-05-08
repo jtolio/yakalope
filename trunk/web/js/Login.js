@@ -27,13 +27,14 @@ var Login = {
         }),         
      });
      var LoginWindowForm = LoginWindow.items.first();
-         LoginWindowForm.addButton({
+     LoginWindowForm.addButton({
             text:'Login',
             name:'login',
          },
          function() {
            var values = LoginWindowForm.getForm().getValues();
            jabber.doLogin(values.username, values.password);
+           yakalope.app.setUserName(values.username);
            LoginWindow.close();
          },
          LoginWindow);
