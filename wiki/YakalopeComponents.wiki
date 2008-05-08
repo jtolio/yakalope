@@ -6,3 +6,6 @@
  * [JabberServer]
  * [JabberTransports]
  * [WebInterface]
+
+== Data Flow ==
+[http://yakalope.googlecode.com/svn/wiki_attachments/DataFlow.png]
