@@ -176,7 +176,7 @@ class LogModule:
         luc_writer.close()
 
     """
-    METHOD: LogModule::getRecentMessages
+    METHOD: LogModule::getRecentConversations
 
     ACCESS: public
 
@@ -442,75 +442,6 @@ class LogModule:
             query = qparser.parse(querytext)
             qresults = searcher.search(query)
 
-            """
-            #Fetch the results
-            conversationlist = []
-            for i in range(qresults.length()):
-                mid = int(qresults.id(i))
-                mprotocol = qresults.doc(i).get("protocol")
-                mfriend_chat = qresults.doc(i).get("friend_chat")
-                mtimestamp = int(qresults.doc(i).get("timestamp"))
-                mwho_sent = qresults.doc(i).get("who_sent")
-                mfileoffset = int(qresults.doc(i).get("file_offset"))
-                mrank = qresults.score(i)
-
-                #Create a conversation for each result
-                conversation = LogConversation(mprotocol,mfriend_chat)
-                conversation.setID(mid)
-
-                messagetext = self.__getMessageFromFile(username,
-                                                        mfriend_chat,
-                                                        mprotocol,
-                                                        mfileoffset)
-                before_msgs = self.__getSurroundingMessages("before",
-                                                            searcher,
-                                                            username,
-                                                            mprotocol,
-                                                            mfriend_chat,
-                                                            mtimestamp,
-                                                            mid);
-                after_msgs = self.__getSurroundingMessages("after",
-                                                           searcher,
-                                                           username,
-                                                           mprotocol,
-                                                           mfriend_chat,
-                                                           mtimestamp,
-                                                           mid);
-                message = LogMessage(messagetext,mtimestamp,mwho_sent)
-                message.setRank(mrank)
-                message.setID(mid)
-
-                #Add all the messages to the conversation
-                for m in before_msgs:
-                    conversation.addMessage(m)
-                conversation.addMessage(message)
-                for m in after_msgs:
-                    conversation.addMessage(m)
-
-                conversationlist.append(conversation)
-            #End fetching all the results
-
-            #Now search through and remove dupe messages
-            for con in conversationlist:
-                for m in con.messages:
-                    for innercon in conversationlist:
-                        if innercon.getID() != con.getID() and \
-                           m.getID() == con.getID():
-                            #Found a dupe, get the ID
-                            dupe_index = conversationlist.index(innercon)
-
-                            #Copy the message rank -- this works only because
-                            #  there should only be 1 ranked message
-                            m.setRank(innercon.getRank())
-
-                            #Delete the offending conversation
-                            del conversationlist[dupe_index]
-            #end searching for dupe messages
-
-            #TODO: sort conversationlist by conversation rank
-            ---------------------------------------------------------------------
-            """
-
             #Fetch the results
             conversationlist = []
             for i in range(qresults.length()):
@@ -570,7 +501,7 @@ class LogModule:
             return conversationlist
         else:
             #Index not found
-            return false
+            return False
 
     """
     METHOD: LogModule::__getSurroundingMessages
