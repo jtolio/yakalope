@@ -92,6 +92,7 @@ ChatWindow = Ext.extend(Ext.Window, {
             id:'chatview' + this.getId(),
             layout:'fit',
             store:chatStore,
+            border:true,
             cls:'chatview',
             tpl: new Ext.XTemplate(
             '<tpl for=".">',

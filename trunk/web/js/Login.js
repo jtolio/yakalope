@@ -1,5 +1,6 @@
 var Login = {
   login: function() {
+//LoginWindow = Ext.extend({
     var LoginWindow = new Ext.Window({
         title: 'Welcome to Yakalope or BlabLab or something...',
         width: 300,
@@ -15,14 +16,14 @@ var Login = {
                 name:'username',
                 allowBlank:false,
                 maxLength: 128,
-                maxLengthText: 'Username must be less than 128 characters',
+                maxLengthText: 'Username must be less than 128 characters'
             },{
                 fieldLabel:'Password',
                 name:'password',
                 allowBlank:false,
                 inputType:'password',
                 maxLength:128,
-                maxLengthText: 'Password must be less than 128 characters',
+                maxLengthText: 'Password must be less than 128 characters'
             }],
         }),         
      });
