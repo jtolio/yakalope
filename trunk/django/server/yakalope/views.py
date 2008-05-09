@@ -134,7 +134,7 @@ def convertToJSON(obj):
         if obj.data != None:
             data_dict = []
             for convo in obj.data:
-                if isinstance(convo, LogConversation):
+                if isinstance(convo, logmodule.LogConversation):
                     con_dict = convo.toDict()
                     data_dict.append(con_dict);
                 else:
@@ -147,7 +147,7 @@ def convertToJSON(obj):
         obj_dict = {"type": obj.type,
                     "message": obj.message,
                     "data": data_dict}
-        return '{"ServerStatus":'+simplejson.dumps(obj_dict)+'}'
+        return '{"ServerStatus": '+simplejson.dumps(obj_dict)+'}'
     else:
         return "(INVALID JSON CONVERSION: " + \
                "Expected ServerStatus object)"
