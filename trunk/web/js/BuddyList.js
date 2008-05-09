@@ -25,6 +25,7 @@ var roster = {
         if (this.roster[i].jid.toString() == jid.toString()) {
           this.online.push(this.roster[i]);
           this.roster.remove(this.roster[i]);
+          break;
         }
       }
     }
@@ -39,6 +40,7 @@ var roster = {
          this.online.remove(this.online[i]);
          this.roster.push(buddy);
         }
+        break;
       }
     }
     rosterStore.load();
@@ -99,9 +101,9 @@ BuddyList = Ext.extend(Ext.Panel, {
       id: 'services-store',
       fields: ['service', 'serviceName'],
       data: [['', 'Jabber'],
-       ['msn.squall.cs.umn.edu', 'MSN'],
        ['aim.squall.cs.umn.edu', 'AIM'],
        ['icq.squall.cs.umn.edu', 'ICQ'],
+       ['msn.squall.cs.umn.edu', 'MSN'],
        ['yahoo.squall.cs.umn.edu', 'Yahoo']
       ],
     });
@@ -157,10 +159,10 @@ BuddyList = Ext.extend(Ext.Panel, {
       id: 'services-store',
       fields: ['service', 'serviceName'],
       data: [
-       ['msn.squall.cs.umn.edu', 'MSN'],
        ['aim.squall.cs.umn.edu', 'AIM'],
        ['icq.squall.cs.umn.edu', 'ICQ'],
-       ['yahoo.squall.cs.umn.edu', 'Yahoo']
+       ['msn.squall.cs.umn.edu', 'MSN'],
+       ['yahoo.squall.cs.umn.edu', 'Yahoo! ']
       ],
     });
     var window = new Ext.Window({

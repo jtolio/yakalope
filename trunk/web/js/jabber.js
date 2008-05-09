@@ -38,6 +38,7 @@ var jabber = {
     con.registerHandler('iq', 'query', NS_ROSTER, jabber.handle.iqRoster);
     con.registerHandler('iq', 'query', NS_DISCO_ITEMS, jabber.handle.iqDiscoItems);
     con.registerHandler('iq', 'query', NS_REGISTER, jabber.handle.iqRegister);
+    con.registerHandler('iq', jabber.handle.iq);
   },
   
   doLogin: function(username, password){
@@ -141,6 +142,7 @@ var jabber = {
   },
 
   register: function(to, fields) {
+    //this.unregister(to); // Unregister old account if possible
     var iq = new JSJaCIQ();
     iq.setTo(to);
     iq.setType('set');
@@ -151,6 +153,16 @@ var jabber = {
         iq.buildNode(field, {}, fields[field])
       );
     }
+    this.send(iq);
+  },
+  
+  unregister: function(to) {
+    var iq = new JSJaCIQ();
+    iq.setTo(to);
+    iq.setType('set');
+    iq.setID('unreg');
+    var query = iq.setQuery(NS_REGISTER);
+    query.appendChild(iq.buildNode('remove', {}, ''));
     this.send(iq);
   },
 
@@ -187,7 +199,6 @@ var jabber = {
     presence.setTo(jid);
     presence.setType(subType);
     this.send(presence);
-    Ext.MessageBox.alert('Error sending ' + subType, e.message);
     return false;
   },
   
@@ -196,12 +207,17 @@ var jabber = {
   },
   handle: {
     iq: function(iq){
-      if (iq.getType() != 'result') {
+      /*if (iq.getType() != 'result') {
         var roster = new JSJaCIQ();
         roster.setIQ(null, 'result', iq.getID());
         roster.setQuery(NS_ROSTER);
         this.send(roster);
         console.log("Reply test: " + iq.reply().xml());
+      }*/
+      if (iq.getID() == 'reg') {        
+        var status = Ext.getCmp('status').getValue();
+        var presence = Ext.getCmp('presence').getValue();
+        jabber.setPresence(presence, status);
       }
     },
     
@@ -223,15 +239,30 @@ var jabber = {
       roster.setPresence(from, presence, status, type);
 
       if (type == "subscribe") {
-        Ext.MessageBox.confirm("Subscription request",
-          "Approve subscription request from " + from.toString() + "?",
-          function (approve) {
-            console.log(approve);
-            if (approve == 'yes')
-              jabber.allowSubscription(from.toString());
-            else
-              jabber.denySubscription(from.toString());
-        });
+        if (from.getDomain() == 'aim.squall.cs.umn.edu' ||
+            from.getDomain() == 'icq.squall.cs.umn.edu' ||
+            from.getDomain() == 'msn.squall.cs.umn.edu' ||
+            from.getDomain() == 'yahoo.squall.cs.umn.edu') {
+          jabber.allowSubscription(from.toString());
+          return;
+        }
+        if (!Ext.MessageBox.isVisible()) {
+          Ext.MessageBox.confirm("Subscription request",
+            "Approve subscription request from " + from.toString() + "?",
+            function (approve) {
+              console.log(approve);
+              if (approve == 'yes')
+                jabber.allowSubscription(from.toString());
+              else
+                jabber.denySubscription(from.toString());
+          });
+        }
+        else {
+          if (confirm ("Approve subscription request from " + from.toString() + "?"))
+            jabber.allowSubscription(from.toString());
+          else
+            jabber.denySubscription(from.toString());
+        }
       }
     },
 
@@ -305,7 +336,9 @@ var jabber = {
     },
 
     iqRegister: function(iq){
-      alert(iq.xml());
+      if (iq.isError())
+        Ext.MessageBox.alert('Error registering', 'Incorrect username or password?');
+      console.log(iq.xml());
     }
   }
 }
