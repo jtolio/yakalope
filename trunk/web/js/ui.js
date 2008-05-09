@@ -5,6 +5,7 @@ Ext.namespace('yakalope');
 yakalope.app = function () {
   var viewport;
   var username;
+  var openChats;
   return {
     getViewport: function() {
       return viewport;
@@ -23,7 +24,7 @@ yakalope.app = function () {
         Login.login();
       }         
       jabber.init();
-        
+      this.openChats = new Array();
       /* Setup Layout of Main Window */
   
       viewport = new Ext.Viewport({
@@ -78,11 +79,11 @@ yakalope.app = function () {
       return this.username;
     },
     setUserName: function(userName) {
-        this.username = userName;
+      this.username = userName;
     },
     createNewChatWindow: function(chatId) {
       if (!Ext.get(chatId)) {
-        var chatArea = yakalope.app.getChatArea();
+        //var chatArea = yakalope.app.getChatArea();
         var newChat = new ChatWindow({
           id:chatId,
           title:chatId,
@@ -90,14 +91,15 @@ yakalope.app = function () {
           key:chatId,
           user:this.getUserName(),
         });
+        this.openChats.push(chatId);
         newChat.show(this);
         return newChat;
       }
       return null;
     },
     removeChatWindow: function(chatId) {
-      var chatArea = yakalope.app.getChatArea();
-      chatArea.remove(chatId, true);
+      Ext.getCmp(chatId).close();
+      this.openChats.remove(chatId);
     },
     addMsg: function(chatId, msg) {
       var chatWindow = Ext.getCmp(chatId);
@@ -115,6 +117,15 @@ yakalope.app = function () {
     unsubscribeBuddy: function(username, domain){
       var user = username + '@' + domain;
       jabber.unsubscribe(user);
+    },
+    clearChatWindows: function() {
+      var arrlength = this.openChats.length;
+      var i = 0;
+      for (; i < arrlength; i++) {
+        var chatId = this.openChats[i];
+        this.removeChatWindow(chatId);
+      }
+      this.openChats = new Array();
     }
   }
 }();
