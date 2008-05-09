@@ -147,7 +147,7 @@ def convertToJSON(obj):
         obj_dict = {"type": obj.type,
                     "message": obj.message,
                     "data": data_dict}
-        return '{"ServerStatus':'+simplejson.dumps(obj_dict)+'}'
+        return '{"ServerStatus"':'+simplejson.dumps(obj_dict)+'}'
     else:
         return "(INVALID JSON CONVERSION: " + \
                "Expected ServerStatus object)"
