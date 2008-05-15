@@ -49,6 +49,10 @@ We can then call module.getCount() to get the value of count but not access it d
 Note: This functionality is possible thanks to !JavaScript's support for closures. A function inside another always has access to the variables and parameters of the outer function regardless of whether the outer function has returned.
 
 = jabber.js =
+All server contact is handled within jabber.js. One could accurately describe it as an implementation of a jabber chat client minus the user interface. When a user logs in, the login window passes the username and password to doLogin and a connection to the server is established and maintained until the user logs off or the connection fails. After logging in, any data received from the server is processed and sent to the proper component of the user interface. Likewise, user interactions that require sending data to the server are passed from the user interface components to the methods in jabber.js for processing.
+
+We chose to use !ExtJs as minimally as possible in the implementation of the client backend. As a result, any other user interface library could easily be used in the future.
+
 == Private ==
 === con ===
 The JSJaCHttpBindingConnection object, an implementation of XMPP Over BOSH (HTTP Binding).
