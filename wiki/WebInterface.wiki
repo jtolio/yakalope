@@ -1,0 +1,226 @@
+#summary Documentation of the web interface component of Yakalope
+
+= Overview =
+
+== Technologies Used ==
+
+=== JavaScript ===
+=== JSJaC ===
+JSJaC is a JavaScript Jabber/XMPP library to ease the implementation of web based Jabber/XMPP clients.
+=== ExtJS ===
+ExtJS is a “Cross-browser JavaScript library for building rich internet applications.” We use ExtJS mainly for the user interface widgets. The code that handles the Jabber connectivity also uses ExtJS minimally. We wanted to be sure it can be easily replaced in the future if necessary.
+
+== Components ==
+
+=== jabber.js ===
+Jabber.js provides the main client functionality of the Yakalope UI and handles all interactions with the Jabber server. The basic layout and functionality was derived from the “Simpleclient” included with JSJaC.
+=== ui.js ===
+ui.js contains the main yakalope application namespace, the main layout (viewport), and any public methods that should be accessible outside of the UI components (eg. createChatWindow).
+=== BuddyList.js, ChatWindow.js, LogWindow.js, Login.js ===
+These are the preconfigured ExtJS classes that make up the various components of the user interface.
+
+We use ExtJS “xtypes” (“lazy instantiation”) as much as possible. When using xtypes, the Ext objects are not created or rendered until they are needed.
+
+Notes: We keep each class in its own file while developing. In production we concatenate (in the original order) an minify the JavaScript files.
+
+= Application Layout =
+
+We chose to use the “Module Pattern” suggested by [http://www.crockford.com/ Douglass Crockford] and ExtJS. The module pattern is a powerful and flexible way to design a web application, allowing the use of private, public, and privileged members in JavaScript.
+
+{{{
+var module = function() {
+  // Private variables/functions
+  var count = 0;
+  var increaseCount = function() {
+    count++;
+  };
+
+  return {
+    // Privileged methods
+    getCount: function() {
+      return secret;
+    }
+  }
+}(); // Note that the function is executed immediately
+}}}
+
+We can then call module.getCount() to get the value of count but not access it directly. Public methods can be added to either the constructor or the objects prototype.
+
+Note: This functionality is possible thanks to JavaScript's support for closures. A function inside another always has access to the variables and parameters of the outer function regardless of whether the outer function has returned.
+
+= jabber.js =
+== Private ==
+=== con ===
+The JSJaCHttpBindingConnection object, an implementation of XMPP Over BOSH (HTTP Binding).
+
+=== setupCon(con) ===
+_@param {JsJaCHttpBindingConnection} con_
+
+Registers handlers for any events (XMPP stanzas received). Must be given a valid JSJaCHttpBindingConnection as the first parameter. Will likely only need to be called from the init() method or any method that overwrites the connection object. To enable/disable debugging (Firebug console logging) support, uncomment/comment the initialization of the JSJaCConsoleLogger object.
+
+Current events handled: message, presence, onconect, ondisconnect, onerror, status_changed, failure, iq roster, iq version, iq time, iq roster set, iq discover items, iq register, iq.
+
+=== send(packet) ===
+_@param {JSJaCPacket} packet_
+
+Wraps the con.send() method to catch any exceptions and show them in the debugger.
+
+=== getRoster() ===
+Sends an IQ packet to the server requesting the full roster. Usually only necessary on login.
+
+=== addRosterItem(buddy) ===
+_@param {JSJaCJID} buddy_
+
+Sends an iq  packet with type “set” to the server attempting to add a user to the roster. Will be called when the user requests to add a buddy from the user interface.
+
+=== discoverItems() ===
+*(Currently unused)*
+
+Requests a list of available services from the server. This is how we would get the list of available transports. See XEP-0030: Service Discovery http://www.xmpp.org/extensions/xep-0030.html
+
+=== getRegFields(to) ===
+_@param {String} to The service to request the registration field from_
+
+*(Currently unused)*
+
+Requests the necessary fields for registering with a specified service.
+
+=== subscription(jid, subType) ===
+_@param {JSJaCJID} jid
+
+@param {String} subType The type of presence packet to send ('subscribe', 'unsubscribe', 'subscribed', 'unsubscribed')_
+
+Sends a presence packet with a specified type. Used for presence subscription requests.
+
+=== _Event Handlers_ ===
+
+===iq(iq)===
+_@param {JSJaCIQ} iq_
+
+Handles miscellaneous IQ packets that are not processed by one of the other IQ handlers. Currently only used to broadcast a presence packet upon the successful registration with a transport. After registring, the transport must receive an initial presence before it will send presence notifications of roster entities.
+
+===iqVersion(iq)===
+_@param {JSJaCIQ} iq_
+
+Responds to a version request with the version and name of the client.
+
+===iqTime(iq)===
+_@param {JSJaCIQ} iq_
+
+Responds to a time request.
+
+===iqRoster(iq)===
+_@param {JSJaCIQ} iq_
+
+Parses roster stanzas and adds them to the persistent roster.
+
+===iqRegister(iq)===
+_@param {JSJaCIQ} iq_
+
+Handles iq registration packets. Currently only used to display an error message when an error packet is received.
+
+===message(aJSJaCPacket)===
+_@param {JSJaCPacket} aJSJaCPacket_
+
+Calls yakalope.app.addMsg() when a message is received to add the message to the correct chat window or open a new one if appropriate. TODO: Extend this and addMsg to properly handle “now typing” messages.
+
+===message(aJSJaCPacket)===
+_@param {JSJaCPacket} aJSJaCPacket_
+
+Updates the roster when a presence packet is received. Prompts the user if the presence packet is a subscription request.
+
+===connected()===
+Requests the full roster and sends an initial presence upon the successful connection to the server. Any actions that should be completed upon logging in to the jabber server can be placed here. An example may be fetching the recent conversation logs (we should already have logged in to the log server at this point).
+
+===disconnected()===
+Clears the roster and performs other cleanup actions necessary upon disconnecting from the server.
+
+== Privileged ==
+
+===init()===
+Attempts to resume a session and upon failing creates a new one.
+
+===isConnected()===
+Returns true if a connection is currently established and false otherwise.
+
+===doLogin(username, password)===
+_@param {String} username
+
+@param {String} password_
+
+Attempts to connect to the jabber server with the user supplied username and password. Required configuration:
+
+_Httpbase:_ The path to the rewrite/proxy that will enable our application to talk to the jabber server regardless of browser support for cross-site AJAX.
+e.g. '/http-bind/'
+
+_Domain:_ URL to the jabber server.
+e.g. 'squall.cs.umn.edu'
+
+_Resource:_ XMPP resource to use for the connection.
+e.g. Home, Work, or Yakalope
+
+Some of these may need to be made user configurable in the future.
+
+===sendMsg(buddy, msg)===
+_@param {JSJaCJID} user
+
+@param {String} msg_
+
+Sends a message packet to the provided user.
+
+===addBuddy(buddy, msg)===
+_@param {JSJaCJID} buddy_
+
+Calls addRosterItem and subscribe to add a specified JID to the roster and request subscription to its presence.
+
+===register(to, fields)===
+_@param {String} to Service to register with
+
+@param {Object} fields Object containing the fields to register with and their corresponding values_
+
+Requests registration with a service using the specified registration fields. This is how we register with transports.
+
+Example usage:
+{{{
+jabber.register('aim.squall.cs.umn.edu', {
+  username: 'yakalopetest',
+  password: 'password'
+});
+}}}
+
+===unregister(to)===
+_@param {String} to Service to unregister_
+
+*(Currently not implemented in the user interface)*
+
+Requests to unregister with a previously registered service. The service will respond with an error if the user has not previously registered.
+
+===setPresence(show, status)===
+_@param {String} show Must be one of: ''(empty string), 'away', 'chat', 'dnd'
+
+@param {String} status_
+
+Sends a presence update to the server.
+
+===subscribe(jid)===
+_@param {JSJaCJID} jid_
+
+Calls the subscription method with type of 'subscribe' to request permisson from an entity to subscribe to its presence.
+
+===unsubscribe(jid)===
+_@param {JSJaCJID} jid_
+
+Calls the subscription method with type of 'unsubscribe' to unsubscribe from an entity's presence.
+
+===allowSubscription(jid)===
+_@param {JSJaCJID} jid_
+
+Calls the subscription function with type of 'subscribed' to approve a pending subscription request from an entity.
+
+===denySubscription(jid)===
+_@param {JSJaCJID} jid_
+
+Calls the subscription function with type of 'unsubscribed' to deny a pending subscription request from an entity.
+
+===isConnected()===
+Returns true if a connection is currently established with a server and false otherwise.
