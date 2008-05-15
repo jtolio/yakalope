@@ -7,8 +7,8 @@
 === !JavaScript ===
 === JSJaC ===
 JSJaC is a !JavaScript Jabber/XMPP library to ease the implementation of web based Jabber/XMPP clients.
-=== ExtJS ===
-ExtJS is a “Cross-browser !JavaScript library for building rich internet applications.” We use ExtJS mainly for the user interface widgets. The code that handles the Jabber connectivity also uses ExtJS minimally. We wanted to be sure it can be easily replaced in the future if necessary.
+=== !ExtJs ===
+ExtJS is a “Cross-browser !JavaScript library for building rich internet applications.” We use !ExtJs mainly for the user interface widgets. The code that handles the Jabber connectivity also uses !ExtJs minimally for XML parsing and !MessageBox windows for alerts and user interactions. We wanted to be sure it can be easily replaced in the future if necessary.
 
 == Components ==
 
@@ -86,9 +86,9 @@ _@param {String} to The service to request the registration field from_
 Requests the necessary fields for registering with a specified service.
 
 === subscription(jid, subType) ===
-_@param {JSJaCJID} jid
+_@param {JSJaCJID} jid_
 
-@param {String} subType The type of presence packet to send ('subscribe', 'unsubscribe', 'subscribed', 'unsubscribed')_
+_@param {String} subType The type of presence packet to send ('subscribe', 'unsubscribe', 'subscribed', 'unsubscribed')_
 
 Sends a presence packet with a specified type. Used for presence subscription requests.
 
@@ -144,9 +144,9 @@ Attempts to resume a session and upon failing creates a new one.
 Returns true if a connection is currently established and false otherwise.
 
 ===doLogin(username, password)===
-_@param {String} username
+_@param {String} username_
 
-@param {String} password_
+_@param {String} password_
 
 Attempts to connect to the jabber server with the user supplied username and password. Required configuration:
 
@@ -174,9 +174,9 @@ _@param {JSJaCJID} buddy_
 Calls addRosterItem and subscribe to add a specified JID to the roster and request subscription to its presence.
 
 ===register(to, fields)===
-_@param {String} to Service to register with
+_@param {String} to Service to register with_
 
-@param {Object} fields Object containing the fields to register with and their corresponding values_
+_@param {Object} fields Object containing the fields to register with and their corresponding values_
 
 Requests registration with a service using the specified registration fields. This is how we register with transports.
 
@@ -196,9 +196,9 @@ _@param {String} to Service to unregister_
 Requests to unregister with a previously registered service. The service will respond with an error if the user has not previously registered.
 
 ===setPresence(show, status)===
-_@param {String} show Must be one of: ''(empty string), 'away', 'chat', 'dnd'
+_@param {String} show Must be one of: ''(empty string), 'away', 'chat', 'dnd'_
 
-@param {String} status_
+_@param {String} status_
 
 Sends a presence update to the server.
 
@@ -224,3 +224,25 @@ Calls the subscription function with type of 'unsubscribed' to deny a pending su
 
 ===isConnected()===
 Returns true if a connection is currently established with a server and false otherwise.
+
+= Roster =
+The roster is made up of an Ext.data.!GridPanel. The grid gets data from an Ext.data.Store which is populated from a single array. Online buddies need to somehow be separated from those that are offline. For this reason, we maintain two arrays of Buddy objects for the roster. One contains the full roster for reference and the other contains only the currently online buddies. To view and interact with offline buddies, we will use a separate grid that contains the data in the array of offline buddies. With some creative use of !ExtJs, we may be able to implement a more elegant approach to this problem.
+
+=== update(buddy) ===
+_@param {Buddy} buddy_
+
+Updates buddy information (e.g. Group) without overwriting the current presence of the buddy. If the buddy is not found in the roster, it is added.
+
+=== setPresence(jid, presence, status, type) ===
+_@param {JSJaCJID} jid_
+
+_@param {String} presence_
+
+_@param {String} status_
+
+_@param {String} type_
+
+Updates the presence of a buddy on the roster. Moves the buddy to the proper array if their online status changes.
+
+=== clear() ===
+Clears all data from the roster. Used when the user logs out.
