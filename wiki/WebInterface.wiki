@@ -4,11 +4,11 @@
 
 == Technologies Used ==
 
-=== JavaScript ===
+=== !JavaScript ===
 === JSJaC ===
-JSJaC is a JavaScript Jabber/XMPP library to ease the implementation of web based Jabber/XMPP clients.
+JSJaC is a !JavaScript Jabber/XMPP library to ease the implementation of web based Jabber/XMPP clients.
 === ExtJS ===
-ExtJS is a “Cross-browser JavaScript library for building rich internet applications.” We use ExtJS mainly for the user interface widgets. The code that handles the Jabber connectivity also uses ExtJS minimally. We wanted to be sure it can be easily replaced in the future if necessary.
+ExtJS is a “Cross-browser !JavaScript library for building rich internet applications.” We use ExtJS mainly for the user interface widgets. The code that handles the Jabber connectivity also uses ExtJS minimally. We wanted to be sure it can be easily replaced in the future if necessary.
 
 == Components ==
 
@@ -16,16 +16,16 @@ ExtJS is a “Cross-browser JavaScript library for building rich internet applic
 Jabber.js provides the main client functionality of the Yakalope UI and handles all interactions with the Jabber server. The basic layout and functionality was derived from the “Simpleclient” included with JSJaC.
 === ui.js ===
 ui.js contains the main yakalope application namespace, the main layout (viewport), and any public methods that should be accessible outside of the UI components (eg. createChatWindow).
-=== BuddyList.js, ChatWindow.js, LogWindow.js, Login.js ===
+=== !BuddyList.js, !ChatWindow.js, !LogWindow.js, Login.js ===
 These are the preconfigured ExtJS classes that make up the various components of the user interface.
 
 We use ExtJS “xtypes” (“lazy instantiation”) as much as possible. When using xtypes, the Ext objects are not created or rendered until they are needed.
 
-Notes: We keep each class in its own file while developing. In production we concatenate (in the original order) an minify the JavaScript files.
+Notes: We keep each class in its own file while developing. In production we concatenate (in the original order) an minify the !JavaScript files.
 
 = Application Layout =
 
-We chose to use the “Module Pattern” suggested by [http://www.crockford.com/ Douglass Crockford] and ExtJS. The module pattern is a powerful and flexible way to design a web application, allowing the use of private, public, and privileged members in JavaScript.
+We chose to use the “Module Pattern” suggested by [http://www.crockford.com/ Douglass Crockford] and ExtJS. The module pattern is a powerful and flexible way to design a web application, allowing the use of private, public, and privileged members in !JavaScript.
 
 {{{
 var module = function() {
@@ -46,7 +46,7 @@ var module = function() {
 
 We can then call module.getCount() to get the value of count but not access it directly. Public methods can be added to either the constructor or the objects prototype.
 
-Note: This functionality is possible thanks to JavaScript's support for closures. A function inside another always has access to the variables and parameters of the outer function regardless of whether the outer function has returned.
+Note: This functionality is possible thanks to !JavaScript's support for closures. A function inside another always has access to the variables and parameters of the outer function regardless of whether the outer function has returned.
 
 = jabber.js =
 == Private ==
@@ -76,7 +76,7 @@ Sends an iq  packet with type “set” to the server attempting to add a user t
 === discoverItems() ===
 *(Currently unused)*
 
-Requests a list of available services from the server. This is how we would get the list of available transports. See XEP-0030: Service Discovery http://www.xmpp.org/extensions/xep-0030.html
+Requests a list of available services from the server. This is how we would get the list of available transports. See [http://www.xmpp.org/extensions/xep-0030.html XEP-0030: Service Discovery]
 
 === getRegFields(to) ===
 _@param {String} to The service to request the registration field from_
